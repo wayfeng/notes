@@ -1,0 +1,74 @@
+#+SETUPFILE: ./setup/article.org
+#+TITLE:     Daily Vim
+#+DATE:      <2014-07-16 Wed>
+
+* Work with tags
+  Following command will start vi and put cursor in where the 'tag' is.
+#+BEGIN_SRC sh
+  vi -t `tag-you-want-to-search'
+#+END_SRC
+  Or, you can also find a 'tag' in vi.
+#+BEGIN_SRC sh
+  :ta `tag-you-want-to-search'
+#+END_SRC
+  Useful key bindings
+
+| *Ctrl-]* | Find tag under the cursor.                      |
+| *Ctrl-t* | Return to previous location before jump to tag. |
+
+* Work with multiple windows
+  - [:split filename] split window and load another file
+  - [:vsplit filename] vertical split
+  - [:only] keep only this window open
+  - [:hide] hide current window
+  - [ctrl-w_] maximize current window
+  - [ctrl-w=] make size of all windows equal
+  - [ctrl-w ctrl-w] move cursor to another window
+
+* Work with buffers
+  To get list of buffers, try =:buffers= or =:ls= or =:files=.
+
+  To switch buffer by name, try =:buffer <filename>= or =:buf <filename>= or even =:b <filename>=
+
+  To close a buffer, try =:bd= or =:bw=.
+
+* Folding setting
+  - automatically folding functions
+: :set foldmethod=syntax
+  - open/close a fold block
+    - *z c* fold a block
+    - *z C* fold every possible block
+    - *z o* open a folder, without sub-folders
+    - *z O* open all sub-folders
+  - more information
+: :help folding
+
+* HEX mode
+  Vim does have a hex mode, use xxd can stream file into hex.
+  - enter hex mode
+: :%!xxd
+  - exit hex mode
+: :%!xxd -r
+  So this method will change the file, you can always press =u= to recover.
+
+
+* Open remote file
+#+BEGIN_EXAMPLE
+vim src://user@host//path/to/file
+#+END_EXAMPLE
+* Configuration
+** Configure file is $(HOME)/.vimrc.
+** commenting in vimrc
+    Put a double quote in front of line you want to comment out.
+**  An example here.
+#+BEGIN_SRC sh
+filetype on
+syntax on
+set autoindent
+set smartindent
+set cindent
+set showmatch
+set tabstop=2
+set shiftwidth=2
+set hlsearch
+#+END_SRC
