@@ -1,3 +1,8 @@
-# notes
-Wayne Feng's notes about programming, linux daily usage, etc.
-Powered by Emacs Org-mode.
+# Notes
+
+Wayne's notes about
+* programming, 
+*	Linux daily usage,
+*	etc.
+
+Powered by Emacs [[org-mode][orgmode.org]].
