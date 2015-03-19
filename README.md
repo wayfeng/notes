@@ -6,4 +6,5 @@ Wayne's notes about
 *	etc.
 
 Since all these files are in org-mode, thanks to Emacs [org-mode](orgmode.org).
-You might have to have emacs with org-mode installed to view them.
+
+The great news is that Github supports orgmode!
