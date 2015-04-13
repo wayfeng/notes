@@ -116,7 +116,13 @@
    - balance all windows
 : C-x +
 
-** Sorting
+** Behind proxy
+#+BEGIN_SRC elisp
+  (setq url-proxy-services '(("no-proxy" . "work.com")
+                             ("http" . "proxy.work.com:port")))
+#+END_SRC
+
+* Sorting
 *** Case sensitive
     Emacs sorting is case sensitive by default, set variable /sort-fold-case/ to /t/ to make it case insensitive.
 
@@ -137,12 +143,12 @@
 *** Sorting by Regular Expression
     /sort-regexp-field/
 
-** Rectangle Operation
-   - to select a rectangle, set mark to one end then move cursor to opposite end.
-   - 'kill-rectangle' does what it says
-   - 'yank-rectangle' too
-   - 'M-x string-insert-rectangle' too
-   - 'C-x r t string <RET>' to replace a rectangle
+* Rectangle Operation
+  - to select a rectangle, set mark to one end then move cursor to opposite end.
+  - 'kill-rectangle' does what it says
+  - 'yank-rectangle' too
+  - 'M-x string-insert-rectangle' too
+  - 'C-x r t string <RET>' to replace a rectangle
 
 * Programming
 
@@ -187,235 +193,6 @@ ebrowse *.h *.cc
 ** Find class
 : / <ClassName>
 
-* Configure Example
-#+BEGIN_SRC lisp
-;; load list
-(add-to-list 'load-path "~/.emacs.d/lisp")
-
-;; load plugins
-(require 'redo)
-;; (require 'color-theme)
-(require 'ansi-color)
-;; (require 'tabbar)
-;; (require 'popup)
-;; (require 'htmlize)
-(require 'sx-mode)
-
-(ansi-color-for-comint-mode-on)
-
-;; setup priority coding
-(prefer-coding-system 'us-ascii)
-;; (setq coding-system-for-write 'us-ascii-unix)
-(set-coding-system-priority 'us-ascii)
-
-;; Key bind.
-(global-set-key [(meta g)] 'goto-line)
-(global-set-key [(meta left)] 'backward-sexp)
-(global-set-key [(meta right)] 'forward-sexp)
-(global-set-key [(meta n)] 'hippie-expand)
-(global-set-key [(f9)] 'undo)
-(global-set-key [(f10)] 'redo)
-
-;; use auto-complete
-(require 'auto-complete)
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/lisp/ac-dict")
-(ac-config-default)
-(setq ac-modes
-      (append ac-modes '(org-mode
-                         text-mode
-                         makefile-gmake-mode
-                         html-mode
-                         js-mode)))
-
-;; set hippie-expand-try-function-list
-;; (setq hippie-expand-try-functions-list
-;;       '(try-complete-file-name-partially
-;;         try-complete-file-name
-;;         try-expand-all-abbrevs
-;;         try-expand-list
-;;         try-expand-line
-;;         try-expand-dabbrev
-;;         try-expand-dabbrev-all-buffers
-;;         try-expand-dabbrev-from-kill
-;;         try-complete-lisp-symbol-partially
-;;         try-complete-lisp-symbol))
-
-;; Looking settings.
-;; (set-frame-position (selected-frame) 150 0)
-;; (set-frame-height (selected-frame) 60)
-;; (set-frame-width (selected-frame) 164)
-;; (set-foreground-color "Wheat")
-;; (set-background-color "DarkSlateGray")
-;; (set-face-foreground 'modeline "darkblue")
-;; (set-face-background 'modeline "gray")
-(set-cursor-color "darkgreen")
-(set-default-font "consolas-13")
-;; (set-default-font "monospace-12")
-;; (set-default-font "inconsolata-14")
-
-;; indent settings
-;; (setq c-basic-offset 4)
-(setq default-tab-width 4)
-(setq-default indent-tabs-mode nil)     ; use spaces instead of tabs
-
-;; disable startup message
-(setq inhibit-startup-message t)
-
-;; C-mode settings.
-(setq c-macro-preprocessor "cpp -C")
-(add-hook 'c-mode-hook
-          '(lambda ()
-             (c-set-style "gnu")
-             (c-toggle-hungry-state)))
-
-;; C++-mode settings.
-(add-hook 'c++-mode-hook
-          '(lambda ()
-             (c-set-style "stroustrup")
-             (c-toggle-hungry-state)))
-
-;; javascript-mode settings
-;; (setq js-indent-level 4)
-
-;; org-mode settings.
-(setq org-hide-leading-stars t)
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
-(define-key global-map "\C-cb" 'org-iswitchb)
-(setq org-log-done 'time)
-(require 'org-publish)
-(setq org-publish-project-alist
-      '(("org-notes"
-         :base-directory "~/workspace/org/notes/"
-         :base-extension "org"
-         :publishing-directory "~/www/notes/"
-         :recursive t
-         :publishing-function org-publish-org-to-html
-         :headline-levels 4
-         :auto-preamble t
-         )
-        ("org-static"
-         :base-directory "~/workspace/org/notes/"
-         :base-extension "css\\|js\\|png\\|jpg"
-         :publishing-directory "~/www/notes/"
-         :recursive t
-         :publishing-function org-publish-attachment
-         )
-        ("org" :components ("org-notes" "org-static"))
-        ("interview-notes"
-         :base-directory "~/workspace/org/interview/"
-         :base-extension "org"
-         :publishing-directory "~/www/interview/"
-         :recursive t
-         :publishing-function org-publish-org-to-html
-         :headline-levels 4
-         :auto-preamble t
-         )
-        ("interview-static"
-         :base-directory "~/workspace/org/interview/"
-         :base-extension "css\\|js\\|png\\|jpg"
-         :publishing-directory "~/www/interview/"
-         :recursive t
-         :publishing-function org-publish-attachment
-         )
-        ("interview" :components ("interview-notes" "interview-static"))
-        ))
-
-;; load scons files as python-mode
-;; (setq auto-mode-alist (cons '("SConstruct" . python-mode) auto-mode-alist))
-;; (setq auto-mode-alist (cons '("SConscript" . python-mode) auto-mode-alist))
-
-;; load .m files as octave-mode
-(setq auto-mode-alist (cons '("\\.[mM]" . octave-mode) auto-mode-alist))
-
-;; load .sx and .sxdef files as scheme-mode of yapas@Nokia
-;; (setq auto-mode-alist (cons '("\\.sx" . scheme-mode) auto-mode-alist))
-;; (setq auto-mode-alist (cons '("\\.sxdef" . scheme-mode) auto-mode-alist))
-
-;; Settings.
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
-(show-paren-mode t)
-(mwheel-install)
-;; (focus-follows-mouse t)
-;; (mouse-autoselect-window t)
-;; (display-time)
-(column-number-mode t)
-(line-number-mode t)
-(setq frame-title-format "%f @ %F")
-(setq scroll-step 1)
-(auto-image-file-mode t)
-;; (put 'upcase-region 'disabled nil)
-;; (mouse-avoidance-mode t)
-(blink-cursor-mode 0)                   ; no blinking cursor
-(setq require-final-newline nil)        ; always newline at end of file
-(defalias 'yes-or-no-p 'y-or-n-p)       ; y/n instead of yes/no
-(icomplete-mode t)                      ; completion in mini-buffer
-
-;; Backup settings.
-(setq make-backup-files nil)
-
-;; open reserved workspace when startup
-(setq desktop-path '("~/.emacs.d/"))
-(load "desktop")
-(desktop-save-mode 1)
-
-(defun iwb ()
-  "indent whole buffer"
-  (interactive)
-  (delete-trailing-whitespace)
-  (indent-region (point-min) (point-max) nil)
-  (untabify (point-min) (point-max)))
-
-(defun ict ()
-  "insert current time"
-  (interactive)
-  (insert (format-time-string "%Y/%m/%d %H:%M:%S" (current-time))))
-
-(defun icd ()
-  "insert current date and weekday"
-  (interactive)
-  (insert (format-time-string "%Y-%m-%d %a" (current-time))))
-
-;; personal info
-(setq user-full-name "Feng Wayne")
-(setq user-mail-address "wayne.feng@nokia.com")
-
-(defun insert-mail ()
-  (interactive)
-  (insert user-mail-address))
-
-(defun insert-header ()
-	(interactive)
-	(insert
-     "File Name: "
-     (buffer-name)
-     "\n"
-	 "Created at "
-	 (format-time-string "%m-%d-%Y %A" (current-time))
-	 "\nby "
-	 user-mail-address
-	 "\n\n")
-	(comment-region (point-min) (point-max)))
-
-(defun insert-file-name ()
-  (interactive)
-  (insert "File: " (buffer-name) "\n"))
-
-(custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(org-agenda-files (quote ("~/workspace/org/projects.org"))))
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- )
 
 #+END_SRC
 * Manually Install
