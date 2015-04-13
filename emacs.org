@@ -122,6 +122,10 @@
 
 *** Sorting order
     Emacs sorting use /lexicographic/ by default for all but /sort-numeric-field/.
+    Sort with reverse order
+: C-u 1 M-x sort-lines
+    Sort lines by second word
+: C-u 2 M-x sort-lines
 
 *** Sorting by Lines, Paragraphs and Pages
     /sort-lines/, /sort-paragraph/, /sort-pages/.
@@ -147,13 +151,6 @@
 ** Occurs of a regexp in buffer
 : M-x occur <regexp>
 
-** Sorting in Buffer
-   Sort Lines
-: M-x sort-lines
-   Sort with reverse order
-: C-u 1 M-x sort-lines
-   Sort lines by second word
-: C-u 2 M-x sort-lines
 ** Chinese Input
    - Using ibus in emacs
 #+BEGIN_SRC sh
@@ -162,6 +159,15 @@ aptitude install ibus-el
    and run following command in emacs to start ibus mode.
 : M-x ibus-mode
 
+** Google C/C++ coding style for emacs
+   Download google-c-style.el
+: wget http://google-styleguide.googlecode.com/svn/trunk/google-c-style.el
+
+   Setup emacs to use Google C/C++ style. In =~/.emacs=
+#+BEGIN_SRC emacs-lisp
+  (require 'google-c-style)
+  (add-hook 'c-mode-common-hook 'google-set-c-style)
+#+END_SRC
 
 * Advanced
 
@@ -412,3 +418,11 @@ ebrowse *.h *.cc
  )
 
 #+END_SRC
+* Manually Install
+Prepare ubuntu
+: sudo apt-get install build-essential
+: sudo apt-get build-dep emacs24
+Download emacs24.4, then compile
+: ./configure
+: make
+: sudo make install
