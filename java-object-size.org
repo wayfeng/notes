@@ -1,0 +1,142 @@
+#+SETUPFILE: ./setup/article.org
+#+TITLE:     Get Object Size in Java
+#+DATE:      <2015-04-13 Mon>
+
+* Using Java Instrument
+  Create object size fetcher with =java.lang.instrument= [fn:1]
+#+BEGIN_SRC java
+  // File: ObjectSizeFetcher.java
+
+  import java.lang.instrument.Instrumentation;
+
+  public class ObjectSizeFetcher {
+    public static void premain(String args, Instrumentation inst) {
+      inst_ = inst;
+    }
+
+    public static long getObjectSize(Object o) {
+      return inst_.getObjectSize(o);
+    }
+
+    private static Instrumentation inst_;
+  }
+
+#+END_SRC
+
+  then compile it
+: javac ObjectSizeFetcher.java
+
+  Create manifest.mf file
+: Premain-Class: ObjectSizeFetcher
+
+  Create jar file
+: jar cmf manifest.mf objsize.jar ObjectSizeFetcher.class
+
+  Now try if it works
+#+BEGIN_SRC java
+  // File: SampleData.java
+
+  class TreeNode { //object size = 16
+      TreeNode() {}
+      TreeNode(TreeNode l, TreeNode r) {
+          left = l;
+          right = r;
+      }
+      //private long l;
+      //private int  i;
+      //private byte b;
+      //private short s;
+      //private Object o = new Object();
+      //private String str = new String("hello");
+      TreeNode left, right;
+  }
+
+  public class SampleData {
+    
+    public static void main(String[] args) {
+      TreeNode node = new TreeNode();
+      long n = ObjectSizeFetcher.getObjectSize(node);
+      System.out.println(n);
+      TreeNode n1 = new TreeNode();
+      TreeNode n2 = new TreeNode(node, n1);
+      n = ObjectSizeFetcher.getObjectSize(n2);
+      System.out.println(n);
+    }
+  }
+
+#+END_SRC
+
+  Compile and run it with objsize.jar
+: javac SampleData.java
+: java -javaagent:objsize.jar SampleData
+
+* Calculate by HEAP Size [fn:2]
+  Tried this with OpenJDK 8, seems this method is *out-of-date*.
+
+#+BEGIN_SRC java
+  // File: CountHeap.java
+
+  public class CountHeap
+  {
+    public static void main(String[] args) {
+      final int count = 100000;
+      runGC();
+      Object[] objs = new Object[count];
+
+      long heap1 = 0;
+
+      for (int i = -1; i < count; i++) {
+        Object o = null;
+        //o = new Integer(i);
+        //o = new Long(i);
+        //o = "string with 20 chars";
+        o = new byte[128];
+        if (i >= 0) {
+          objs[i] = o;
+        } else {
+          o = null;
+          runGC();
+          heap1 = runtime_.freeMemory();
+        }
+      }
+
+      runGC();
+      long heap2 = runtime_.freeMemory();
+      long n = (heap2 - heap1);
+      long size = Math.round((float)n / count);
+      System.out.println(n);
+      System.out.println(size);
+
+    }
+
+    private static void runGC() {
+      for (int i = 0; i < 4; i++) {
+        _runGC();
+      }
+    }
+    
+    private static void _runGC() {
+      runtime_.gc();
+      // long usedMem1 = usedMemory(), usedMem2 = Long.MAX_VALUE;
+      // for (int i = 0; (usedMem1 < usedMem2) && (i < 500); ++ i) {
+      //   runtime_.runFinalization();
+      //   runtime_.gc();
+      //   Thread.currentThread().yield();
+
+      //   usedMem2 = usedMem1;
+      //   usedMem1 = usedMemory();
+      // }
+    }
+    
+    private static long usedMemory() {
+      return runtime_.totalMemory() -
+          runtime_.freeMemory();
+    }
+
+    private static final Runtime runtime_ = Runtime.getRuntime();
+  }
+
+#+END_SRC
+
+[fn:1] Official document of Java [[http://docs.oracle.com/javase/7/docs/api/java/lang/instrument/package-summary.html][instrument]].
+[fn:2] [[http://www.javaworld.com/article/2077496/testing-debugging/java-tip-130--do-you-know-your-data-size-.html][Java Tips 130]]
