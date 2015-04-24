@@ -1,0 +1,47 @@
+#+SETUPFILE: setup/article.org
+#+TITLE:     Repo Usage
+#+DATE:      <2015-04-24 Fri>
+
+* Get help
+: repo help init
+: repo help manifest
+
+* Configure user name
+: repo init --config-name
+* Create a topic branch
+: repo start <branch-name> [--all | <proj_list>]
+* Create a remote branch
+First create a branch for manifest file
+: cd .repo/manifest
+: git branch dev
+then push new branch =dev= to server
+: git push origin dev
+for the record, to delete a remote branch
+: git push origin :dev
+
+* Download source efficiently
+   Parallel downloading,
+: repo sync -j 8
+   Or only current branch.
+: repo sync -c
+   Disable unwanted groups, such as darwin, x86 and mips, assuming you're
+   working on linux and your target is an ARM device.
+: repo init -g default,pdk,-darwin,-mips,-x86
+   When there is already a local repository
+: repo init --reference=<path/to/local/repo> -u <url> -b <branch>
+
+* Save a snapshot of source tree
+To save source tree
+: repo manifest -o snapshot.xml -r
+
+To restore the saved snapshot
+: cp snapshot.xml .repo/manifests
+: repo init -m snapshot.xml
+: repo sync -d
+
+* Remove a project
+: rm -r hardware/qcom/display
+: rm -r .repo/projects/hardware/qcom/display.git
+
+* Diff releases
+: repo forall -pc 'git log --no-merges --oneline <old_branch>..<new_branch>'
