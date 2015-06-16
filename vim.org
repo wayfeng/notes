@@ -1,22 +1,43 @@
-#+SETUPFILE: ./setup/article.org
 #+TITLE:     Daily Vim
-#+DATE:      <2014-07-16 Wed>
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
 
-* Work with tags
+#+INDEX: vim
+* Open file
+  Open remote file
+#+begin_src sh
+vim src://user@host//path/to/file
+#+end_src
+  Open file to a given line number
+#+begin_src sh 
+vim filename +n
+#+end_src
+
+* Search and Replace
+
+* tags
   Following command will start vi and put cursor in where the 'tag' is.
-#+BEGIN_SRC sh
+#+begin_src sh
   vi -t `tag-you-want-to-search'
-#+END_SRC
+#+end_src
   Or, you can also find a 'tag' in vi.
-#+BEGIN_SRC sh
+#+begin_src sh
   :ta `tag-you-want-to-search'
-#+END_SRC
+#+end_src
+
+  When there are multiple locations found
+#+begin_src sh
+:ts(elect) `tag-you-want'
+#+end_src
+
   Useful key bindings
 
 | *Ctrl-]* | Find tag under the cursor.                      |
 | *Ctrl-t* | Return to previous location before jump to tag. |
 
-* Work with multiple windows
+  For more information, see =:help tags=.
+
+* multiple windows
   - [:split filename] split window and load another file
   - [:vsplit filename] vertical split
   - [:only] keep only this window open
@@ -25,7 +46,10 @@
   - [ctrl-w=] make size of all windows equal
   - [ctrl-w ctrl-w] move cursor to another window
 
-* Work with buffers
+  To always enable status line, put =set laststatus=2= in =~/.vimrc=.
+  See =:help laststatus= for more information.
+
+* buffers
   To get list of buffers, try =:buffers= or =:ls= or =:files=.
 
   To switch buffer by name, try =:buffer <filename>= or =:buf <filename>= or even =:b <filename>=
@@ -34,34 +58,36 @@
 
 * Folding setting
   - automatically folding functions
-: :set foldmethod=syntax
+#+begin_src sh
+:set foldmethod=syntax
+#+end_src
   - open/close a fold block
     - *z c* fold a block
     - *z C* fold every possible block
     - *z o* open a folder, without sub-folders
     - *z O* open all sub-folders
   - more information
-: :help folding
+#+begin_src sh
+:help folding
+#+end_src
 
 * HEX mode
   Vim does have a hex mode, use xxd can stream file into hex.
   - enter hex mode
-: :%!xxd
+#+begin_src sh
+:%!xxd
+#+end_src
   - exit hex mode
-: :%!xxd -r
+#+begin_src sh
+:%!xxd -r
+#+end_src
   So this method will change the file, you can always press =u= to recover.
-
-
-* Open remote file
-#+BEGIN_EXAMPLE
-vim src://user@host//path/to/file
-#+END_EXAMPLE
 * Configuration
 ** Configure file is $(HOME)/.vimrc.
 ** commenting in vimrc
     Put a double quote in front of line you want to comment out.
 **  An example here.
-#+BEGIN_SRC sh
+#+begin_src sh
 filetype on
 syntax on
 set autoindent
@@ -71,4 +97,4 @@ set showmatch
 set tabstop=2
 set shiftwidth=2
 set hlsearch
-#+END_SRC
+#+end_src

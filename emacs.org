@@ -1,51 +1,63 @@
-#+SETUPFILE: ./setup/article.org
 #+TITLE:     Emacs and Elisp
-#+DATE:      <2014-10-30 Thu>
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/article.css" />
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
+#+OPTIONS:   tex:verbatim
 
 * Basic
 
 ** Basic Search
-   - 'C-s' : search forward
-   - 'C-r' : search backward
-   - 'C-M-5' : query replace
-   - 'C-s C-q C-j': search for new line
-   - 'C-s C-q tab': search for tab
+
+| key binding   | description         |
+|---------------+---------------------|
+| 'C-s'         | search forward      |
+| 'C-r'         | search backward     |
+| 'C-M-5'       | query replace       |
+| 'C-s C-q C-j' | search for new line |
+| 'C-s C-q tab' | search for tab      |
+
 ** [[http://www.emacswiki.org/emacs/RegularExpression][Regular Expression]]
-*** Key bindings
-   - `C-M-s': regexp search;
-   - `C-M-%': regexp replace;
-   - `M-x occur': regexp search for all occurrences;
-   - `M-x re-builder': try regexp with current buffer
+  Key bindings
 
-*** Backslash
+| key binding      | description                       |
+|------------------+-----------------------------------|
+| `C-M-s'          | regexp search                     |
+| `C-M-%'          | regexp replace                    |
+| `M-x occur'      | regexp search for all occurrences |
+| `M-x re-builder' | try regexp with current buffer    |
 
-#+BEGIN_EXAMPLE
-  .        any character (but newline)
-  *        previous character or group, repeated 0 or more time
-  +        previous character or group, repeated 1 or more time
-  ?        previous character or group, repeated 0 or 1 time  
-  ^        start of line
-  $        end of line
-  [...]    any character between brackets
-  [^..]    any character not in the brackets
-  [a-z]    any character between a and z
-  \        prevents interpretation of following special char
-  \|       or
-  \w       word constituent
-  \b       word boundary
-  \sc      character with c syntax (e.g. \s- for whitespace char)
-  \( \)    start\end of group
-  \< \>    start\end of word
-  \_< \_>  start\end of symbol
-  \` \'    start\end of buffer\string
-  \1       string matched by the first group
-  \n       string matched by the nth group
-  \{3\}    previous character or group, repeated 3 times
-  \{3,\}   previous character or group, repeated 3 or more times
-  \{3,6\}  previous character or group, repeated 3 to 6 times
-  \=       match succeeds if it is located at point
-#+END_EXAMPLE
+  Syntax
 
+| code     | description                                            |
+|----------+--------------------------------------------------------|
+| .        | any character (but newline)                            |
+| ,*       | previous character or group, repeated 0 or more time   |
+| +        | previous character or group, repeated 1 or more time   |
+| ?        | previous character or group, repeated 0 or 1 time      |
+| ^        | start of line                                          |
+| $        | end of line                                            |
+| [a-z]    | any character between a and z                          |
+| [^a-z]   | any character not between a and z                      |
+| \        | prevents interpretation of following special char      |
+| \\vert   | or                                                     |
+| \w       | word constituent                                       |
+| \b       | word boundary                                          |
+| \sc      | character with c syntax (e.g. \s- for whitespace char) |
+| \(       | start of group                                         |
+| \)       | end of group                                           |
+| \< \>    | start end of word                                      |
+| \_< \_>  | start\end of symbol                                    |
+| \` \'    | start\end of buffer\string                             |
+| \1       | string matched by the first group                      |
+| \n       | string matched by the nth group                        |
+| \{n\}    | previous character or group, repeated n times          |
+| \{n,\}   | previous character or group, repeated n or more times  |
+| \{n,n'\} | previous character or group, repeated n to n' times    |
+| \=       | match succeeds if it is located at point               |
+
+** Swapping
+	 - To swap chars such as "ab", put cursor at 'b', then press 'C-t', you'll get "ba".
+	 - To swap words such as "first second", put cursor at "second", then press 'M-t', you'll get "first second".
+	 - To swap lines such as "first line\n second line", put cursor at "second line", then press 'C-x C-t'.
 ** Key Binding
   Global key map
 #+BEGIN_SRC elisp
@@ -59,14 +71,18 @@
   ;; or
   (define-key (current-local-map) key binding)
 #+END_SRC
-** Useful Keyboard Macros
-   - `C-x (': start defining a keyboard macro;
-   - `C-x )': end defining a keyboard macro;
-   - `C-x e': execute a keyboard macro;
-   - `C-u n C-x e': execute last keyboard marco /n/ times;
-   
-   - `C-x h': mark the whole buffer;
-   - `M-z': zap-to-char;
+
+** Macros
+
+| key binding | description                            |
+|-------------+----------------------------------------|
+| C-x (       | start defining a keyboard macro;       |
+| C-x )       | end defining a keyboard macro;         |
+| C-x e       | execute a keyboard macro;              |
+| C-u n C-x e | execute last keyboard marco /n/ times; |
+| C-x h       | mark the whole buffer;                 |
+| M-z         | zap-to-char;                           |
+
 ** [[http://www.gnu.org/software/emacs/elisp/html_node/Time-Parsing.html][Parsing and Formatting times]]
 *** Get Current Time
 #+BEGIN_SRC elisp
@@ -99,22 +115,17 @@
 #+END_SRC
 
 ** Work with windows (not MS windows :) )
-   - split current window, side by side
-: C-w 3
-   - split current window, top and bottom
-: C-w 2
-   - keep only current window
-: C-w 1
-   - delete current window
-: C-w 0
-   - increase height of current window
-: C-x ^
-   - increase width of current window
-: C-x }
-   - decrease width of current window
-: C-x {
-   - balance all windows
-: C-x +
+
+| key binding | description                          |
+|-------------+--------------------------------------|
+| C-w 3       | split current window, side by side   |
+| C-w 2       | split current window, top and bottom |
+| C-w 1       | keep only current window             |
+| C-w 0       | delete current window                |
+| C-x ^       | increase height of current window    |
+| C-x }       | increase width of current window     |
+| C-x {       | decrease width of current window     |
+| C-x +       | balance all windows                  |
 
 ** Behind proxy
 #+BEGIN_SRC elisp
@@ -129,9 +140,14 @@
 *** Sorting order
     Emacs sorting use /lexicographic/ by default for all but /sort-numeric-field/.
     Sort with reverse order
-: C-u 1 M-x sort-lines
+#+begin_src sh
+C-u 1 M-x sort-lines
+#+end_src
+
     Sort lines by second word
-: C-u 2 M-x sort-lines
+#+begin_src sh
+C-u 2 M-x sort-lines
+#+end_src
 
 *** Sorting by Lines, Paragraphs and Pages
     /sort-lines/, /sort-paragraph/, /sort-pages/.
@@ -153,28 +169,54 @@
 * Programming
 
 ** Find a function definition in buffer
-: M-x imenu
+#+begin_src sh
+M-x imenu
+#+end_src
 ** Occurs of a regexp in buffer
-: M-x occur <regexp>
+#+begin_src sh
+M-x occur <regexp>
+#+end_src
 
 ** Chinese Input
    - Using ibus in emacs
-#+BEGIN_SRC sh
+#+begin_src sh
 aptitude install ibus-el
-#+END_SRC
+#+end_src
    and run following command in emacs to start ibus mode.
-: M-x ibus-mode
+#+begin_src sh
+M-x ibus-mode
+#+end_src
 
 ** Google C/C++ coding style for emacs
    Download google-c-style.el
-: wget http://google-styleguide.googlecode.com/svn/trunk/google-c-style.el
+#+begin_src sh
+$ wget http://google-styleguide.googlecode.com/svn/trunk/google-c-style.el
+#+end_src
 
    Setup emacs to use Google C/C++ style. In =~/.emacs=
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (require 'google-c-style)
+  ; 'return-and-indent is necessary for emacs < 24.4
+  ; it's default behavior since 24.4
+  (add-hook 'c-mode-common-hook 'google-make-newline-indent)
   (add-hook 'c-mode-common-hook 'google-set-c-style)
-#+END_SRC
+#+end_src
+* Yasnippet
+** Install
+#+begin_src sh
+$ sudo apt-get install yasnippet
+#+end_src
+** templates
+   templates of yasnippet is directory structrue in =/usr/share/emacs/site-lisp/yasnippet/snippets/=, I'll use this folder as =$TOP= in later examples.
 
+   to add =while= for =c-mode= and =c++-mode=, edit $TOP/text-mode/cc-mode/while
+#+begin_src c
+  #name : while (...) { ... }
+  # --
+  while (${1:condition}) {
+      $0
+  }
+#+end_src
 * Advanced
 
 ** Create Your Own Mode
@@ -193,7 +235,6 @@ ebrowse *.h *.cc
 ** Find class
 : / <ClassName>
 
-
 * Install Packages
   show available/installed packages
 : M-x list-packages
@@ -201,12 +242,18 @@ ebrowse *.h *.cc
   install package
 : M-x package-install
 
-#+END_SRC
-* Manually Install
+* Manually Compile & Install
 Prepare ubuntu
-: sudo apt-get install build-essential
-: sudo apt-get build-dep emacs24
+
+#+BEGIN_SRC sh
+sudo apt-get install build-essential
+sudo apt-get build-dep emacs24
+#+END_SRC
+
 Download emacs24.4, then compile
-: ./configure
-: make
-: sudo make install
+
+#+BEGIN_SRC sh
+./configure
+make
+sudo make install
+#+END_SRC

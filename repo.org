@@ -1,47 +1,138 @@
-#+SETUPFILE: setup/article.org
-#+TITLE:     Repo Usage
-#+DATE:      <2015-04-24 Fri>
+#+TITLE:     Using Repo
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
 
 * Get help
-: repo help init
-: repo help manifest
+  You can use =repo help= to get a list of =repo= commands, then use
+  =repo help <command>= to get the details of a specific command.
+#+begin_src sh
+$ repo help init
+$ repo help manifest
+#+end_src
 
 * Configure user name
-: repo init --config-name
-* Create a topic branch
-: repo start <branch-name> [--all | <proj_list>]
-* Create a remote branch
-First create a branch for manifest file
-: cd .repo/manifest
-: git branch dev
-then push new branch =dev= to server
-: git push origin dev
-for the record, to delete a remote branch
-: git push origin :dev
+
+  The default user name and email should be stored in ~/.gitconfig.
+  Use =git config= command to set or change them. see [[file:../tools/git.org][git]].
+
+  In case you want to use a different user name or email in repo project,
+  you can run repo init again with =config-name= option.
+
+#+begin_src sh
+$ repo init --config-name
+#+end_src
 
 * Download source efficiently
-   Parallel downloading,
-: repo sync -j 8
-   Or only current branch.
-: repo sync -c
-   Disable unwanted groups, such as darwin, x86 and mips, assuming you're
-   working on linux and your target is an ARM device.
-: repo init -g default,pdk,-darwin,-mips,-x86
-   When there is already a local repository
-: repo init --reference=<path/to/local/repo> -u <url> -b <branch>
+  Repo support parallel downloading, but please choose /n/ carefully so that
+  you're not bothering your team with a network jam.
+
+#+begin_src sh
+$ repo sync -j <n>
+#+end_src
+
+  You can also download only current branch.
+
+#+begin_src sh
+$ repo sync -c -j <n>
+#+end_src
+
+  Disable unwanted groups, such as darwin, x86 and mips, assuming you're
+  working on linux and your target is an ARM device.
+
+#+begin_src sh
+$ repo init -g default,pdk,-darwin,-mips,-x86
+#+end_src
+
+  When there is already a local repository, you can use it as a reference
+  to avoid fetch data from server.
+
+#+begin_src sh
+$ repo init --reference=<path/to/local/repo> -u <url> -b <branch>
+#+end_src
+
+* Create a topic branch
+
+#+begin_src sh
+$ repo start <branch-name> [--all | <proj_list>]
+#+end_src
+
+* Upload local branch to review server
+
+  After you did your local changes, commit your change in each project,
+  or do a =repo forall=, then run =upload= command:
+#+begin_src sh
+$ repo upload <project>...
+#+end_src
+  You will get a list of choice to upload, and the patch(es) you chose
+  will be pushed to review server, but not the local branch.
+
+  Make sure =sync= before =upload= to save yourself many troubles.
+#+begin_src sh
+$ repo sync -c
+$ repo upload
+#+end_src
+
+* Add a patchset to a change on review server
+
+  What you have to do is change the code, then run
+#+begin_src sh
+git commit --amend
+#+end_src
+  Then do a =repo upload= again.
+
+* Create a remote branch
+  First create a branch for manifest file
+
+#+begin_src sh
+$ cd .repo/manifest
+$ git branch dev
+#+end_src
+
+  then push new branch =dev= to server
+
+#+begin_src sh
+$ git push origin dev
+#+end_src
+
+  for the record, to delete a remote branch
+
+#+begin_src sh
+$ git push origin :dev
+#+end_src
 
 * Save a snapshot of source tree
-To save source tree
-: repo manifest -o snapshot.xml -r
+  To save source tree
 
-To restore the saved snapshot
-: cp snapshot.xml .repo/manifests
-: repo init -m snapshot.xml
-: repo sync -d
+#+begin_src sh
+$ repo manifest -o snapshot.xml -r
+#+end_src
+
+  To restore the saved snapshot
+
+#+begin_src sh
+$ cp snapshot.xml .repo/manifests
+$ repo init -m snapshot.xml
+$ repo sync -d
+#+end_src
 
 * Remove a project
-: rm -r hardware/qcom/display
-: rm -r .repo/projects/hardware/qcom/display.git
+
+#+begin_src sh
+$ rm -r hardware/qcom/display
+$ rm -r .repo/projects/hardware/qcom/display.git
+#+end_src
 
 * Diff releases
-: repo forall -pc 'git log --no-merges --oneline <old_branch>..<new_branch>'
+
+  To diff 2 branches from same repository, you can run =git log= through
+  a =forall= command:
+#+begin_src sh
+$ repo forall -pc 'git log --no-merges --oneline <old_branch>..<new_branch>'
+#+end_src
+* Rebase a local topic branch
+  I've a local topic branch, with a published but not merged change. After a few days I need
+  to commit a new patch to the change, but the remote branch has been changed. Then I'll need
+  to rebase my local topic branch to the remote HEAD.
+#+begin_src sh
+  repo rebase -i [project]
+#+end_src
