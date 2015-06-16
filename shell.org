@@ -1,0 +1,233 @@
+#+TITLE:     Shell Tricks
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
+#+options:   ^:nil
+#+tags:      awk(a) diff(d) find(f) grep(g) sed(s) ssh(h) sort(t) others(o)
+
+* one-liners
+** compare folders                                                     :diff:
+#+begin_src sh
+  diff --brief --exclude='.git' -r <dir1> <dir2>
+#+end_src
+** find files in current directory, without subdirectories             :find:
+#+begin_src sh
+find . -maxdepth 1
+#+end_src
+
+** find not matching files                                             :find:
+#+begin_src sh
+find . -not -name '*.tar.gz'
+#+end_src
+or simply
+#+begin_src sh
+find . ! -name '*.tar.gz'
+#+end_src
+
+** find C/C++ files that not in folder =tests=                         :find:
+#+begin_src sh
+find -iregex '.*\.[ch][pp]*' -and -not -path '*/tests/*'
+#+end_src
+
+** find C/C++ files without =tests= and =tools=                        :find:
+
+#+begin_src sh
+find -iregex '.*\.[ch][pp]*' -and -not -path '*/tests/*' -and -not -path '*/tools/*'
+#+end_src
+
+   For example, I'm working on Android Runtime (ART), and I want a tag file that doesn't include
+   architecture dependent code such as ARM, MIPS, and X86_64, also no test code, so I can do this:
+
+#+begin_src sh
+find -iregex '.*\.[ch]+' -and -not -path '*test*' -and -not -path '*mips*' -and -not -path '*arm*' -and -not -path '*x86_64*' | xargs etags --language=c++
+#+end_src
+
+   It's boring to do an exhausted list of unwanted folders, but it works well so far.
+
+
+** grep only c++ files in a folder                                     :grep:
+
+#+begin_src sh
+grep -rnI --include=\*.{h,cpp} 'pattern'
+#+end_src
+
+** cast grep result for vim                                        :grep:sed:
+   Vim takes parameter =+n= after file name to go to line number =n= directly
+   after open the file. To use result of grep with line number:
+#+begin_src sh
+  grep -rn <pattern> <folder> | sed 's/:\([0-9]*\):.*/ \+\1/'
+#+end_src
+   The =-r= option of sed[fn:sed] enables extended regular expressions, you can do it
+   this way to be more precise with using =+= to indicate that the line number
+   exists.
+#+begin_src sh
+  grep -rn <pattern> <folder> | sed -r 's/:([0-9]+):.*/ \+\1/'
+#+end_src
+
+** average a column                                                     :awk:
+#+begin_src sh
+cat file | awk '{ sum+=$N } END { print "average = ", sum/NR }'
+#+end_src
+
+** Remove duplicated lines from files (not perfect)                    :sort:
+#+begin_src sh
+cat [files] | sort | uniq
+#+end_src
+** List 10 biggest files in current folder                             :sort:
+#+begin_src sh
+du -s * | sort -rg | head
+#+end_src
+** List top 10 RAM user                                                :sort:
+#+begin_src sh
+ps aux | sort -rgk +4 | head
+#+end_src
+** Check if string 'Finish: success' exists in log                      :sed:
+#+begin_src sh
+tail -f /path/to/log | sed '/^Finish success$/q'
+#+end_src
+** Run script on remote machine without copy file                       :ssh:
+#+begin_src sh
+ssh user@host bash < /path/to/local/script
+#+end_src
+** Create a detached SSH connection                                     :ssh:
+#+begin_src sh
+screen -d -m -S svr1 -t wfeng@svr1 ssh user@svr1.address
+#+end_src
+   then you can attach to it later with
+#+begin_src sh
+screen -r svr1
+#+end_src
+
+
+* bash
+** To run a script with current environment
+#+begin_src sh
+. <script>
+#+end_src
+** Check if folder exists
+#+begin_src sh
+  if [ -d /path/to/folder ]; then
+      # code here
+  fi
+#+end_src
+** Check string length
+#+begin_src sh
+  # true if STRING length is 0
+  if [ -z STRING ]; then
+      # code here
+  fi
+
+  # true if STRING length is NOT 0
+  if [ -n STRING ]; then
+      # code here
+  fi
+#+end_src
+** Expressions used with if
+| Primary      | Meaning                                               |
+|--------------+-------------------------------------------------------|
+| =[ -a FILE]= | True if =FILE= exists                                 |
+| =[ -b FILE]= | True if =FILE= exists and is a block special file     |
+| =[ -c FILE]= | True if =FILE= exists and is a character special file |
+| =[ -d FILE]= | True if =FILE= exists and is a directory              |
+| =[ -e FILE]= | True if =FILE= exists                                 |
+| =[ -f FILE]= | True if =FILE= exists and is a regular file           |
+
+** Check whether interactive
+#+begin_src sh
+if [ -z $PS1 ]; then
+    # non-interactive
+else
+    # interactive
+fi
+#+end_src
+Or check '$-' flag
+#+begin_src sh
+case $- in
+    *i*)
+        # interactive
+    ;;
+    *)
+        # non-interactive
+    ;;
+esac
+#+end_src
+** Auto complete
+   Check =/etc/bash_completion= and =/usr/share/bash-completion=
+** Start editor (specified by $EDITOR)
+#+begin_src sh
+ctrl-x e
+#+end_src
+** Run previous cmd as root
+#+begin_src sh
+sudo !!
+#+end_src
+** Last argument of previous cmd
+#+begin_src sh
+touch very-loooooooooooooooooooooooong-file-name
+vi !$
+#+end_src
+** Also last argument of previous cmd
+#+begin_src sh
+alt+.
+#+end_src
+** /n/th argument of previous cmd
+#+begin_src sh
+alt+n alt+.
+#+end_src
+** Create an empty file without using /touch/
+#+begin_src sh
+>file.txt
+#+end_src
+** Replace string of previous cmd
+#+begin_src sh
+^old^new
+#+end_src
+	 this is equivalent to
+#+begin_src sh
+!!:s/old/new/
+#+end_src
+	 to replace all instances of 'old' in previous command
+#+begin_src sh
+!!:gs/old/new/
+#+end_src
+	 more details [[http://www.gnu.org/software/bash/manual/bashref.html#History-Interaction][here]].
+** Result of last cmd
+#+begin_src sh
+echo $?
+#+end_src
+
+** =type= command
+   To check definition of a command
+#+begin_src sh
+type <command>
+#+end_src
+
+* debugging
+** Run shell script with *-x* option
+
+#+begin_src sh
+bash -x script-name
+#+end_src
+
+** Use *set* builtin command
+#+begin_src sh
+# noexec
+set -n
+# verbose
+set -v
+# turn on debug mode
+set -x
+for f in *
+do
+   file $f
+done
+# turn OFF debug mode
+set +x
+#+end_src
+
+** Replace the standard shebang[fn:shebang] line
+#+begin_src sh
+#!/bin/bash -xv
+#+end_src
+
+[fn:shebang] Explain of shebang on [[http://en.wikipedia.org/wiki/Shebang_(Unix)][Wikipedia]].
+[fn:sed] There is a very splendid tutorial of sed can be found [[http://www.grymoire.com/Unix/sed.html][here]].
