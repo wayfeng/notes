@@ -2,7 +2,7 @@
 #+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
 #+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
 #+options:   ^:nil
-#+tags:      awk(a) diff(d) find(f) grep(g) sed(s) ssh(h) sort(t) others(o)
+#+tags:      awk(a) bash(b) diff(d) find(f) grep(g) sed(s) ssh(h) sort(t) others(o)
 
 * one-liners
 ** compare folders                                                     :diff:
@@ -38,7 +38,7 @@ find -iregex '.*\.[ch][pp]*' -and -not -path '*/tests/*' -and -not -path '*/tool
    architecture dependent code such as ARM, MIPS, and X86_64, also no test code, so I can do this:
 
 #+begin_src sh
-find -iregex '.*\.[ch]+' -and -not -path '*test*' -and -not -path '*mips*' -and -not -path '*arm*' -and -not -path '*x86_64*' | xargs etags --language=c++
+find -iregex '.*\.[ch]+' -and -not -path '*test*' -and -not -path '*mips*' -and -not -path '*arm*' -and -not -path '*x86_64*' | xargs ctags -e
 #+end_src
 
    It's boring to do an exhausted list of unwanted folders, but it works well so far.
@@ -68,6 +68,16 @@ grep -rnI --include=\*.{h,cpp} 'pattern'
 cat file | awk '{ sum+=$N } END { print "average = ", sum/NR }'
 #+end_src
 
+** Print all columns but the very first one                             :awk:
+#+begin_src sh
+cat file | awk '{ $1=""; print $0 }'
+#+end_src
+
+** Replace top dir of a list of files                                   :awk:
+#+begin_src sh
+  cat file | awk -F '/' 'BEGIN {OFS="/"} {$1="$TOP"; print $0}'
+#+end_src
+
 ** Remove duplicated lines from files (not perfect)                    :sort:
 #+begin_src sh
 cat [files] | sort | uniq
@@ -86,17 +96,41 @@ tail -f /path/to/log | sed '/^Finish success$/q'
 #+end_src
 ** Run script on remote machine without copy file                       :ssh:
 #+begin_src sh
-ssh user@host bash < /path/to/local/script
+  ssh user@host bash < /path/to/local/script
+#+end_src
+** deploy ssh identity to remote device                                 :ssh:
+#+begin_src sh
+  ssh-copy-id -i <idfile.pub> user@remote-machcine
+#+end_src
+   If the identity file is not the default one, you'll have to declare it in =~/.ssh/config=.
+#+begin_src sh
+  Host <nickname>
+    HostName <domain name or ip address>
+    User username
+    IdentityFile ~/.ssh/you_file
 #+end_src
 ** Create a detached SSH connection                                     :ssh:
 #+begin_src sh
-screen -d -m -S svr1 -t wfeng@svr1 ssh user@svr1.address
+  screen -d -m -S svr1 -t wfeng@svr1 ssh user@svr1.address
 #+end_src
    then you can attach to it later with
 #+begin_src sh
 screen -r svr1
 #+end_src
 
+** run a command N times																							 :bash:
+#+begin_src sh
+  for i in {1..$N}; do <CMD>; done
+#+end_src
+   or if you need to start from 0
+#+begin_src sh
+  i=0
+  while [ $i -lt $N ]
+  do
+      # command
+      let i=i+1
+  done
+#+end_src
 
 * bash
 ** To run a script with current environment
@@ -130,6 +164,10 @@ screen -r svr1
 | =[ -d FILE]= | True if =FILE= exists and is a directory              |
 | =[ -e FILE]= | True if =FILE= exists                                 |
 | =[ -f FILE]= | True if =FILE= exists and is a regular file           |
+| =[ -g FILE]= | True if =FILE= exists and SGID bit is set             |
+| =[ -h FILE]= | True if =FILE= exists and is a symbolic link          |
+
+   see more [[http://www.tldp.org/LDP/Bash-Beginners-Guide/html/sect_07_01.html][here]].
 
 ** Check whether interactive
 #+begin_src sh
@@ -162,8 +200,8 @@ sudo !!
 #+end_src
 ** Last argument of previous cmd
 #+begin_src sh
-touch very-loooooooooooooooooooooooong-file-name
-vi !$
+  touch very-loooooooooooooooooooooooong-file-name
+  vi !$ # alt-. does the same
 #+end_src
 ** Also last argument of previous cmd
 #+begin_src sh
@@ -201,6 +239,43 @@ echo $?
 type <command>
 #+end_src
 
+* String manipulation
+** Get length of string
+#+begin_src sh
+  string="hello world!"
+  ${#string} # 12
+#+end_src
+** Get substring by position
+#+begin_src sh
+  ${string:position}
+  # or
+  ${string:position:length}
+#+end_src
+** Match shortest substring
+#+begin_src sh
+  # start from front
+  ${string#substring}
+  # start from back
+  ${string%substring}
+#+end_src
+** Match longest substring
+#+begin_src sh
+  # from front
+  ${string##substring}
+  # from back
+  ${string%%substring}
+#+end_src
+** Replace substring
+#+begin_src sh
+  # replace first match
+  ${string/pattern/replace}
+  # replace all matches
+  ${string//pattern/replace}
+  # replace only beginning
+  ${string/#pattern/replace}
+  # replace only ending
+  ${string/%pattern/replace}
+#+end_src
 * debugging
 ** Run shell script with *-x* option
 
