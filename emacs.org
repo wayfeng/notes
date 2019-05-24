@@ -114,7 +114,7 @@
   (set-coding-system-priority 'us-ascii-unix)
 #+END_SRC
 
-** Work with windows (not MS windows :) )
+** Work with windows (not M$ windows :) )
 
 | key binding | description                          |
 |-------------+--------------------------------------|
@@ -129,8 +129,9 @@
 
 ** Behind proxy
 #+BEGIN_SRC elisp
-  (setq url-proxy-services '(("no-proxy" . "work.com")
-                             ("http" . "proxy.work.com:port")))
+  (setq url-proxy-services '(("no-proxy" . "localhost, 127.0.0.1")
+                             ("http" . "proxy.work.com:port")
+                             ("https" . "proxy.work.com:port")))
 #+END_SRC
 
 * Sorting
@@ -228,13 +229,6 @@ $ sudo apt-get install yasnippet
    - [[http://www.emacswiki.org/emacs/DerivedMode][Derived Major Mode]]
    - [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Derived-Modes.html][Derived Modes]]
 
-** Setup Proxy
-#+BEGIN_SRC elisp
-;; when using emacs behind proxy
-(setq url-proxy-services '(("no_proxy" . "localhost, 127.0.0.1")
-                           ("http" . "your-proxy.com:port")
-                           ("https" . "your-proxy.com:port")))
-#+END_SRC
 
 * Ebrowse
 ** Generate database from source code
