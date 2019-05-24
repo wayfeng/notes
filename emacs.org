@@ -172,6 +172,7 @@ C-u 2 M-x sort-lines
 #+begin_src sh
 M-x imenu
 #+end_src
+
 ** Occurs of a regexp in buffer
 #+begin_src sh
 M-x occur <regexp>
@@ -180,7 +181,7 @@ M-x occur <regexp>
 ** Chinese Input
    - Using ibus in emacs
 #+begin_src sh
-aptitude install ibus-el
+sudo apt install ibus-el
 #+end_src
    and run following command in emacs to start ibus mode.
 #+begin_src sh
@@ -201,6 +202,7 @@ $ wget http://google-styleguide.googlecode.com/svn/trunk/google-c-style.el
   (add-hook 'c-mode-common-hook 'google-make-newline-indent)
   (add-hook 'c-mode-common-hook 'google-set-c-style)
 #+end_src
+
 * Yasnippet
 ** Install
 #+begin_src sh
@@ -217,6 +219,7 @@ $ sudo apt-get install yasnippet
       $0
   }
 #+end_src
+
 * Advanced
 
 ** Create Your Own Mode
@@ -224,6 +227,14 @@ $ sudo apt-get install yasnippet
    - [[http://www.emacswiki.org/emacs/SampleMode][Sample]]
    - [[http://www.emacswiki.org/emacs/DerivedMode][Derived Major Mode]]
    - [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Derived-Modes.html][Derived Modes]]
+
+** Setup Proxy
+#+BEGIN_SRC elisp
+;; when using emacs behind proxy
+(setq url-proxy-services '(("no_proxy" . "localhost, 127.0.0.1")
+                           ("http" . "your-proxy.com:port")
+                           ("https" . "your-proxy.com:port")))
+#+END_SRC
 
 * Ebrowse
 ** Generate database from source code
@@ -236,6 +247,16 @@ ebrowse *.h *.cc
 : / <ClassName>
 
 * Install Packages
+
+  Setup package repositories
+#+BEGIN_SRC elisp
+;; configure package archives
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+(package-initialize)
+#+END_SRC
+
   show available/installed packages
 : M-x list-packages
 
