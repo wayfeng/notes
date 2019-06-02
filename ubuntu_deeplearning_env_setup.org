@@ -1,0 +1,55 @@
+#+TITLE:     Ubuntu + CUDA + Tensorflow + PyTorch
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
+
+#+INDEX: tensorflow, pytorch, cuda
+
+* Install Ubuntu 18.04
+  Should be easy.
+
+* Install Nvidia Device Driver
+  Add PPA repository of Nvidia drivers.
+#+begin_src sh
+  sudo add-apt-repository ppa:graphics-drivers/ppa
+#+end_src
+
+  List Nvidia devices
+#+begin_src sh
+  lspci | grep VGA
+#+end_src
+
+#+begin_example
+  01:00.0 VGA compatible controller: NVIDIA Corporation Device 1f07 (rev a1)
+#+end_example
+
+  List available drivers
+#+begin_src sh
+  sudo ubuntu-drivers devices
+#+end_src
+#+begin_example
+  == /sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0 ==
+  modalias : pci:v000010DEd00001F07sv00001043sd00008681bc03sc00i00
+  vendor   : NVIDIA Corporation
+  driver   : nvidia-driver-415 - third-party free
+  driver   : nvidia-driver-418 - third-party free
+  driver   : nvidia-driver-410 - third-party free
+  driver   : nvidia-driver-430 - third-party free recommended
+  driver   : xserver-xorg-video-nouveau - distro free builtin
+#+end_example
+
+  Install recommended driver
+#+begin_src sh
+  sudo ubuntu-drivers install
+#+end_src
+
+  Check installation
+#+begin_src sh
+  nvidia-smi
+#+end_src
+* Install CUDA/CUDNN toolkit
+
+* Python VirtualEnv
+
+* Install TensorFlow
+
+* Install PyTorch
