@@ -47,9 +47,33 @@
   nvidia-smi
 #+end_src
 * Install CUDA/CUDNN toolkit
+  Should be easy.
 
 * Python VirtualEnv
+#+begin_src sh
+sudo apt install virtualenv
+virtualenv -p /usr/bin/python3 .env
+. .env/bin/activate
+#+end_src
 
 * Install TensorFlow
 
 * Install PyTorch
+
+* Miscs
+** Install Matplotlib
+#+begin_src sh
+sudo apt install python3-tk
+pip install matplotlib
+#+end_src
+
+** Jupyter Notebook
+   Install jupyter notebook.
+#+begin_src sh
+  pip install jupyter
+#+end_src
+
+   Start jupyter notebook
+#+begin_src sh
+  jupyter notebook
+#+end_src
