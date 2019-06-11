@@ -57,8 +57,32 @@ virtualenv -p /usr/bin/python3 .env
 #+end_src
 
 * Install TensorFlow
+  Install the stable version with GPU supported.
+#+begin_src sh
+  pip install tensorflow-gpu
+#+end_src
+  Install tensorflow 2.0.0 beta.
+#+begin_src sh
+  pip install tensorflow-gpu==2.0.0b0
+#+end_src
+
+  The "Conv2D CUDNN handle issue"[fn:1]
+#+begin_src python
+  # for tf 1.x
+  config = tf.ConfigProto(allow_soft_placement=True)
+  config.gpu_options.allow_growth = True
+  sess = tf.Session(config=config)
+
+  # for tf 2.0
+  gpus = tf.config.experimental.list_physical_devices('GPU')
+  for gpu in gpus:
+      tf.config.experimental.set_memory_growth(gpu, True)
+#+end_src
 
 * Install PyTorch
+#+begin_src sh
+  pip install torch torchvision
+#+end_src
 
 * Miscs
 ** Install Matplotlib
@@ -77,3 +101,5 @@ pip install matplotlib
 #+begin_src sh
   jupyter notebook
 #+end_src
+
+[fn:1] [[https://github.com/tensorflow/tensorflow/issues/6698][issue-6698]]

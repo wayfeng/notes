@@ -305,4 +305,4 @@ set +x
 #+end_src
 
 [fn:shebang] Explain of shebang on [[http://en.wikipedia.org/wiki/Shebang_(Unix)][Wikipedia]].
-[fn:sed] There is a very splendid tutorial of sed can be found [[http://www.grymoire.com/Unix/sed.html][here]].
+[fn:sed] There is a splendid tutorial of sed can be found [[http://www.grymoire.com/Unix/sed.html][here]].
