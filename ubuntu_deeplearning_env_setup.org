@@ -102,4 +102,4 @@ pip install matplotlib
   jupyter notebook
 #+end_src
 
-[fn:1] [[https://github.com/tensorflow/tensorflow/issues/6698][issue-6698]]
+[fn:1] [[https://tensorflow.google.cn/beta/guide/using_gpu][TF Guide: Using GPU]]
