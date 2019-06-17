@@ -1,0 +1,14 @@
+#+TITLE:     Ubuntu Tricks
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
+
+* Terminal Emulator
+
+** Mononoki font cannot be found by gnome terminal since ubuntu 18.04
+   This issue is caused by mis-typing of mononoki font as a none mono.
+   To force gnome terninal use it, install =dconf-editor=, find
+   =/org/gnome/terminal/legacy/profile:/:<uuid>/font=, type =mononoki <size>=
+   in "Custom value".
+
+   Or use other terminal emulators such as =terminator= which comes with more 
+   features such as split window.
