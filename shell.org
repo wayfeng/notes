@@ -2,7 +2,7 @@
 #+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
 #+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
 #+options:   ^:nil
-#+tags:      awk(a) bash(b) diff(d) find(f) grep(g) sed(s) ssh(h) sort(t) others(o)
+#+tags:      awk(a) bash(b) diff(d) find(f) grep(g) sed(s) ssh(h) sort(t) others(o) xargs(x)
 
 * one-liners
 ** compare folders                                                     :diff:
@@ -43,6 +43,10 @@ find -iregex '.*\.[ch]+' -and -not -path '*test*' -and -not -path '*mips*' -and 
 
    It's boring to do an exhausted list of unwanted folders, but it works well so far.
 
+** change mode of files with whitespaces in filename             :find:xargs:
+#+begin_src sh
+  find ~/Videos/ -type f | xargs -d '\n' chmod 644
+#+end_src
 
 ** grep only c++ files in a folder                                     :grep:
 
@@ -50,6 +54,10 @@ find -iregex '.*\.[ch]+' -and -not -path '*test*' -and -not -path '*mips*' -and 
 grep -rnI --include=\*.{h,cpp} 'pattern'
 #+end_src
 
+** grep only java files in a folder and it's sub folders               :grep:
+#+begin_src sh
+ find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.java" -print0 | xargs -0 grep --color -n "$@"
+#+end_src
 ** cast grep result for vim                                        :grep:sed:
    Vim takes parameter =+n= after file name to go to line number =n= directly
    after open the file. To use result of grep with line number:
@@ -78,6 +86,39 @@ cat file | awk '{ $1=""; print $0 }'
   cat file | awk -F '/' 'BEGIN {OFS="/"} {$1="$TOP"; print $0}'
 #+end_src
 
+** Match lines with hex number                                          :awk:
+#+begin_src python
+  foo = {
+      0x00 : ["vendor_id",             2, {} ],
+      0x02 : ["device_id",             2, {} ],
+      ...
+  }
+
+  bar = {
+      0x28 : ["cardbus_cis_ptr",       4, {} ],
+      0x2C : ["subsystem_vendor_id",   2, {} ],
+      0x2E : ["subsystem_id",          2, {} ],
+      0x30 : ["expansion_rom_base",    4, {} ],
+      ...
+  }
+
+  blabla = {
+      0x18 : ["primary_bus_number",            1, {} ],
+      0x19 : ["secondary_bus_number",          1, {} ],
+      0x1A : ["subordinate_bus_number",        1, {} ],
+      0x1B : ["secondary_latency_timer",       1, {} ],
+      ...
+  }
+#+end_src
+   You can list all addessed with =awk=
+#+begin_src sh
+  awk ' /$1 ~ 0x[0-9a-fA-F]+/ { print $1, $4 } ' file
+#+end_src
+** Trim whitespaces within awk                                          :awk:
+#+begin_src sh
+  awk '{gsub(/ /, "", $2); print $2}' file.txt
+#+end_src
+
 ** Remove duplicated lines from files (not perfect)                    :sort:
 #+begin_src sh
 cat [files] | sort | uniq
@@ -94,6 +135,16 @@ ps aux | sort -rgk +4 | head
 #+begin_src sh
 tail -f /path/to/log | sed '/^Finish success$/q'
 #+end_src
+** Remove lines of multiple files with a pattern                        :sed:
+#+begin_src sh
+sed -i '/pattern/d' files
+#+end_src
+** Remove trailing whitespaces and empty lines                          :sed:
+#+begin_src sh
+sed -i -e 's/[ ^I]*$//' -e '/^$/ d' files
+#+end_src
+   This command takes care of _lines contain only whitespaces_ by removing
+   whitespaces then empty line.
 ** Run script on remote machine without copy file                       :ssh:
 #+begin_src sh
   ssh user@host bash < /path/to/local/script
@@ -111,25 +162,30 @@ tail -f /path/to/log | sed '/^Finish success$/q'
 #+end_src
 ** Create a detached SSH connection                                     :ssh:
 #+begin_src sh
-  screen -d -m -S svr1 -t wfeng@svr1 ssh user@svr1.address
+  screen -d -m -S svr1 -t user@server ssh user@server
 #+end_src
+   Where '-d -m' start a new session and detach from it. '-S' set the session name, and '-t' set the title of terminal.
    then you can attach to it later with
 #+begin_src sh
 screen -r svr1
 #+end_src
 
-** run a command N times																							 :bash:
-#+begin_src sh
-  for i in {1..$N}; do <CMD>; done
+   To detach it again, input 'C-a C-d'.
+
+** Indent one-line XML file                                          :others:
+   First, create indent style sheet as =indent.xsl=.
+#+begin_src xml
+  <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+   <xsl:output method="xml" indent="yes"/>
+   <xsl:strip-space elements="*"/>
+   <xsl:template match="/">
+    <xsl:copy-of select="."/>
+   </xsl:template>
+  </xsl:stylesheet>
 #+end_src
-   or if you need to start from 0
+   Then use xml transformat tool.
 #+begin_src sh
-  i=0
-  while [ $i -lt $N ]
-  do
-      # command
-      let i=i+1
-  done
+  $ xsltproc indent.xsl origin.xml > indented.xml
 #+end_src
 
 * bash
@@ -198,6 +254,20 @@ ctrl-x e
 #+begin_src sh
 sudo !!
 #+end_src
+** Run a command N times																							 :bash:
+#+begin_src sh
+  for i in {1..$N}; do <CMD>; done
+#+end_src
+   or if you need to start from 0
+#+begin_src sh
+  i=0
+  while [ $i -lt $N ]
+  do
+      # command
+      let i=i+1
+  done
+#+end_src
+
 ** Last argument of previous cmd
 #+begin_src sh
   touch very-loooooooooooooooooooooooong-file-name
@@ -228,6 +298,15 @@ alt+n alt+.
 !!:gs/old/new/
 #+end_src
 	 more details [[http://www.gnu.org/software/bash/manual/bashref.html#History-Interaction][here]].
+** Handle file paths
+   List directory find in last argument of previous cmd.
+#+begin_src sh
+  ls $(dirname [alt+.])
+#+end_src
+   Get base name of last argument of previous cmd.
+#+begin_src sh
+  echo $(basename [alt+.])
+#+end_src
 ** Result of last cmd
 #+begin_src sh
 echo $?
@@ -238,7 +317,17 @@ echo $?
 #+begin_src sh
 type <command>
 #+end_src
+** Exit ssh without stopping a long-run-cmd
+#+begin_src sh
+nohup <long-run-command> &
+#+end_src
 
+   Or you didn't see the command should be over-live the terminal.
+#+begin_src sh
+<long-run-command>
+# press ctrl-z
+bg && disown
+#+end_src
 * String manipulation
 ** Get length of string
 #+begin_src sh
@@ -275,6 +364,25 @@ type <command>
   ${string/#pattern/replace}
   # replace only ending
   ${string/%pattern/replace}
+#+end_src
+** Delete substring
+#+begin_src sh
+  # remove prefix, match shortest
+  ${string#pattern}
+  # remove suffix, match shortest
+  ${string%pattern}
+  # remove prefix, match longest
+  ${string##substring}
+  # remove suffix, match longest
+  ${string%%substring}
+#+end_src
+** Convert string to uppercase
+#+begin_src sh
+  $(str^^)
+  # or
+  echo $str | tr [a-z] [A-Z]
+  # or
+  echo $str | awk '{print toupper($0)}'
 #+end_src
 * debugging
 ** Run shell script with *-x* option
