@@ -66,7 +66,7 @@ virtualenv -p /usr/bin/python3 .env
   pip install tensorflow-gpu==2.0.0b0
 #+end_src
 
-  The "Conv2D CUDNN handle issue"[fn:1]
+  The "Conv2D CUDNN handle issue"[fn:1][fn:2]
 #+begin_src python
   # for tf 1.x
   config = tf.ConfigProto(allow_soft_placement=True)
@@ -77,6 +77,22 @@ virtualenv -p /usr/bin/python3 .env
   gpus = tf.config.experimental.list_physical_devices('GPU')
   for gpu in gpus:
       tf.config.experimental.set_memory_growth(gpu, True)
+#+end_src
+
+** Build TensorFlow from source code[fn:3]
+   Download tensorflow source code
+#+begin_src sh
+  git clone git@github.com:tensorflow/tensorflow.git
+  git checkout r1.9
+#+end_src
+
+   Install bazel
+#+begin_src sh
+  wget https://github.com/bazelbuild/bazel/releases/download/0.26.1/bazel-0.26.1-installer-linux-x86_64.sh
+  chmod a+x *.sh
+  ./bazel-0.26.1-installer-linux-x86_64.sh --prefix=~/.local
+  # set PATH if not yet
+  # export PATH=$PATH:~/.local/bin
 #+end_src
 
 * Install PyTorch
@@ -103,3 +119,5 @@ pip install matplotlib
 #+end_src
 
 [fn:1] [[https://tensorflow.google.cn/beta/guide/using_gpu][TF Guide: Using GPU]]
+[fn:2] [[https://github.com/tensorflow/tensorflow/issues/6698][issue-6698]]
+[fn:3] [[https://tensorflow.google.cn/install/source][Build TF from Source]]

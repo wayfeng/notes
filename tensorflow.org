@@ -1,0 +1,17 @@
+#+TITLE:     Tensorflow Usages
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
+
+* Using TensorBoard
+
+  Saving model
+
+#+begin_src python
+  tf.summary.FileWriter('<logdir>', <graph>)
+#+end_src
+
+  Start tensorboard
+
+#+begin_src sh
+  tensorboard --logdir=<logdir>
+#+end_src
