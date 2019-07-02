@@ -27,8 +27,7 @@ func main() {
 
 You can send this file when start **go** docker.
 ```bash
-$ docker run -it -v /path/to/src:/go/src
-golang:1.11-alpine
+$ docker run -it -v /path/to/src:/go/src golang:1.11-alpine
 ```
 
 Or copy this file to a running container.
