@@ -12,3 +12,35 @@
 
    Or use other terminal emulators such as =terminator= which comes with more 
    features such as split window.
+
+* Boot to Non-graphical Mode
+
+  For a server running Ubuntu, all users will be login through SSH or VNC,
+  graphical mode is not needed. To boot to text mode by default, we need to
+  change both GRUB and system configuration.
+
+#+BEGIN_SRC sh
+sudo vim /etc/default/grub
+#+END_SRC
+
+  Find line of GRUB default setting and do the change.
+: # GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
+: GRUB_CMDLINE_LINUX_DEFAULT="quiet splash text"
+
+  Then update GRUB configuration by =update-grub= command.
+
+#+BEGIN_SRC sh
+sudo update-grub
+#+END_SRC
+
+  To update system configuration, user =systemctl= command.
+
+#+BEGIN_SRC sh
+sudo systemctl set-default multi-user.target
+#+END_SRC
+
+  Default setting can be restore by =systemctl= command.
+
+#+BEGIN_SRC sh
+sudo systemctl set-default graphical.target
+#+END_SRC
