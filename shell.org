@@ -80,7 +80,10 @@ cat file | awk '{ sum+=$N } END { print "average = ", sum/NR }'
 #+begin_src sh
 cat file | awk '{ $1=""; print $0 }'
 #+end_src
-
+** Print a column in a row                                              :awk:
+#+begin_src sh
+cat file | awk 'BEGIN { ORS = " " } { print $1 }'
+#+end_src
 ** Replace top dir of a list of files                                   :awk:
 #+begin_src sh
   cat file | awk -F '/' 'BEGIN {OFS="/"} {$1="$TOP"; print $0}'
