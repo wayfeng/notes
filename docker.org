@@ -28,7 +28,7 @@
   Environment="HTTPS_PROXY=http://proxy-prc.intel.com:912/" "NO_PROXY=localhost, 127.0.0.1, intel.com"
 #+end_src
 
-* Inspect Docker Image Content
+* Docker Usages
 
 ** Run with bash
 #+begin_src sh
