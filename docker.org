@@ -1,0 +1,62 @@
+#+TITLE:     Docker
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/article.css" />
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
+#+OPTIONS:   tex:verbatim
+
+* Install Docker CE for Ubuntu
+  [[https://docs.docker.com/install/linux/docker-ce/ubuntu/][ref]]
+** Using Docker as non-root user
+#+begin_src sh
+  sudo usermod -aG docker <your-user>
+#+end_src
+
+** Docker Compose
+#+begin_src sh
+  curl -L https://github.com/docker/compose/releases/download/<version>/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+  chmod a+x /usr/local/bin/docker-compose
+#+end_src
+
+* Docker Proxy Setting
+  [[https://stackoverflow.com/questions/26550360/docker-ubuntu-behind-proxy][ref]]
+
+#+begin_src sh
+  $ cat /etc/systemd/system/docker.service.d/http-proxy.conf
+  [Service]
+  Environment="HTTP_PROXY=http://proxy-prc.intel.com:912/" "NO_PROXY=localhost, 127.0.0.1, intel.com"
+  $ cat /etc/systemd/system/docker.service.d/https-proxy.conf
+  [Service]
+  Environment="HTTPS_PROXY=http://proxy-prc.intel.com:912/" "NO_PROXY=localhost, 127.0.0.1, intel.com"
+#+end_src
+
+* Inspect Docker Image Content
+
+** Run with bash
+#+begin_src sh
+  docker run -it ubuntu:18.04
+#+end_src
+
+** Attach to a container
+#+begin_src sh
+  docker exec -it <image> /bin/bash
+#+end_src
+
+** Check history
+#+begin_src sh
+  docker image history --no-trunc <image_name> > image_history
+#+end_src
+
+** Save image
+#+begin_src sh
+  docker save <image_name> > tmp.tar
+  tar xvf tmp.tar
+#+end_src
+
+** Remove all containers
+#+begin_src sh
+  docker rm -f $(docker ps -a -q)
+#+end_src
+
+** Delete all docker images
+#+begin_src sh
+  docker rmi -f $(docker images -q)
+#+end_src
