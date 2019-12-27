@@ -148,6 +148,10 @@ sed -i -e 's/[ ^I]*$//' -e '/^$/ d' files
 #+end_src
    This command takes care of _lines contain only whitespaces_ by removing
    whitespaces then empty line.
+** Run command on remote machine                                        :ssh:
+#+begin_src sh
+  ssh user@host '<CMD>'
+#+end_src
 ** Run script on remote machine without copy file                       :ssh:
 #+begin_src sh
   ssh user@host bash < /path/to/local/script

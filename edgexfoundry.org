@@ -1,0 +1,39 @@
+#+TITLE:     EdgeX Foundry
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/article.css" />
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
+#+OPTIONS:   tex:verbatim
+
+* Pre-requisite
+
+  EdgeX does not support Ubuntu 18.04 yet, so we use Ubuntu 16.04 as default OS.
+
+** Install ZeroMQ
+
+#+begin_src sh
+  wget https://github.com/zeromq/libzmq/releases/download/v4.3.2/zeromq-4.3.2.tar.gz
+
+  tar zxvf zeromq-4.3.2.tar.gz
+
+  sudo apt update
+  sudo apt install -y libtool pkg-config build-essential autoconf automake uuid-dev
+
+  cd zeromq-4.3.2/
+  ./configure
+
+  make -j4
+  sudo make install
+
+  sudo ldconfig
+#+end_src
+
+
+* Installation
+
+** Install Docker CE
+** Install Docker Compose
+
+** Install EdgeX
+
+* Add Device
+
+* Add Service
