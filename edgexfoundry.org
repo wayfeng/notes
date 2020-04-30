@@ -5,9 +5,7 @@
 
 * Pre-requisite
 
-  EdgeX does not support Ubuntu 18.04 yet, so we use Ubuntu 16.04 as default OS.
-
-** Install ZeroMQ
+** Install ZeroMQ on Ubuntu 16.04
 
 #+begin_src sh
   wget https://github.com/zeromq/libzmq/releases/download/v4.3.2/zeromq-4.3.2.tar.gz
@@ -30,6 +28,7 @@
 * Installation
 
 ** Install Docker CE
+
 ** Install Docker Compose
 
 ** Install EdgeX

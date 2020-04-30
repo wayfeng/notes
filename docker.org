@@ -4,7 +4,7 @@
 #+OPTIONS:   tex:verbatim
 
 * Install Docker CE for Ubuntu
-  [[https://docs.docker.com/install/linux/docker-ce/ubuntu/][ref]]
+  See [[https://docs.docker.com/install/linux/docker-ce/ubuntu/][details]] about installing Docker CE.
 ** Using Docker as non-root user
 #+begin_src sh
   sudo usermod -aG docker <your-user>
@@ -26,6 +26,9 @@
   $ cat /etc/systemd/system/docker.service.d/https-proxy.conf
   [Service]
   Environment="HTTPS_PROXY=http://proxy-prc.intel.com:912/" "NO_PROXY=localhost, 127.0.0.1, intel.com"
+
+  $ sudo systemctl daemon-reload
+  $ sudo systemctl restart docker
 #+end_src
 
 * Docker Usages
@@ -65,6 +68,11 @@
 #+begin_src sh
   docker rmi -f $(docker images -q)
 #+end_src
+** Delete volumes
+#+begin_src sh
+  docker volume rm $(docker volume ls -qf dangling=true)
+#+end_src
+
 
 * Dockerfile Usages
 
