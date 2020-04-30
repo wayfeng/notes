@@ -1,4 +1,7 @@
-# Go Development with Docker
+# Go Development
+
+
+## Go with Docker
 
 Docker can be a good environment for go developement. You have more versions to choose in [Docker Hub](hub.docker.com) without mess up your PC.
 
@@ -41,4 +44,16 @@ Then you can run this go file in the container.
 ```bash
 /go # go run src/helloworld.go
 Hello world!
+```
+
+## Go Proxy
+
+Go website is blocked in PRC, to be able to use =go get= command to install dependencies, you will need Go proxy. To use Go proxy, =GO111MODULE= mode is also needed to be turned on.
+
+```bash
+if [ -d "/usr/local/go" ]; then
+    PATH="$PATH:/usr/local/go/bin"
+    export GO111MODULE=on
+    export GOPROXY=https://goproxy.io
+fi
 ```

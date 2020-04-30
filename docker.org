@@ -45,6 +45,11 @@
   docker image history --no-trunc <image_name> > image_history
 #+end_src
 
+** Check logs of container
+#+begin_src sh
+  docker logs <container>
+#+end_src
+
 ** Save image
 #+begin_src sh
   docker save <image_name> > tmp.tar
@@ -59,4 +64,22 @@
 ** Delete all docker images
 #+begin_src sh
   docker rmi -f $(docker images -q)
+#+end_src
+
+* Dockerfile Usages
+
+** Heredoc
+   To create text file with multiple lines, in bash we can use here-document.
+#+begin_src sh
+  cat <<EOF > /tmp/tmp.txt
+  hello line #1
+  hello line #2
+  finish
+  EOF
+#+end_src
+   Use =printf= in Dockerfile to get the equivalent.
+#+begin_src sh
+  RUN printf 'hello line #1\n\
+  hello line #2\n\
+  finish' > /tmp/tmp.txt
 #+end_src
