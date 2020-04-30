@@ -44,3 +44,20 @@ sudo systemctl set-default multi-user.target
 #+BEGIN_SRC sh
 sudo systemctl set-default graphical.target
 #+END_SRC
+
+* Setup WiFi from Terminal
+  [[https://www.linuxbabe.com/ubuntu/connect-to-wi-fi-from-terminal-on-ubuntu-18-04-19-04-with-wpa-supplicant][ref]]
+#+BEGIN_SRC sh
+  # Use iwconfig to find WiFi interface
+  $ iwconfig
+
+  # Find available AP
+  $ sudo iwlist wlp1s0 scan | grep ESSID
+
+  # Setup WPA_Supplicant
+  $ wpa_passphrase <ESSID> <password> | sudo tee /etc/wap_supplicant.conf
+
+  $ sudo wpa_supplicant -B -c /etc/wpa_supplicant.conf -i wlp1s0
+  $ sudo dhclient wlp1s0
+  $ ip addr wlp1s0
+#+END_SRC
