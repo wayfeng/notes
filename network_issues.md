@@ -1,25 +1,27 @@
 # PRC network issues and solutions
 
-## Fast and easy solution
-Setup commercial VPN services is the most easy way to solve all network issues caused by regulation.
+# pip
 
-Pros:
-- Easy to setup
-- No need to change source code.
+Using local pip mirrors.
+```sh
+pip config set global.trusted-host mirrors.aliyun.com
+pip config set global.index-url http://mirrors.aliyun.com/pypi/simpleyun.com
+```
 
-Cons:
-- Not free.
+# apt
 
-## Workarounds
+Using local apt mirrors.
+```sh
+sudo sed -i 's/cn.archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+```
 
-- Use local mirrors of Ubuntu package server for **apt** command.
-- Use local mirrors of Python package server for **pip** command.
-- Use local mirrors instead of **github**.
-- Use local registry mirrors for **docker**.
+# bypass DNS
 
-Pros:
-- Free
+```sh
+$ cat /etc/hosts
+127.0.0.1 localhost
+127.0.1.1 iotg-lab-007
 
-Cons:
-- extra effort needed to setup environment.
-- Need to change Dockerfiles.
+xxx.xxx.xxx.xxx raw.githubusercontent.com
+xxx.xxx.xxx.xxx amazonaws.com
+```
