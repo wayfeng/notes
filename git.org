@@ -214,6 +214,12 @@ git annotate <filename>
 git diff --name-only <ci1> <ci2>
 #+end_src
 
+** Replace URL
+
+#+begin_src
+[url "http://fastmirror.com/path/proj.git"]
+        insteadOf = https://github.com/path/proj.git
+#+end_src
 * Git Configuration
 
 * Gitosis (Obsoleted)

@@ -25,3 +25,10 @@ $ cat /etc/hosts
 xxx.xxx.xxx.xxx raw.githubusercontent.com
 xxx.xxx.xxx.xxx amazonaws.com
 ```
+
+# Replace github.com
+
+```gitconfig
+[url "http://gitee.com/waynefeng/onnxruntime.git"]
+        insteadOf = https://github.com/microsoft/onnxruntime.git
+```
