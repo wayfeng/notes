@@ -5,7 +5,7 @@
 ## Tutorials
 
 ## Rust App as Minimal Docker Image
-The Dockerfile:
+Create Dockerfile:
 
 ```Dockerfile
 FROM rust:latest as build
@@ -25,9 +25,9 @@ USER 1000
 CMD ["./helloworld"]
 ```
 
-    Build docker image:
+Then build docker image:
 
-```sh
+```bash
 docker build -t hello .
 ```
 
