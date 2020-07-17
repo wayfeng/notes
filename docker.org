@@ -91,3 +91,13 @@
   hello line #2\n\
   finish' > /tmp/tmp.txt
 #+end_src
+
+* Docker China Mirrors
+
+  Add configure file: =/etc/docker/daemon.json=, then restart docker.
+
+#+begin_src json
+{
+    "registry-mirrors": ["https://registry.docker-cn.com"]
+}
+#+end_src
