@@ -101,3 +101,9 @@
     "registry-mirrors": ["https://registry.docker-cn.com"]
 }
 #+end_src
+
+  Alpine China mirror
+
+#+begin_src sh
+  sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+#+end_src
