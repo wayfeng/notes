@@ -68,6 +68,10 @@
 #+begin_src sh
   docker rmi -f $(docker images -q)
 #+end_src
+** Delete docker images with no tags
+#+begin_src sh
+  docker rmi $(docker images --filter dangling=true -q)
+#+end_src
 ** Delete volumes
 #+begin_src sh
   docker volume rm $(docker volume ls -qf dangling=true)
