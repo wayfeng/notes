@@ -1,15 +1,19 @@
-# Windows 10 Tools
+# Windows 10 CLI Tools
 
-## Package Management
+## Package Management with Scoop
 
-### scoop
+## PowerShell
 
-## Terminal
+## Windows Terminal
 
 ## NeoVim
 
 ## Clang/Clang++
 
-## VS Code
+## Miscs
 
-## VS Studio
+### grep
+
+### curl
+
+### wget
