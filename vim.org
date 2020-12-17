@@ -135,6 +135,10 @@ set fileformat=<dos|unix|mac>
    - [ctrl-w_] maximize current window
    - [ctrl-w=] make size of all windows equal
    - [ctrl-w ctrl-w] move cursor to another window
+   - [ctrl-w L] move current window to far right
+   - [ctrl-w H] move current window to far left
+   - [ctrl-w J] move current window to very bottom
+   - [ctrl-w K] move current window to very top
    - [:qa] quit from all windows
 
    To always enable status line, put =set laststatus=2= in =~/.vimrc=.
@@ -403,6 +407,12 @@ cscope -Rb
 ** Fix Annoying Indentation while Pasting Code
 #+begin_src sh
 set paste
+#+end_src
+
+** Debugging
+#+begin_src sh
+:packadd termdebug
+:Termdebug
 #+end_src
 
 * History of Vim
