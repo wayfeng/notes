@@ -10,6 +10,8 @@
   echo "obase=16; 1234" | bc
   # or convert file of integers
   (echo "obase=16" ; cat file_with_integers.txt) | bc
+  # or with printf
+  printf "%x\n" 1234
 #+end_src
 ** compare folders                                                     :diff:
 #+begin_src sh
