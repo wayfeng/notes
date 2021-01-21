@@ -5,6 +5,14 @@
 #+tags:      awk(a) bash(b) diff(d) find(f) grep(g) sed(s) ssh(h) sort(t) others(o) xargs(x)
 
 * one-liners
+** convert decimal to hexadecimal                                    :others:
+#+begin_src sh
+  echo "obase=16; 1234" | bc
+  # or convert file of integers
+  (echo "obase=16" ; cat file_with_integers.txt) | bc
+  # or with printf
+  printf "%x\n" 1234
+#+end_src
 ** compare folders                                                     :diff:
 #+begin_src sh
   diff --brief --exclude='.git' -r <dir1> <dir2>
