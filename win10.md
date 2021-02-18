@@ -50,3 +50,9 @@ In regedit tool, find ``Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Con
 ```
 
 Then reboot windows.
+
+Consider using [Autohotkey](https://www.autohotkey.com/) if you only want to swap occasionally. Just put a simple line in your ``ahk`` file.
+```
+Capslock::Ctrl
+```
+
