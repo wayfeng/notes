@@ -36,8 +36,8 @@ To setup proxy in docker containers, edit =~/.docker/config.json=
   {
           "proxies": {
                   "default": {
-                          "httpProxy": "http://child-prc.intel.com:913",
-                          "httpsProxy": "http://child-prc.intel.com:913",
+                          "httpProxy": "http://proxy.address:port",
+                          "httpsProxy": "http://proxy.address:port",
                           "noProxy": "localhost"
                   }
           }
