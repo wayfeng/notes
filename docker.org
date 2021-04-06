@@ -89,7 +89,13 @@ To setup proxy in docker containers, edit =~/.docker/config.json=
 #+begin_src sh
   docker volume rm $(docker volume ls -qf dangling=true)
 #+end_src
+** Check IP addr of containers
+#+begin_src sh
+  docker inspect -f '{{ .NetworkSettings.IPAddress }}' mqtt-broker
 
+  # all containers
+  docker inspect -f '{{ .NetworkSettings.IPAddress }}' $(docker ps -aq)
+#+end_src
 
 * Dockerfile Usages
 
