@@ -31,6 +31,19 @@
   $ sudo systemctl restart docker
 #+end_src
 
+To setup proxy in docker containers, edit =~/.docker/config.json=
+#+begin_src js
+  {
+          "proxies": {
+                  "default": {
+                          "httpProxy": "http://child-prc.intel.com:913",
+                          "httpsProxy": "http://child-prc.intel.com:913",
+                          "noProxy": "localhost"
+                  }
+          }
+  }
+#+end_src
+
 * Docker Usages
 
 ** Run with bash
