@@ -1,0 +1,75 @@
+\documentclass{article}
+
+\usepackage[fleqn]{amsmath}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{graphicx}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{equation}
+\tag{3.2}  G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \cdots = \sum_{k=0}^\infty \gamma^k R_{t+k+1} \qquad (0 \leq \gamma \leq 1)
+\end{equation}
+%\begin{equation*}
+%  \pi(a|s) = Pr\bigl\{ A_t = a \:\big|\:S_t = s\bigr\} \qquad \qquad \forall s\in\mathcal{S}, a\in\mathcal{A}(s)
+%\end{equation*}
+\begin{equation*}
+\tag{3.6}  p(s',r\:|\:s,a) = Pr\bigl\{S_{t+1} = s', R_{t+1} = r \:\big|\: S_t = s, A_t = a\bigr\}
+\end{equation*}
+
+\begin{equation*}
+\tag{3.7}  r(s,a) = \mathbb{E}_\pi\bigl[R_{t+1} \:\big|\: S_t = s, A_t = a\bigr] = \sum_{r\in\mathcal{R}}{r}\sum_{s'\in\mathcal{S}}{p(s',r\:|\:s,a)}
+\end{equation*}
+
+\begin{equation*}
+\tag{3.8}  p(s'\:|\:s,a) = Pr\bigl\{S_{t+1} = s' \:\big|\: S_t = s, A_t = a\bigr\} = \sum_{r\in\mathcal{R}}{p(s',r\:|\:s,a)}
+\end{equation*}
+
+\begin{equation*}
+\tag{3.9}  r(s,a,s') = \mathbb{E_\pi}\bigl[R_{t+1}\:\big|\:S_t=s,A_t=a,S_{t+1}=s'\bigr]=\frac{\sum_{r\in\mathcal{R}}{r\cdot{}p(s',r\:|\:s,a)}}{p(s'\:|\:s,a)}
+\end{equation*}
+
+\begin{equation*}
+  \tag{3.11}  q_{\pi}(s,a) = \mathbb{E_\pi}[G_t \:|\: S_t=s,A_t=a] = \mathbb{E_\pi}\biggl[\sum_{k=0}^{\infty} \gamma^k R_{t+k+1}\:\bigg\vert\:S_t=s,A_t=a\biggr]
+\end{equation*}
+
+\begin{align*}
+  v_{\pi}(s) &= \mathbb{E_\pi}[G_t \:|\: S_t=s] = \mathbb{E_\pi}\biggl[\sum_{k=0}^{\infty}\gamma^kR_{t+k+1}\:\bigg\vert\:S_t=s\biggr]\\
+\tag{3.12}  &= \sum_a \pi(a|s) \sum_{s',r}p(s',r|s,a)\bigl[r+\gamma v_{\pi}(s')\bigl]
+\end{align*}
+
+\begin{align*}
+  v_{\ast}(s) &= \max_{a\in\mathcal{A}(s)} q_{\pi_{\ast}}(s,a)\\
+\tag{3.16}   &= \max_{a\in\mathcal{A}(s)} \mathbb{E}_{\pi^\ast} \bigl[R_{t+1} + \gamma v_\ast(S_{t+1}) \:\big|\: S_t=s, A_t=a \bigr]\\
+\tag{3.17}   &= \max_{a\in\mathcal{A}(s)} \sum_{s',r}p(s',r|s,a)\bigl[r+\gamma v_{\ast}(s')\bigr]
+\end{align*}
+
+\begin{align*}
+  q_{\ast}(s,a) &= \mathbb{E}_{\pi^\ast}\bigl[R_{t+1} + \gamma \max_{a'} q_{\ast}(S_{t+1},a') \big| S_t=s, A_t=a \bigr]\\
+  &= \sum_{s',r} p(s',r|s,a) \bigl[r+\gamma \max_{a'} q_{\ast}(s',a')\bigr]
+\end{align*}
+
+\vspace{10ex}
+\begin{equation}
+  \tag{6.1} V(S_t) \leftarrow V(S_t) + \alpha \bigl[G_t - V(S_t)\bigr]
+\end{equation}
+\begin{equation}
+  \tag{6.2} V(S_t) \leftarrow V(S_t) + \alpha \bigl[ R_{t+1} + \gamma V(S_{t+1}) - V(S_t)]
+\end{equation}
+\begin{equation}
+  \tag{6.5} Q(S_t,A_t) \leftarrow Q(S_t,A_t) + \alpha \bigl[ R_{t+1} + \gamma Q(S_{t+1},a) - Q(S_t, A_t) \bigr]
+\end{equation}
+\begin{equation}
+  \tag{6.6} Q(S_t,A_t) \leftarrow Q(S_t,A_t) + \alpha \bigl[ R_{t+1} + \gamma \max_a Q(S_{t+1},a) - Q(S_t, A_t) \bigr]
+\end{equation}
+
+\begin{equation}
+  \tag{7.1} G_t^{(n)} = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \cdots + \gamma^{n-1}R_{t+n} + \gamma^nV_t(S_{t+n}), \qquad n \geq 1, 0 \leq t < T-n
+\end{equation}
+\begin{equation}
+  \tag{7.2} V_{t+n}(S_t) = V_{t+n-1}(S_t) + \alpha \bigl[G_t^{(n)} - V_{t+n-1}(S_t)\bigr],\qquad 0 \le t < T
+\end{equation}
+\end{document}
