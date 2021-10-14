@@ -61,3 +61,16 @@ sudo systemctl set-default graphical.target
   $ sudo dhclient wlp1s0
   $ ip addr wlp1s0
 #+END_SRC
+
+* Using LVM
+
+** Extending Logical Volume.
+#+BEGIN_SRC sh
+  sudo lvextend -L +100GB /dev/ubuntu-vg/ubuntu-lv
+  sudo resize2fs /dev/ubuntu-vg/ubuntu-lv
+#+END_SRC
+
+** Extending Logical Volume to Whole Disk
+#+BEGIN_SRC sh
+  sudo lvresize -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+#+END_SRC
