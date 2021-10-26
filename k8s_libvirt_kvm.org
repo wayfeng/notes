@@ -1,0 +1,109 @@
+#+TITLE: Bootstrap k8s cluster on KVM/libvirt
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
+#+INDEX: k8s kvm libvirt
+
+* KVM & qemu & libvirt
+
+** KVM
+** qemu
+** libvirt
+
+** Setup
+#+begin_src bash
+  $ sudo apt install qemu-kvm qemu-system-x86
+  $ sudo apt install libvirt-clients libvirt-daemon virtinst
+  $ sudo usermod -a -G kvm wayne
+  $ kvm-ok
+  INFO: /dev/kvm exists
+  KVM acceleration can be used
+#+end_src
+
+* Using Bridged Network
+
+** Creating bridge
+
+#+begin_src bash
+  $ sudo apt install bridge-utils
+  $ sudo brctl addbr br0
+  $ sudo brctl addif br0 eno1
+#+end_src
+
+** Bringing up bridge with netplan (ubuntu 20.04)
+
+#+begin_src bash
+$ echo 'network:
+    ethernets:
+      eno1:
+        dhcp4: no
+    bridges:
+      br0:
+        dhcp4: yes
+        interfaces:
+          - eno1
+    version: 2' | sudo tee /etc/netplan/00-installer-config.yaml
+$ sudo netplan apply
+#+end_src
+
+** Applying bridged network to libvirt
+
+#+begin_src bash
+$ echo '<network>
+    <name>bridged-network</name>
+    <forward mode="bridge" />
+    <bridge name="br0" />
+  </network>' > /tmp/bridged-network.xml
+$ sudo virsh net-define /tmp/bridged-network.xml
+$ sudo virsh net-start bridged-network
+$ sudo virsh net-autostart bridged-network
+#+end_src
+
+* Fedora CoreOS
+
+** producing ignite file [[https://docs.fedoraproject.org/en-US/fedora-coreos/producing-ign/][ref]]
+
+** booting CoreOS VM [[https://docs.fedoraproject.org/en-US/fedora-coreos/getting-started/][ref]]
+
+** FAQs
+
+*** No permission to access ignite file [[https://unix.stackexchange.com/questions/578086/virt-install-error-cant-load-ignition-file][ref]]
+    This is an issue of AppArmor. The fix is add path of ignite files to
+    apparmor configure file.
+#+begin_src sh
+$ echo '#include <tunables/global>
+  profile LIBVIRT_TEMPLATE flags=(attach_disconnected) {
+    #include <abstractions/libvirt-qemu>
+    /var/lib/libvirt/images/**.ign rk,
+  }' | sudo tee /etc/apparmor.d/libvirt/TEMPLATE.qemu
+#+end_src
+
+** Using rpm-ostree behind proxy
+
+#+begin_src bash
+$ sudo mkdir -p /etc/systemd/system/rpm-ostreed.service.d
+$ echo '[Service]
+  Environment="http_proxy=http://<my-proxy>"' \
+   | sudo tee /etc/systemd/system/rpm-ostreed.service.d/http-proxy.conf
+
+$ systemctl daemon-reload
+$ systemctl restart rpm-ostreed.service
+#+end_src
+
+* K8S cluster
+
+** install k8s tools in guest CoreOS
+
+#+begin_src bash
+$ echo '[kubernetes]
+  name=Kubernetes
+  baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+  enabled=1
+  gpgcheck=1
+  repo_gpgcheck=1
+  gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg' \
+ | sudo tee /etc/yum.repos.d/kubernetes.repo
+$ sudo rpm-ostree install kubadmin kubelet kubectl
+$ sudo systemctl reboot
+#+end_src
+
+** bootstrap cluster
