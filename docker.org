@@ -72,6 +72,13 @@ To setup proxy in docker containers, edit =~/.docker/config.json=
   tar xvf tmp.tar
 #+end_src
 
+** List docker images by name
+#+begin_src sh
+  docker images "k8s.*"
+  # or use filter
+  docker images --filter reference='k8s.*'
+#+end_src
+
 ** Remove all containers
 #+begin_src sh
   docker rm -f $(docker ps -a -q)
@@ -81,14 +88,17 @@ To setup proxy in docker containers, edit =~/.docker/config.json=
 #+begin_src sh
   docker rmi -f $(docker images -q)
 #+end_src
+
 ** Delete docker images with no tags
 #+begin_src sh
   docker rmi $(docker images --filter dangling=true -q)
 #+end_src
+
 ** Delete volumes
 #+begin_src sh
   docker volume rm $(docker volume ls -qf dangling=true)
 #+end_src
+
 ** Check IP addr of containers
 #+begin_src sh
   docker inspect -f '{{ .NetworkSettings.IPAddress }}' mqtt-broker
