@@ -9,12 +9,12 @@
 ** qemu
 ** libvirt
 
-** Setup
+** Setup host system
 #+begin_src bash
-  $ sudo apt install qemu-kvm qemu-system-x86
-  $ sudo apt install libvirt-clients libvirt-daemon virtinst
-  $ sudo usermod -a -G kvm wayne
-  $ kvm-ok
+sudo apt install qemu-kvm qemu-system-x86
+sudo apt install libvirt-clients libvirt-daemon virtinst
+sudo usermod -a -G kvm <username>
+kvm-ok
   INFO: /dev/kvm exists
   KVM acceleration can be used
 #+end_src
@@ -24,15 +24,15 @@
 ** Creating bridge
 
 #+begin_src bash
-  $ sudo apt install bridge-utils
-  $ sudo brctl addbr br0
-  $ sudo brctl addif br0 eno1
+sudo apt install bridge-utils
+sudo brctl addbr br0
+sudo brctl addif br0 eno1
 #+end_src
 
 ** Bringing up bridge with netplan (ubuntu 20.04)
 
 #+begin_src bash
-$ echo 'network:
+echo 'network:
     ethernets:
       eno1:
         dhcp4: no
@@ -42,59 +42,118 @@ $ echo 'network:
         interfaces:
           - eno1
     version: 2' | sudo tee /etc/netplan/00-installer-config.yaml
-$ sudo netplan apply
+sudo netplan apply
 #+end_src
 
 ** Applying bridged network to libvirt
 
 #+begin_src bash
-$ echo '<network>
+echo '<network>
     <name>bridged-network</name>
     <forward mode="bridge" />
     <bridge name="br0" />
   </network>' > /tmp/bridged-network.xml
-$ sudo virsh net-define /tmp/bridged-network.xml
-$ sudo virsh net-start bridged-network
-$ sudo virsh net-autostart bridged-network
+sudo virsh net-define /tmp/bridged-network.xml
+sudo virsh net-start bridged-network
+sudo virsh net-autostart bridged-network
 #+end_src
 
-* Fedora CoreOS
+* Bootstrap k8s cluster
 
-** producing ignite file [[https://docs.fedoraproject.org/en-US/fedora-coreos/producing-ign/][ref]]
-
-** booting CoreOS VM [[https://docs.fedoraproject.org/en-US/fedora-coreos/getting-started/][ref]]
-
-** FAQs
-
-*** No permission to access ignite file [[https://unix.stackexchange.com/questions/578086/virt-install-error-cant-load-ignition-file][ref]]
-    This is an issue of AppArmor. The fix is add path of ignite files to
-    apparmor configure file.
-#+begin_src sh
-$ echo '#include <tunables/global>
-  profile LIBVIRT_TEMPLATE flags=(attach_disconnected) {
-    #include <abstractions/libvirt-qemu>
-    /var/lib/libvirt/images/**.ign rk,
-  }' | sudo tee /etc/apparmor.d/libvirt/TEMPLATE.qemu
+** producing ignite file
+   Example yaml file with proxy and k8s repo setting. Check out [[https://docs.fedoraproject.org/en-US/fedora-coreos/producing-ign/][ref]] for details.
+#+begin_src yaml
+  variant: fcos
+  version: 1.4.0
+  passwd:
+    users:
+      - name: core
+        groups:
+          - docker
+          - wheel
+          - sudo
+        password_hash: ...
+        ssh_authorized_keys:
+          - ssh-rsa AAAAB...
+  storage:
+    directories:
+      - path: /etc/systemd/system/rpm-ostreed.service.d
+        overwrite: true
+      - path: /etc/systemd/system/docker.service.d
+        overwrite: true
+    files:
+      - path: /etc/sysctl.d/20-silence-audit.conf
+        contents:
+          inline: |
+            kernel.printk=4
+      - path: /etc/systemd/system/rpm-ostreed.service.d/http-proxy.conf
+        contents:
+          inline: |
+            [Service]
+            Environment="http_proxy=<proxy>"
+      - path: /etc/systemd/system/docker.service.d/http-proxy.conf
+        contents:
+          inline: |
+            [Service]
+            Environment="http_proxy=<proxy>"
+      - path: /etc/systemd/system/docker.service.d/https-proxy.conf
+        contents:
+          inline: |
+            [Service]
+            Environment="https_proxy=<proxy>"
+      - path: /etc/yum.repos.d/kubernetes.repo
+        contents:
+          inline: |
+            [kubernetes]
+            name=Kubernetes
+            baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+            enabled=1
+            gpgcheck=1
+            gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+      - path: /etc/hostname
+        mode: 420
+        contents:
+          inline: fcos
 #+end_src
 
-** Using rpm-ostree behind proxy
-
+  To produce ignite file, I prefer to run butane tool in a container.
 #+begin_src bash
-$ sudo mkdir -p /etc/systemd/system/rpm-ostreed.service.d
-$ echo '[Service]
-  Environment="http_proxy=http://<my-proxy>"' \
-   | sudo tee /etc/systemd/system/rpm-ostreed.service.d/http-proxy.conf
-
-$ systemctl daemon-reload
-$ systemctl restart rpm-ostreed.service
+docker run -it --rm --volume $(pwd):/data --workdir /data \
+  quay.io/coreos/butane:release --pretty --strict conf.yaml -o conf.ign
 #+end_src
 
-* K8S cluster
+** Download Fedora CoreOS image
 
-** install k8s tools in guest CoreOS
+** Start a VM as k8s master
+   The guest system has 2 cores, 2048MB RAM and 10GB disk. For more details, see [[https://docs.fedoraproject.org/en-US/fedora-coreos/getting-started/][ref]].
 
+   To make sure each VM has it's own unique hostname, a ignite file (with
+   different hostname) is needed. There might be a better way to achieve this.
 #+begin_src bash
-$ echo '[kubernetes]
+virt-install --connect="qemu:///system" --name="fcos-master-01" --vcpus=2 \
+             --memory=2048 --disk="size=10,backing_store=${IMG}" \
+             --os-variant="fedora-unknown" --import --graphcs=none \
+             --noautoconsole --network network=bridged-network \
+             --qemu-commandline="-fw_cfg name=opt/com.coreos/config,file=${IGN}"
+#+end_src
+
+You can use =virsh= tool to check the VM just created.
+#+begin_src bash
+$ virsh list
+ Id   Name             State
+--------------------------------
+ 21   fcos-master-01   running
+#+end_src
+
+Since option =noautoconsole= was added to force the VM created in background,
+You will need to attach to it's console manually.
+#+begin_src bash
+virsh console fcos-master-01
+#+end_src
+
+** Setup k8s repo (can be done in ignite file)
+#+begin_src bash
+[core@fcos-master-01 ~]$ echo '[kubernetes]
   name=Kubernetes
   baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
   enabled=1
@@ -102,8 +161,49 @@ $ echo '[kubernetes]
   repo_gpgcheck=1
   gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg' \
  | sudo tee /etc/yum.repos.d/kubernetes.repo
-$ sudo rpm-ostree install kubadmin kubelet kubectl
-$ sudo systemctl reboot
 #+end_src
 
-** bootstrap cluster
+** Install k8s tools.
+#+begin_src bash
+[core@fcos-master-01 ~]$ sudo rpm-ostree install kubadmin kubelet kubectl
+[core@fcos-master-01 ~]$ sudo systemctl reboot
+#+end_src
+
+  Enable needed services.
+#+begin_src bash
+[core@fcos-master-01 ~]$ sudo systemctl enable docker
+[core@fcos-master-01 ~]$ sudo systemctl enable kubelet
+#+end_src
+
+** Configure k8s master
+#+begin_src bash
+[core@fcos-master-01 ~]$ sudo kubeadm init --control-plane-endpoint <ip-of-master01>
+#+end_src
+
+** Join worker notes
+
+* FAQs
+
+** No permission to access ignite file
+    This is an issue of AppArmor ([[https://unix.stackexchange.com/questions/578086/virt-install-error-cant-load-ignition-file][ref]]). The fix is add path of ignite files to
+    apparmor configure file.
+#+begin_src sh
+echo '#include <tunables/global>
+profile LIBVIRT_TEMPLATE flags=(attach_disconnected) {
+  #include <abstractions/libvirt-qemu>
+  /var/lib/libvirt/images/**.ign rk,
+}' | sudo tee /etc/apparmor.d/libvirt/TEMPLATE.qemu
+#+end_src
+
+** Using rpm-ostree behind proxy
+
+#+begin_src bash
+[core@fcos ~]$ sudo mkdir -p /etc/systemd/system/rpm-ostreed.service.d
+[core@fcos ~]$ echo '[Service]
+Environment="http_proxy=http://<my-proxy>"' | \
+sudo tee /etc/systemd/system/rpm-ostreed.service.d/http-proxy.conf
+[core@fcos ~]$ systemctl daemon-reload
+[core@fcos ~]$ systemctl restart rpm-ostreed.service
+#+end_src
+
+** Using docker behind proxy
