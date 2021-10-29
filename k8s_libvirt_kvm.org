@@ -13,7 +13,7 @@
 #+begin_src bash
 sudo apt install qemu-kvm qemu-system-x86
 sudo apt install libvirt-clients libvirt-daemon virtinst
-sudo usermod -a -G kvm <username>
+sudo usermod -a -G kvm $(id -u)
 kvm-ok
   INFO: /dev/kvm exists
   KVM acceleration can be used
@@ -173,6 +173,12 @@ virsh console fcos-master-01
 #+begin_src bash
 [core@fcos-master-01 ~]$ sudo systemctl enable docker
 [core@fcos-master-01 ~]$ sudo systemctl enable kubelet
+#+end_src
+
+  Disable SELinux if necessary.
+#+begin_src bash
+sudo setenforce 0
+sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 #+end_src
 
 ** Configure k8s master
