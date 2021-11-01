@@ -182,11 +182,43 @@ sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 #+end_src
 
 ** Configure k8s master
+   The default =flex-volum-plugin-dir= on CoreOS is read-only, so we need to use a different folder, otherwise the =kube-controller-manager= pod won't be running.
 #+begin_src bash
-[core@fcos-master-01 ~]$ sudo kubeadm init --control-plane-endpoint <ip-of-master01>
+[core@fcos-master-01 ~]$ cat <<EOF > kubeadm-custom.yml
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+kubernetesVersion: v1.17.0
+controllerManager:
+  extraArgs:
+    flex-volume-plugin-dir: "/etc/kubernetes/kubelet-plugins/volume/exec"
+networking:
+  podSubnet: 10.244.0.0/16
+EOF
+[core@fcos-master-01 ~]$ sudo kubeadm init --config kubeadm-custom.yml
+#+end_src
+
+** Install Pod network add-on
+
+#+begin_src bash
+[core@fcos-master-01 ~]$ curl -OL https://docs.projectcalico.org/manifests/calico.yaml
+[core@fcos-master-01 ~]$ sed -i s'!/usr/libexec/kubernetes!/etc/kubernetes!' calico.yaml
+# login to docker to pull calico images
+[core@fcos-master-01 ~]$ sudo docker login
+[core@fcos-master-01 ~]$ kubectl apply -f calico.yaml
+
+# check if pods are running
+[core@fcos-master-01 ~]$ kubectl get pods --all-namespaces
+
+# check if nodes are ready
+[core@fcos-master-01 ~]$ kubectl get nodes
 #+end_src
 
 ** Join worker notes
+#+begin_src bash
+[core@fcos-worker-01 ~]$ sudo kubeadm join <master>:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash>
+# check nodes again
+[core@fcos-master-01 ~]$ kubectl get node
+#+end_src
 
 * FAQs
 
