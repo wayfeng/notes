@@ -1,4 +1,4 @@
-#+TITLE: Bootstrap k8s cluster on KVM/libvirt
+#+TITLE: Bootstrapping k8s cluster on KVM/libvirt
 #+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
 #+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
 #+INDEX: k8s kvm libvirt
@@ -53,9 +53,9 @@ echo '<network>
     <forward mode="bridge" />
     <bridge name="br0" />
   </network>' > /tmp/bridged-network.xml
-sudo virsh net-define /tmp/bridged-network.xml
-sudo virsh net-start bridged-network
-sudo virsh net-autostart bridged-network
+virsh net-define /tmp/bridged-network.xml
+virsh net-start bridged-network
+virsh net-autostart bridged-network
 #+end_src
 
 * Bootstrap k8s cluster
@@ -116,7 +116,7 @@ sudo virsh net-autostart bridged-network
           inline: fcos
 #+end_src
 
-  To produce ignite file, I prefer to run butane tool in a container.
+To produce ignite file, I prefer to run butane tool in a container.
 #+begin_src bash
 docker run -it --rm --volume $(pwd):/data --workdir /data \
   quay.io/coreos/butane:release --pretty --strict conf.yaml -o conf.ign
@@ -137,12 +137,12 @@ virt-install --connect="qemu:///system" --name="fcos-master-01" --vcpus=2 \
              --qemu-commandline="-fw_cfg name=opt/com.coreos/config,file=${IGN}"
 #+end_src
 
-You can use =virsh= tool to check the VM just created.
+   You can use =virsh= tool to check the VM just created.
 #+begin_src bash
-$ virsh list
+virsh list
  Id   Name             State
 --------------------------------
- 21   fcos-master-01   running
+  1   fcos-master-01   running
 #+end_src
 
 Since option =noautoconsole= was added to force the VM created in background,
@@ -177,8 +177,8 @@ virsh console fcos-master-01
 
   Disable SELinux if necessary.
 #+begin_src bash
-sudo setenforce 0
-sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+[core@fcos-master-01 ~]$ sudo setenforce 0
+[core@fcos-master-01 ~]$ sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 #+end_src
 
 ** Configure k8s master
@@ -220,11 +220,103 @@ EOF
 [core@fcos-master-01 ~]$ kubectl get node
 #+end_src
 
+** Create pods
+
+Docker Hub has limitation for unregistered user, make sure that your k8s
+cluster knows how to login to Docker Hub with *secret*.
+
+First get login info.
+#+begin_src bash
+[core@fcos ~]$ docker login
+[core@fcos ~]$ cat ~/.docker/config.json
+#+end_src
+
+It looks like this.
+#+begin_src json
+{
+    "auths": {
+        "https://index.docker.io/v1/": {
+            "auth": "c3R...zE2"
+        }
+    }
+}
+#+end_src
+
+Then create *secret* with =kubectl=.
+#+begin_src bash
+[core@fcos ~]$ kubectl create secret generic regcred \
+    --from-file=.dockerconfigjson=/home/core/.docker/config.json \
+    --type=kubernetes.io/dockerconfigjson
+#+end_src
+
+Check the *secret* you just created.
+#+begin_src bash
+[core@fcos ~]$ kubectl get secret regcred --output=yaml
+#+end_src
+
+It looks like this.
+#+begin_src yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  ...
+  name: regcred
+  ...
+data:
+  .dockerconfigjson: ...
+type: kubernetes.io/dockerconfigjson
+#+end_src
+
+To check =.dockerconfigjson= contents.
+#+begin_src bash
+[core@fcos ~]$ kubectl get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode
+#+end_src
+
+Now create yaml file that uses the secret to create deployment.
+#+begin_src bash
+[core@fcos ~]$ cat nginx.yml
+#+end_src
+
+#+begin_src yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:stable
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: regcred
+#+end_src
+
+Then create pods with it.
+#+begin_src bash
+[core@fcos ~]$ kubectl apply -f nginx.yml
+#+end_src
+
+#+begin_src bash
+[core@fcos ~]$ kubectl expose deployment nginx-deployment --port=80 --type=NodePort
+#+end_src
+
 * FAQs
 
 ** No permission to access ignite file
-    This is an issue of AppArmor ([[https://unix.stackexchange.com/questions/578086/virt-install-error-cant-load-ignition-file][ref]]). The fix is add path of ignite files to
-    apparmor configure file.
+   This is an issue of AppArmor ([[https://unix.stackexchange.com/questions/578086/virt-install-error-cant-load-ignition-file][ref]]). The fix is add path of ignite files to
+   apparmor configure file.
 #+begin_src sh
 echo '#include <tunables/global>
 profile LIBVIRT_TEMPLATE flags=(attach_disconnected) {
@@ -245,3 +337,12 @@ sudo tee /etc/systemd/system/rpm-ostreed.service.d/http-proxy.conf
 #+end_src
 
 ** Using docker behind proxy
+
+#+begin_src bash
+[core@fcos ~]$ echo '[Service]
+Environment="HTTP_PROXY=<proxy>"' | \
+sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
+[core@fcos ~]$ echo '[Service]
+Environment="HTTPS_PROXY=<proxy>"' | \
+sudo tee /etc/systemd/system/docker.service.d/https-proxy.conf
+#+end_src
