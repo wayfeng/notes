@@ -107,6 +107,16 @@ To setup proxy in docker containers, edit =~/.docker/config.json=
   docker inspect -f '{{ .NetworkSettings.IPAddress }}' $(docker ps -aq)
 #+end_src
 
+** Ping container by name
+   In order to let containers find each other by names instead of IP address,
+   all containers have to be in same docker network. Keep in mind that the default
+   network won't work.
+#+begin_src sh
+  docker network create testnet
+  docker run --name mysql --network testnet mysql:latest
+  docker run --network testnet busybox ping mysql -c 4
+#+end_src
+
 * Dockerfile Usages
 
 ** Heredoc
