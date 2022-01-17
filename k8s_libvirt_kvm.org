@@ -12,8 +12,9 @@
 ** Setup host system
 #+begin_src bash
 sudo apt install qemu-kvm qemu-system-x86
-sudo apt install libvirt-clients libvirt-daemon virtinst
-sudo usermod -a -G kvm $(id -u)
+sudo apt install libvirt-clients libvirt-daemon-system virtinst
+sudo usermod -aG kvm $(id -u)
+sudo usermod -aG libvirt $(id -u)
 kvm-ok
   INFO: /dev/kvm exists
   KVM acceleration can be used
@@ -29,7 +30,16 @@ sudo brctl addbr br0
 sudo brctl addif br0 eno1
 #+end_src
 
-** Bringing up bridge with netplan (ubuntu 20.04)
+** Bringing up bridge
+
+#+begin_src bash
+cat <<EOF | sudo tee /etc/network/interfaces.d/br0
+iface br0 inet dhcp
+    bridge_ports eno1
+EOF
+#+end_src
+
+** Bringing up bridge with netplan
 
 #+begin_src bash
 echo 'network:
@@ -45,7 +55,7 @@ echo 'network:
 sudo netplan apply
 #+end_src
 
-** Applying bridged network to libvirt
+** Applying bridged network to libvirt (optional)
 
 #+begin_src bash
 echo '<network>
