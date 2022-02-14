@@ -5,7 +5,7 @@
 Install necessary tools for the demo.
 ```bash
 sudo apt install qemu-kvm qemu-system-x86 libvirt-clients \
-                   libvirt-daemon-system virtinst cloud-utils -y
+                 libvirt-daemon-system virtinst cloud-utils whois -y
 ```
 Then grant access right of KVM and libvirt to current user.
 ```bash
@@ -152,13 +152,13 @@ users:
 apt:
   primary:
     - arches: [default]
-      uri: http://us.archive.ubuntu.com/ubuntu/
-  http_proxy: http://child-prc.intel.com:913/
-  https_proxy: http://child-prc.intel.com:913/
+      uri: http://mirrors.aliyun.com/ubuntu/
 
 packages:
   - vim
   - git
+  - docker.io
+  - docker-compose
 
 package_update: true
 package_upgrade: true
@@ -186,12 +186,11 @@ virt-install \
     --vcpus="${VCPUS}" \
     --memory="${RAM_MB}" \
     --os-variant="ubuntu20.04" \
-    --disk $HOME/eii/disk.qcow2,device=disk,bus=virtio \
-    --disk $HOME/eii/user-data.img,format=raw \
+    --disk $PWD/disk.qcow2,device=disk,bus=virtio \
+    --disk $PWD/user-data.img,format=raw \
     --virt-type kvm \
     --graphics none \
-    --import \
-    --network network=bridged-network
+    --import
 EOF
 chmod +x install-eii-vm.sh
 ```
