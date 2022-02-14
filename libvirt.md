@@ -136,6 +136,7 @@ cat user-data
 #cloud-config
 hostname: vm-eii
 manage_etc_hosts: true
+timezone: Asia/Chongqing
 users:
   - default
   - name: eii
