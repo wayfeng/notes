@@ -208,6 +208,8 @@ $ virsh list
  1    eii    running
 ```
 
+### Connect to the VM
+
 There are two ways to connect to the VM: using `virsh console` command or `ssh`.
 
 - With `virsh console`
@@ -237,4 +239,12 @@ $ arp -an | grep $(virsh dumpxml eii | grep "mac address" | awk -F\' '{ print $2
 Otherwise use virsh command:
 ```bash
 virsh net-dhcp-leases default
+```
+
+### Change VM settings
+
+Read the manual for more details.
+```bash
+virsh setmem <new-memory-size>
+virsh setvcpu <new-cores>
 ```
