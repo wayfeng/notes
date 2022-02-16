@@ -245,6 +245,6 @@ virsh net-dhcp-leases default
 
 Read the manual for more details.
 ```bash
-virsh setmem <new-memory-size>
-virsh setvcpu <new-cores>
+virsh setmem eii <new-memory-size>
+virsh setvcpu eii <new-cores>
 ```
