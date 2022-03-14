@@ -7,13 +7,13 @@
   See [[https://docs.docker.com/install/linux/docker-ce/ubuntu/][details]] about installing Docker CE.
 ** Using Docker as non-root user
 #+begin_src sh
-  sudo usermod -aG docker <your-user>
+  sudo usermod -aG docker $(id -u)
 #+end_src
 
 ** Docker Compose
 #+begin_src sh
-  curl -L https://github.com/docker/compose/releases/download/<version>/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-  chmod a+x /usr/local/bin/docker-compose
+  sudo curl -L https://github.com/docker/compose/releases/download/<version>/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+  sudo chmod a+x /usr/local/bin/docker-compose
 #+end_src
 
 * Docker Proxy Setting
@@ -134,6 +134,10 @@ To setup proxy in docker containers, edit =~/.docker/config.json=
   hello line #2\n\
   finish' > /tmp/tmp.txt
 #+end_src
+
+* Docker Compose
+** Environment Variables
+   To use environment variables in docker compose file, put variables in =.env= file in the same folder of docker compose file. Check [[defination][details]].
 
 * Docker China Mirrors
 
