@@ -13,8 +13,8 @@
 #+begin_src bash
 sudo apt install qemu-kvm qemu-system-x86
 sudo apt install libvirt-clients libvirt-daemon-system virtinst
-sudo usermod -aG kvm $(id -u)
-sudo usermod -aG libvirt $(id -u)
+sudo usermod -aG kvm $USER
+sudo usermod -aG libvirt $USER
 kvm-ok
   INFO: /dev/kvm exists
   KVM acceleration can be used

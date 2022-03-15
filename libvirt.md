@@ -9,8 +9,8 @@ sudo apt install qemu-kvm qemu-system-x86 libvirt-clients \
 ```
 Then grant access right of KVM and libvirt to current user.
 ```bash
-sudo usermod -aG kvm $(id -u)
-sudo usermod -aG libvirt $(id -u)
+sudo usermod -aG kvm $USER
+sudo usermod -aG libvirt $USER
 ```
 
 Check if everything is OK.
