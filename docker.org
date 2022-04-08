@@ -22,11 +22,17 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io
   sudo usermod -aG docker $USER
 #+end_src
 
-** Docker Compose
-#+begin_src sh
-  sudo curl -L https://github.com/docker/compose/releases/download/<version>/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-  sudo chmod a+x /usr/local/bin/docker-compose
-#+end_src
+* Docker Compose
+** Install Compose V1
+ #+begin_src sh
+   sudo curl -L https://github.com/docker/compose/releases/download/<version>/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+   sudo chmod a+x /usr/local/bin/docker-compose
+ #+end_src
+
+** Install Compose V2
+
+** Environment Variables
+   To use environment variables in docker compose file, put variables in =.env= file in the same folder of docker compose file. Check [[defination][details]].
 
 * Docker Proxy Setting
   [[https://stackoverflow.com/questions/26550360/docker-ubuntu-behind-proxy][ref]]
@@ -146,10 +152,6 @@ To setup proxy in docker containers, edit =~/.docker/config.json=
   hello line #2\n\
   finish' > /tmp/tmp.txt
 #+end_src
-
-* Docker Compose
-** Environment Variables
-   To use environment variables in docker compose file, put variables in =.env= file in the same folder of docker compose file. Check [[defination][details]].
 
 * Docker China Mirrors
 
