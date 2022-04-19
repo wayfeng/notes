@@ -103,6 +103,10 @@ git tag -l
 #+begin_src sh
 git checkout tags/<tagname>
 #+end_src
+** Revert just added file
+#+begin_src sh
+  git reset <file>
+#+end_src
 ** Roll back commitment
 
    When you have done some bad commit on a branch like this:

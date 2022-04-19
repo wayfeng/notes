@@ -135,6 +135,25 @@ To setup proxy in docker containers, edit =~/.docker/config.json=
   docker run --network testnet busybox ping mysql -c 4
 #+end_src
 
+** Enable experimental features
+
+   The experimental features of docker engine are disabled by default.
+#+begin_src sh
+$ docker build --squash .
+"--squash" is only supported on a Docker daemon with experimental features enabled
+#+end_src
+
+   Configure docker daemon to enable experimental features.
+#+begin_src sh
+  $ cat <<EOF | sudo tee /etc/docker/daemon.json
+  {
+          "experimental": true
+  }
+  EOF
+  $ sudo systemctl daemon-reload
+  $ sudo systemctl restart docker.service
+#+end_src
+
 * Dockerfile Usages
 
 ** Heredoc
