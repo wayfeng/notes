@@ -1,12 +1,11 @@
-#+SETUPFILE: ./setup/article.org
 #+TITLE:     Get Object Size in Java
-#+DATE:      <2015-04-13 Mon>
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
 
 * Using Java Instrument
   Create object size fetcher with =java.lang.instrument= [fn:1]
-#+BEGIN_SRC java
+  #+BEGIN_SRC java
   // File: ObjectSizeFetcher.java
-
   import java.lang.instrument.Instrumentation;
 
   public class ObjectSizeFetcher {
@@ -21,19 +20,19 @@
     private static Instrumentation inst_;
   }
 
-#+END_SRC
+  #+END_SRC
 
   then compile it
-: javac ObjectSizeFetcher.java
+  : javac ObjectSizeFetcher.java
 
   Create manifest.mf file
-: Premain-Class: ObjectSizeFetcher
+  : Premain-Class: ObjectSizeFetcher
 
   Create jar file
-: jar cmf manifest.mf objsize.jar ObjectSizeFetcher.class
+  : jar cmf manifest.mf objsize.jar ObjectSizeFetcher.class
 
   Now try if it works
-#+BEGIN_SRC java
+  #+BEGIN_SRC java
   // File: SampleData.java
 
   class TreeNode { //object size = 16
@@ -52,7 +51,7 @@
   }
 
   public class SampleData {
-    
+
     public static void main(String[] args) {
       TreeNode node = new TreeNode();
       long n = ObjectSizeFetcher.getObjectSize(node);
@@ -64,18 +63,17 @@
     }
   }
 
-#+END_SRC
+  #+END_SRC
 
   Compile and run it with objsize.jar
-: javac SampleData.java
-: java -javaagent:objsize.jar SampleData
+  : javac SampleData.java
+  : java -javaagent:objsize.jar SampleData
 
 * Calculate by HEAP Size [fn:2]
   Tried this with OpenJDK 8, seems this method is *out-of-date*.
 
-#+BEGIN_SRC java
+  #+BEGIN_SRC java
   // File: CountHeap.java
-
   public class CountHeap
   {
     public static void main(String[] args) {
@@ -114,7 +112,7 @@
         _runGC();
       }
     }
-    
+
     private static void _runGC() {
       runtime_.gc();
       // long usedMem1 = usedMemory(), usedMem2 = Long.MAX_VALUE;
@@ -127,7 +125,7 @@
       //   usedMem1 = usedMemory();
       // }
     }
-    
+
     private static long usedMemory() {
       return runtime_.totalMemory() -
           runtime_.freeMemory();
@@ -136,7 +134,7 @@
     private static final Runtime runtime_ = Runtime.getRuntime();
   }
 
-#+END_SRC
+  #+END_SRC
 
 [fn:1] Official document of Java [[http://docs.oracle.com/javase/7/docs/api/java/lang/instrument/package-summary.html][instrument]].
 [fn:2] [[http://www.javaworld.com/article/2077496/testing-debugging/java-tip-130--do-you-know-your-data-size-.html][Java Tips 130]]

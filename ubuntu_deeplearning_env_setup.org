@@ -130,12 +130,12 @@
 #+end_src
 
 * Install MxNet
-  To install official release, check [[mxnet.apache.org]].
+  To install official release, check [[https://mxnet.apache.org][here]].
 #+begin_src sh
   pip install mxnet-cu100mkl # for both CUDA 10.0 and MKLDNN
 #+end_src
 
-  To install branch with NumPy integrated, check [[numpy.mxnet.io]].
+  To install branch with NumPy integrated, check [[https://numpy.mxnet.io][here]].
 #+begin_src sh
   pip install https://apache-mxnet.s3-accelerate.amazonaws.com/dist/python/numpy/latest/mxnet_cu100mkl-1.5.0-py2.py3-none-manylinux1_x86_64.whl
 #+end_src

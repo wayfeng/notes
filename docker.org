@@ -32,7 +32,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io
 ** Install Compose V2
 
 ** Environment Variables
-   To use environment variables in docker compose file, put variables in =.env= file in the same folder of docker compose file. Check [[defination][details]].
+   To use environment variables in docker compose file, put variables in =.env= file in the same folder of docker compose file.
 
 * Docker Proxy Setting
   [[https://stackoverflow.com/questions/26550360/docker-ubuntu-behind-proxy][ref]]
