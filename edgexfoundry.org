@@ -1,13 +1,12 @@
 #+TITLE:     EdgeX Foundry
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/article.css" />
-#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
-#+OPTIONS:   tex:verbatim
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
 
 * Pre-requisite
 
 ** Install ZeroMQ on Ubuntu 16.04
 
-#+begin_src sh
+#+BEGIN_SRC sh
   wget https://github.com/zeromq/libzmq/releases/download/v4.3.2/zeromq-4.3.2.tar.gz
 
   tar zxvf zeromq-4.3.2.tar.gz
@@ -22,7 +21,7 @@
   sudo make install
 
   sudo ldconfig
-#+end_src
+#+END_SRC
 
 
 * Installation

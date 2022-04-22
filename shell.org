@@ -1,104 +1,104 @@
 #+TITLE:     Shell Tricks
-#+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
-#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
-#+options:   ^:nil
-#+tags:      awk(a) bash(b) diff(d) find(f) grep(g) sed(s) ssh(h) sort(t) others(o) xargs(x)
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+OPTIONS:   ^:nil
+#+TAGS:      awk(a) bash(b) curl(c) diff(d) find(f) grep(g) rsync(r) sed(s) ssh(h) sort(t) others(o)
 
 * one-liners
 ** convert decimal to hexadecimal                                    :others:
-#+begin_src sh
+#+BEGIN_SRC sh
   echo "obase=16; 1234" | bc
   # or convert file of integers
   (echo "obase=16" ; cat file_with_integers.txt) | bc
   # or with printf
   printf "%x\n" 1234
-#+end_src
+#+END_SRC
 ** compare folders                                                     :diff:
-#+begin_src sh
+#+BEGIN_SRC sh
   diff --brief --exclude='.git' -r <dir1> <dir2>
-#+end_src
+#+END_SRC
 ** find files in current directory, without subdirectories             :find:
-#+begin_src sh
+#+BEGIN_SRC sh
 find . -maxdepth 1
-#+end_src
+#+END_SRC
 
 ** find not matching files                                             :find:
-#+begin_src sh
+#+BEGIN_SRC sh
 find . -not -name '*.tar.gz'
-#+end_src
+#+END_SRC
 or simply
-#+begin_src sh
+#+BEGIN_SRC sh
 find . ! -name '*.tar.gz'
-#+end_src
+#+END_SRC
 
-** find C/C++ files that not in folder =tests=                         :find:
-#+begin_src sh
+** find C/C++ files that not in folder =tests=                           :find:
+#+BEGIN_SRC sh
 find -iregex '.*\.[ch][pp]*' -and -not -path '*/tests/*'
-#+end_src
+#+END_SRC
 
-** find C/C++ files without =tests= and =tools=                        :find:
+** find C/C++ files without =tests= and =tools=                            :find:
 
-#+begin_src sh
+#+BEGIN_SRC sh
 find -iregex '.*\.[ch][pp]*' -and -not -path '*/tests/*' -and -not -path '*/tools/*'
-#+end_src
+#+END_SRC
 
    For example, I'm working on Android Runtime (ART), and I want a tag file that doesn't include
    architecture dependent code such as ARM, MIPS, and X86_64, also no test code, so I can do this:
 
-#+begin_src sh
+#+BEGIN_SRC sh
 find -iregex '.*\.[ch]+' -and -not -path '*test*' -and -not -path '*mips*' -and -not -path '*arm*' -and -not -path '*x86_64*' | xargs ctags -e
-#+end_src
+#+END_SRC
 
    It's boring to do an exhausted list of unwanted folders, but it works well so far.
 
-** change mode of files with whitespaces in filename             :find:xargs:
-#+begin_src sh
+** change mode of files with whitespaces in filename                   :find:
+#+BEGIN_SRC sh
   find ~/Videos/ -type f | xargs -d '\n' chmod 644
-#+end_src
+#+END_SRC
 
 ** grep only c++ files in a folder                                     :grep:
 
-#+begin_src sh
+#+BEGIN_SRC sh
 grep -rnI --include=\*.{h,cpp} 'pattern'
-#+end_src
+#+END_SRC
 
 ** grep only java files in a folder and it's sub folders               :grep:
-#+begin_src sh
+#+BEGIN_SRC sh
  find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.java" -print0 | xargs -0 grep --color -n "$@"
-#+end_src
+#+END_SRC
 ** cast grep result for vim                                        :grep:sed:
    Vim takes parameter =+n= after file name to go to line number =n= directly
    after open the file. To use result of grep with line number:
-#+begin_src sh
+#+BEGIN_SRC sh
   grep -rn <pattern> <folder> | sed 's/:\([0-9]*\):.*/ \+\1/'
-#+end_src
+#+END_SRC
    The =-r= option of sed[fn:sed] enables extended regular expressions, you can do it
    this way to be more precise with using =+= to indicate that the line number
    exists.
-#+begin_src sh
+#+BEGIN_SRC sh
   grep -rn <pattern> <folder> | sed -r 's/:([0-9]+):.*/ \+\1/'
-#+end_src
+#+END_SRC
 
 ** average a column                                                     :awk:
-#+begin_src sh
+#+BEGIN_SRC sh
 cat file | awk '{ sum+=$N } END { print "average = ", sum/NR }'
-#+end_src
+#+END_SRC
 
 ** Print all columns but the very first one                             :awk:
-#+begin_src sh
+#+BEGIN_SRC sh
 cat file | awk '{ $1=""; print $0 }'
-#+end_src
+#+END_SRC
 ** Print a column in a row                                              :awk:
-#+begin_src sh
+#+BEGIN_SRC sh
 cat file | awk 'BEGIN { ORS = " " } { print $1 }'
-#+end_src
+#+END_SRC
 ** Replace top dir of a list of files                                   :awk:
-#+begin_src sh
+#+BEGIN_SRC sh
   cat file | awk -F '/' 'BEGIN {OFS="/"} {$1="$TOP"; print $0}'
-#+end_src
+#+END_SRC
 
 ** Match lines with hex number                                          :awk:
-#+begin_src python
+#+BEGIN_SRC python
   foo = {
       0x00 : ["vendor_id",             2, {} ],
       0x02 : ["device_id",             2, {} ],
@@ -120,76 +120,76 @@ cat file | awk 'BEGIN { ORS = " " } { print $1 }'
       0x1B : ["secondary_latency_timer",       1, {} ],
       ...
   }
-#+end_src
+#+END_SRC
    You can list all addessed with =awk=
-#+begin_src sh
+#+BEGIN_SRC sh
   awk ' /$1 ~ 0x[0-9a-fA-F]+/ { print $1, $4 } ' file
-#+end_src
+#+END_SRC
 ** Trim whitespaces within awk                                          :awk:
-#+begin_src sh
+#+BEGIN_SRC sh
   awk '{gsub(/ /, "", $2); print $2}' file.txt
-#+end_src
+#+END_SRC
 
 ** Remove duplicated lines from files (not perfect)                    :sort:
-#+begin_src sh
+#+BEGIN_SRC sh
 cat [files] | sort | uniq
-#+end_src
+#+END_SRC
 ** List 10 biggest files in current folder                             :sort:
-#+begin_src sh
+#+BEGIN_SRC sh
 du -s * | sort -rg | head
-#+end_src
+#+END_SRC
 ** List top 10 RAM user                                                :sort:
-#+begin_src sh
+#+BEGIN_SRC sh
 ps aux | sort -rgk +4 | head
-#+end_src
+#+END_SRC
 ** Check if string 'Finish: success' exists in log                      :sed:
-#+begin_src sh
+#+BEGIN_SRC sh
 tail -f /path/to/log | sed '/^Finish success$/q'
-#+end_src
+#+END_SRC
 ** Remove lines of multiple files with a pattern                        :sed:
-#+begin_src sh
+#+BEGIN_SRC sh
 sed -i '/pattern/d' files
-#+end_src
+#+END_SRC
 ** Remove trailing whitespaces and empty lines                          :sed:
-#+begin_src sh
+#+BEGIN_SRC sh
 sed -i -e 's/[ ^I]*$//' -e '/^$/ d' files
-#+end_src
+#+END_SRC
    This command takes care of _lines contain only whitespaces_ by removing
    whitespaces then empty line.
 ** Run command on remote machine                                        :ssh:
-#+begin_src sh
+#+BEGIN_SRC sh
   ssh user@host '<CMD>'
-#+end_src
+#+END_SRC
 ** Run script on remote machine without copy file                       :ssh:
-#+begin_src sh
+#+BEGIN_SRC sh
   ssh user@host bash < /path/to/local/script
-#+end_src
+#+END_SRC
 ** deploy ssh identity to remote device                                 :ssh:
-#+begin_src sh
+#+BEGIN_SRC sh
   ssh-copy-id -i <idfile.pub> user@remote-machcine
-#+end_src
+#+END_SRC
    If the identity file is not the default one, you'll have to declare it in =~/.ssh/config=.
-#+begin_src sh
+#+BEGIN_SRC sh
   Host <nickname>
     HostName <domain name or ip address>
     User username
     IdentityFile ~/.ssh/you_file
-#+end_src
+#+END_SRC
 ** Create a detached SSH connection                                     :ssh:
-#+begin_src sh
+#+BEGIN_SRC sh
   screen -d -m -S svr1 -t user@server ssh user@server
-#+end_src
+#+END_SRC
    Where '-d -m' start a new session and detach from it. '-S' set the session name, and '-t' set the title of terminal.
    then you can attach to it later with
-#+begin_src sh
+#+BEGIN_SRC sh
 screen -r svr1
-#+end_src
+#+END_SRC
 
    To detach it again, input 'C-a C-d'.
 
 ** Indent one-line XML file                                          :others:
    First, create indent style sheet as =indent.xsl=.
-#+begin_src xml
+#+BEGIN_SRC xml
   <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
    <xsl:output method="xml" indent="yes"/>
    <xsl:strip-space elements="*"/>
@@ -197,25 +197,40 @@ screen -r svr1
     <xsl:copy-of select="."/>
    </xsl:template>
   </xsl:stylesheet>
-#+end_src
+#+END_SRC
    Then use xml transformat tool.
-#+begin_src sh
+#+BEGIN_SRC sh
   $ xsltproc indent.xsl origin.xml > indented.xml
-#+end_src
+#+END_SRC
+** Post JSON data                                                      :curl:
+#+BEGIN_SRC bash
+$ curl -X POST -H 'Content-Type: application/json' -d '{"key":"value"}' http://domain/upload
+#+END_SRC
+
+** Post files                                                          :curl:
+#+BEGIN_SRC bash
+curl -X POST -F 'image=@/path/to/pictures/pic.jpg' http://docmain/upload
+#+END_SRC
+
+** Backup folder with filter                                          :rsync:
+#+BEGIN_SRC bash
+rsync -aP --exclude-from=blacklist.txt $HOME /path/to/home_backup
+rsync -aP --include-from=whitelist.txt $HOME /path/to/home_backup
+#+END_SRC
 
 * bash
 ** To run a script with current environment
-#+begin_src sh
+#+BEGIN_SRC sh
 . <script>
-#+end_src
+#+END_SRC
 ** Check if folder exists
-#+begin_src sh
+#+BEGIN_SRC sh
   if [ -d /path/to/folder ]; then
       # code here
   fi
-#+end_src
+#+END_SRC
 ** Check string length
-#+begin_src sh
+#+BEGIN_SRC sh
   # true if STRING length is 0
   if [ -z STRING ]; then
       # code here
@@ -225,7 +240,7 @@ screen -r svr1
   if [ -n STRING ]; then
       # code here
   fi
-#+end_src
+#+END_SRC
 ** Expressions used with if
 | Primary      | Meaning                                               |
 |--------------+-------------------------------------------------------|
@@ -241,15 +256,15 @@ screen -r svr1
    see more [[http://www.tldp.org/LDP/Bash-Beginners-Guide/html/sect_07_01.html][here]].
 
 ** Check whether interactive
-#+begin_src sh
+#+BEGIN_SRC sh
 if [ -z $PS1 ]; then
     # non-interactive
 else
     # interactive
 fi
-#+end_src
+#+END_SRC
 Or check '$-' flag
-#+begin_src sh
+#+BEGIN_SRC sh
 case $- in
     *i*)
         # interactive
@@ -258,119 +273,119 @@ case $- in
         # non-interactive
     ;;
 esac
-#+end_src
+#+END_SRC
 ** Auto complete
    Check =/etc/bash_completion= and =/usr/share/bash-completion=
 ** Start editor (specified by $EDITOR)
-#+begin_src sh
+#+BEGIN_SRC sh
 ctrl-x e
-#+end_src
+#+END_SRC
 ** Run previous cmd as root
-#+begin_src sh
+#+BEGIN_SRC sh
 sudo !!
-#+end_src
+#+END_SRC
 ** Run a command N times																							 :bash:
-#+begin_src sh
+#+BEGIN_SRC sh
   for i in {1..$N}; do <CMD>; done
-#+end_src
+#+END_SRC
    or if you need to start from 0
-#+begin_src sh
+#+BEGIN_SRC sh
   i=0
   while [ $i -lt $N ]
   do
       # command
       let i=i+1
   done
-#+end_src
+#+END_SRC
 
 ** Last argument of previous cmd
-#+begin_src sh
+#+BEGIN_SRC sh
   touch very-loooooooooooooooooooooooong-file-name
   vi !$ # alt-. does the same
-#+end_src
+#+END_SRC
 ** Also last argument of previous cmd
-#+begin_src sh
+#+BEGIN_SRC sh
 alt+.
-#+end_src
+#+END_SRC
 ** /n/th argument of previous cmd
-#+begin_src sh
+#+BEGIN_SRC sh
 alt+n alt+.
-#+end_src
+#+END_SRC
 ** Create an empty file without using /touch/
-#+begin_src sh
+#+BEGIN_SRC sh
 >file.txt
-#+end_src
+#+END_SRC
 ** Replace string of previous cmd
-#+begin_src sh
+#+BEGIN_SRC sh
 ^old^new
-#+end_src
+#+END_SRC
 	 this is equivalent to
-#+begin_src sh
+#+BEGIN_SRC sh
 !!:s/old/new/
-#+end_src
+#+END_SRC
 	 to replace all instances of 'old' in previous command
-#+begin_src sh
+#+BEGIN_SRC sh
 !!:gs/old/new/
-#+end_src
+#+END_SRC
 	 more details [[http://www.gnu.org/software/bash/manual/bashref.html#History-Interaction][here]].
 ** Handle file paths
    List directory find in last argument of previous cmd.
-#+begin_src sh
+#+BEGIN_SRC sh
   ls $(dirname [alt+.])
-#+end_src
+#+END_SRC
    Get base name of last argument of previous cmd.
-#+begin_src sh
+#+BEGIN_SRC sh
   echo $(basename [alt+.])
-#+end_src
+#+END_SRC
 ** Result of last cmd
-#+begin_src sh
+#+BEGIN_SRC sh
 echo $?
-#+end_src
+#+END_SRC
 
 ** =type= command
    To check definition of a command
-#+begin_src sh
+#+BEGIN_SRC sh
 type <command>
-#+end_src
+#+END_SRC
 ** Exit ssh without stopping a long-run-cmd
-#+begin_src sh
+#+BEGIN_SRC sh
 nohup <long-run-command> &
-#+end_src
+#+END_SRC
 
    Or you didn't see the command should be over-live the terminal.
-#+begin_src sh
+#+BEGIN_SRC sh
 <long-run-command>
 # press ctrl-z
 bg && disown
-#+end_src
+#+END_SRC
 * String manipulation
 ** Get length of string
-#+begin_src sh
+#+BEGIN_SRC sh
   string="hello world!"
   ${#string} # 12
-#+end_src
+#+END_SRC
 ** Get substring by position
-#+begin_src sh
+#+BEGIN_SRC sh
   ${string:position}
   # or
   ${string:position:length}
-#+end_src
+#+END_SRC
 ** Match shortest substring
-#+begin_src sh
+#+BEGIN_SRC sh
   # start from front
   ${string#substring}
   # start from back
   ${string%substring}
-#+end_src
+#+END_SRC
 ** Match longest substring
-#+begin_src sh
+#+BEGIN_SRC sh
   # from front
   ${string##substring}
   # from back
   ${string%%substring}
-#+end_src
+#+END_SRC
 ** Replace substring
-#+begin_src sh
+#+BEGIN_SRC sh
   # replace first match
   ${string/pattern/replace}
   # replace all matches
@@ -379,9 +394,9 @@ bg && disown
   ${string/#pattern/replace}
   # replace only ending
   ${string/%pattern/replace}
-#+end_src
+#+END_SRC
 ** Delete substring
-#+begin_src sh
+#+BEGIN_SRC sh
   # remove prefix, match shortest
   ${string#pattern}
   # remove suffix, match shortest
@@ -390,24 +405,24 @@ bg && disown
   ${string##substring}
   # remove suffix, match longest
   ${string%%substring}
-#+end_src
+#+END_SRC
 ** Convert string to uppercase
-#+begin_src sh
+#+BEGIN_SRC sh
   $(str^^)
   # or
   echo $str | tr [a-z] [A-Z]
   # or
   echo $str | awk '{print toupper($0)}'
-#+end_src
+#+END_SRC
 * debugging
 ** Run shell script with *-x* option
 
-#+begin_src sh
+#+BEGIN_SRC sh
 bash -x script-name
-#+end_src
+#+END_SRC
 
 ** Use *set* builtin command
-#+begin_src sh
+#+BEGIN_SRC sh
 # noexec
 set -n
 # verbose
@@ -420,12 +435,12 @@ do
 done
 # turn OFF debug mode
 set +x
-#+end_src
+#+END_SRC
 
 ** Replace the standard shebang[fn:shebang] line
-#+begin_src sh
+#+BEGIN_SRC sh
 #!/bin/bash -xv
-#+end_src
+#+END_SRC
 
 [fn:shebang] Explain of shebang on [[http://en.wikipedia.org/wiki/Shebang_(Unix)][Wikipedia]].
 [fn:sed] There is a splendid tutorial of sed can be found [[http://www.grymoire.com/Unix/sed.html][here]].

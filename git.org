@@ -1,6 +1,6 @@
 #+TITLE:     Daily GIT
-#+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
-#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
 #+INDEX: git
 
 * Git Concept
@@ -27,166 +27,166 @@
 
 * Git Basic
 ** Create a new repository locally
-#+begin_src sh
+#+BEGIN_SRC sh
 git init
-#+end_src
+#+END_SRC
 ** Get repository from a remote server
-#+begin_src sh
+#+BEGIN_SRC sh
 git clone <URL>
-#+end_src
+#+END_SRC
 
 ** Current status
-#+begin_src sh
+#+BEGIN_SRC sh
 git status
-#+end_src
+#+END_SRC
 ** Diff changes
-#+begin_src sh
+#+BEGIN_SRC sh
 git diff <FILE>
-#+end_src
+#+END_SRC
 ** Diff with another branch
-#+begin_src sh
+#+BEGIN_SRC sh
 git diff <another-branch>
-#+end_src
+#+END_SRC
 ** Staging changes
-#+begin_src sh
+#+BEGIN_SRC sh
 git add <FILE>
-#+end_src
+#+END_SRC
 ** Diff staged changes
-#+begin_src sh
+#+BEGIN_SRC sh
 git diff --cached
-#+end_src
+#+END_SRC
 ** Check whitespaces errors
-#+begin_src sh
+#+BEGIN_SRC sh
 git diff --check
-#+end_src
+#+END_SRC
 
 ** Commit changes
-#+begin_src sh
+#+BEGIN_SRC sh
 git commit
-#+end_src
+#+END_SRC
 ** Commit/Checkout/Stage Interactively
-#+begin_src sh
+#+BEGIN_SRC sh
 git commit -p <file>
 git checkout -p <file>
 git add -p <file>
-#+end_src
+#+END_SRC
 ** Branches
    Show branch(es)
-#+begin_src sh
+#+BEGIN_SRC sh
 git branch
-#+end_src
+#+END_SRC
 
    Check out remote branch
-#+begin_src sh
+#+BEGIN_SRC sh
 git checkout -b <local-branch> origin/<remote-branch>
-#+end_src
+#+END_SRC
 
    It is commom enough to use same local branch name, so git provide shorthand like this
-#+begin_src sh
+#+BEGIN_SRC sh
 git checkout --track origin/<remote-branch>
-#+end_src
+#+END_SRC
 
    push local branch to remote server:
-#+begin_src sh
+#+BEGIN_SRC sh
 git push remote <branch>
-#+end_src
+#+END_SRC
 
    to delete a remote branch
-#+begin_src sh
+#+BEGIN_SRC sh
 git push origin --delete <branch>
-#+end_src
+#+END_SRC
 ** List Tags
-#+begin_src sh
+#+BEGIN_SRC sh
 git tag -l
-#+end_src
+#+END_SRC
 ** Checkout a specific tag
-#+begin_src sh
+#+BEGIN_SRC sh
 git checkout tags/<tagname>
-#+end_src
+#+END_SRC
 ** Revert just added file
-#+begin_src sh
+#+BEGIN_SRC sh
   git reset <file>
-#+end_src
+#+END_SRC
 ** Roll back commitment
 
    When you have done some bad commit on a branch like this:
-#+begin_src sh
+#+BEGIN_SRC sh
 A - B - C - D - E - F
-#+end_src
+#+END_SRC
    and you want to roll back to /C/ and discard /D/, /E/ and /F/.
 
    First, you shold will need the hash id of /C/, the first several number is sufficient (db7c2b7 for example).
 
    Then execute the reset command of git:
-#+begin_src sh
+#+BEGIN_SRC sh
 git reset --soft db7c2b7
-#+end_src
+#+END_SRC
    or you want to discard the changes you have made forever (before you do it, think about it twice):
-#+begin_src sh
+#+BEGIN_SRC sh
 git reset --hard db7c2b7
-#+end_src
+#+END_SRC
    After reset the branch, the commitment /D/, /E/, and /F/ are removed. Next time you commit some thing, it will directly behind /C/.
 
    If you have a remote repository and you want to change it also, push the resetting like this:
-#+begin_src sh
+#+BEGIN_SRC sh
 git push --force origin
-#+end_src
+#+END_SRC
 
    To get a list of HEADs with =reflog=
-#+begin_src sh
+#+BEGIN_SRC sh
 git reflog
-#+end_src
+#+END_SRC
 
 ** Git behind proxy
    - install socat
-#+begin_src sh
+#+BEGIN_SRC sh
    $ sudo apt-get install socat
-#+end_src
+#+END_SRC
    - create proxy-cmd.sh containing (replace your_proxy and your_proxy_port)
-#+begin_src sh
+#+BEGIN_SRC sh
    #!/bin/bash
    socat STDIO PROXY:your_proxy:$1:$2,proxyport=your_proxy_port
-#+end_src
+#+END_SRC
    - change perm and export
-#+begin_src sh
+#+BEGIN_SRC sh
    $ chmod +x proxy-cmd.sh
    $ export GIT_PROXY_COMMAND=proxy-cmd.sh
-#+end_src
+#+END_SRC
 
 ** Ignore SSL certification
-#+begin_src sh
+#+BEGIN_SRC sh
 env GIT_SSL_NO_VERIFY=true git clone https://github...
-#+end_src
+#+END_SRC
 
 ** Automatic template for commit messages
    You can set a global template for all git projects.
-#+begin_src sh
+#+BEGIN_SRC sh
   git config --global commit.template ~/.git-commit-message.global
-#+end_src
+#+END_SRC
    Or you can set a local template for a specific project.
-#+begin_src sh
+#+BEGIN_SRC sh
   cd <path/to/project>; git config --local commit.template <path/to/template>
-#+end_src
+#+END_SRC
 
 ** Setup user name and email
-#+begin_src sh
+#+BEGIN_SRC sh
   git config --global user.name <user name>
   git config --global user.email <user@domain.com>
-#+end_src
+#+END_SRC
 
 * Git Advance
 ** Make a bare repository
-#+begin_src sh
+#+BEGIN_SRC sh
 git clone --bare /path/to/original/code
-#+end_src
+#+END_SRC
 ** Stash changes
-#+begin_src sh
+#+BEGIN_SRC sh
 git stash
-#+end_src
+#+END_SRC
    Diff against stash
-#+begin_src sh
+#+BEGIN_SRC sh
 git stash show -p stash@{0}
-#+end_src
+#+END_SRC
    See more details [[http://git-scm.com/book/en/Git-Tools-Stashing][here]].
 
 ** Use rebase to merge branches
@@ -194,50 +194,50 @@ git stash show -p stash@{0}
 
 ** Histories
    filter logs by author
-#+begin_src sh
+#+BEGIN_SRC sh
 git log --author='@google.com'
-#+end_src
+#+END_SRC
    formating out put with ISO date, author Email and subject.
-#+begin_src sh
+#+BEGIN_SRC sh
 git log --format=format:"%aD %aE %s"
-#+end_src
+#+END_SRC
    history as a graph
-#+begin_src sh
+#+BEGIN_SRC sh
 git log --graph --branches --oneline --decorate
-#+end_src
+#+END_SRC
 ** History of every line of a file
-#+begin_src sh
+#+BEGIN_SRC sh
 git blame <filename>
-#+end_src
+#+END_SRC
    or
-#+begin_src sh
+#+BEGIN_SRC sh
 git annotate <filename>
-#+end_src
+#+END_SRC
 ** Find changed files between commits
-#+begin_src sh
+#+BEGIN_SRC sh
 git diff --name-only <ci1> <ci2>
-#+end_src
+#+END_SRC
 
 ** Replace URL
 
-#+begin_src
+#+BEGIN_SRC
 [url "http://fastmirror.com/path/proj.git"]
         insteadOf = https://github.com/path/proj.git
-#+end_src
+#+END_SRC
 * Git Configuration
 
 * Gitosis (Obsoleted)
 ** Installation and Configuration
    Install gitosis
-#+begin_src sh
+#+BEGIN_SRC sh
    $ sudo apt-get install gitosis
-#+end_src
+#+END_SRC
    You might want to put repositories in /home/git/ rather than /srv/gitosis/.
-#+begin_src sh
+#+BEGIN_SRC sh
    $ sudo usermod -d /home/git/ gitosis
-#+end_src
+#+END_SRC
    Or add a new git management user
-#+begin_src sh
+#+BEGIN_SRC sh
    $ sudo adduser \
    --system \
    --shell /bin/sh \
@@ -246,54 +246,54 @@ git diff --name-only <ci1> <ci2>
    --disabled-password \
    --home /home/git \
    git
-#+end_src
+#+END_SRC
    You will need a public ssh key to continue.
-#+begin_src sh
+#+BEGIN_SRC sh
    $ ssh-keygen -t rsa
-#+end_src
+#+END_SRC
    Then initialize the gitosis repository with the rss key.
-#+begin_src sh
+#+BEGIN_SRC sh
    $ sudo -H -u gitosis gitosis-init < /tmp/id_dsa.pub
-#+end_src
+#+END_SRC
    You'll see messages like this.
-#+begin_src sh
+#+BEGIN_SRC sh
    Initialized empty Git repository in /home/git/repositories/gitosis-admin.git/
    Reinitialized existing Git repository in /home/git/repositories/gitosis-admin.git/
-#+end_src
+#+END_SRC
    Now you can get the admin files
-#+begin_src sh
+#+BEGIN_SRC sh
    $ git clone git@HOST:gitosis-admin.git
-#+end_src
+#+END_SRC
 ** Add Users
    Gather users' SSH public key and add them to gitosis-admin.
-#+begin_src sh
+#+BEGIN_SRC sh
    $ cd gitosis-admin
    $ cp ~/alice.pub ~/bob.pub keydir/
    $ git add keydir/
-#+end_src
+#+END_SRC
    Change gitosis.conf
-#+begin_src sh
+#+BEGIN_SRC sh
 [group myteam]
 - member = fw  
 + member = fw alice bob  
 writable = project
-#+end_src
+#+END_SRC
    The push it to the git repository.
-#+begin_src sh
+#+BEGIN_SRC sh
    $ git commit -a -m 'Granted Alice and Bob commit rights to project'
    $ git push
-#+end_src
+#+END_SRC
 ** Add Repositories
    Change the gitosis.conf
-#+begin_src sh
+#+BEGIN_SRC sh
 [group mygroup] 
 members = member1 member2 member3
 writable = projectA projectB
-#+end_src
+#+END_SRC
    The push it to the gitosis-admin.
 
    Add a project
-#+begin_src sh
+#+BEGIN_SRC sh
 mdkir projectA
 cd projectA
 git init
@@ -301,51 +301,51 @@ git add .
 git remote add origin git@HOST:projectA.git
 do some work
 git push origin master:refs/heads/master
-#+end_src
+#+END_SRC
 ** Public Access
-#+begin_src sh
+#+BEGIN_SRC sh
   sudo -u git git-daemon --base-path=/home/git/repositories/ --export-all
-#+end_src
+#+END_SRC
 
 
 * Github
 ** config SSH client
    Generate ssh key pair, key pair will be found in ~/.ssh/ by default.
-#+begin_src sh
+#+BEGIN_SRC sh
   ssh-keygen -t dsa -C <email>
-#+end_src
+#+END_SRC
 
    Upload .ssh/id_dsa.pub to github.com. (check setting -> ssh key after login to github.com)
 
    If you're behind a proxy, install corkscrew first.
-#+begin_src sh
+#+BEGIN_SRC sh
   sudo dnf install corkscrew
-#+end_src
+#+END_SRC
 
    Then configure ssh by editing =.ssh/config=.
-#+begin_src sh
+#+BEGIN_SRC sh
   host github.com
     hostname ssh.github.com
     user git
     port 443
     ProxyCommand corkscrew proxy.domain.com port %h %p
     IdentityFile ~/.ssh/id_dsa
-#+end_src
+#+END_SRC
 
    Some proxy server may block port 22, so you have to use =ssh.github.com=
    as server address and =443= as port.
 
    For direct access without proxy, =.ssh/config= will be easier.
-#+begin_src sh
+#+BEGIN_SRC sh
   host github.com
     user git
     IdentityFile ~/.ssh/id_dsa
-#+end_src
+#+END_SRC
 
    Now you can try if your setup is working
-#+begin_src sh
+#+BEGIN_SRC sh
 ssh -T github.com
-#+end_src
+#+END_SRC
 
    If it works, you will see message like this
 : Hi Name! You've successfully authenticated, but GitHub does not provide shell access.

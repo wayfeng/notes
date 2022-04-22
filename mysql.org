@@ -1,0 +1,25 @@
+#+TITLE:     MySQL
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+
+* Install
+
+** With Docker
+*** Install in Docker
+
+#+BEGIN_SRC bash
+$ docker pull mysql:latest # or with specific version mysql:8.0
+#+END_SRC
+
+*** Run MySQL server
+#+BEGIN_SRC bash
+$ docker run --name testdb -e MYSQL_ROOT_PASSWORD=123456 --network db mysql:latest
+#+END_SRC
+
+*** Connect with MySQL client
+#+BEGIN_SRC bash
+$ docker run -it --name dbclient --network db mysql:latest mysql -h testdb -u root -p
+Enter password:
+
+mysql> 
+#+END_SRC

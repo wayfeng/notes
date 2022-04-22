@@ -1,6 +1,6 @@
 #+TITLE: Bootstrapping k8s cluster on KVM/libvirt
-#+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
-#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
 #+INDEX: k8s kvm libvirt
 
 * KVM & qemu & libvirt
@@ -10,7 +10,7 @@
 ** libvirt
 
 ** Setup host system
-#+begin_src bash
+#+BEGIN_SRC bash
 sudo apt install qemu-kvm qemu-system-x86
 sudo apt install libvirt-clients libvirt-daemon-system virtinst
 sudo usermod -aG kvm $USER
@@ -18,30 +18,30 @@ sudo usermod -aG libvirt $USER
 kvm-ok
   INFO: /dev/kvm exists
   KVM acceleration can be used
-#+end_src
+#+END_SRC
 
 * Using Bridged Network
 
 ** Creating bridge
 
-#+begin_src bash
+#+BEGIN_SRC bash
 sudo apt install bridge-utils
 sudo brctl addbr br0
 sudo brctl addif br0 eno1
-#+end_src
+#+END_SRC
 
 ** Bringing up bridge
 
-#+begin_src bash
+#+BEGIN_SRC bash
 cat <<EOF | sudo tee /etc/network/interfaces.d/br0
 iface br0 inet dhcp
     bridge_ports eno1
 EOF
-#+end_src
+#+END_SRC
 
 ** Bringing up bridge with netplan
 
-#+begin_src bash
+#+BEGIN_SRC bash
 echo 'network:
     ethernets:
       eno1:
@@ -53,11 +53,11 @@ echo 'network:
           - eno1
     version: 2' | sudo tee /etc/netplan/00-installer-config.yaml
 sudo netplan apply
-#+end_src
+#+END_SRC
 
 ** Applying bridged network to libvirt (optional)
 
-#+begin_src bash
+#+BEGIN_SRC bash
 echo '<network>
     <name>bridged-network</name>
     <forward mode="bridge" />
@@ -66,13 +66,13 @@ echo '<network>
 virsh net-define /tmp/bridged-network.xml
 virsh net-start bridged-network
 virsh net-autostart bridged-network
-#+end_src
+#+END_SRC
 
 * Bootstrap k8s cluster
 
 ** producing ignite file
    Example yaml file with proxy and k8s repo setting. Check out [[https://docs.fedoraproject.org/en-US/fedora-coreos/producing-ign/][ref]] for details.
-#+begin_src yaml
+#+BEGIN_SRC yaml
   variant: fcos
   version: 1.4.0
   passwd:
@@ -124,13 +124,13 @@ virsh net-autostart bridged-network
         mode: 420
         contents:
           inline: fcos
-#+end_src
+#+END_SRC
 
 To produce ignite file, I prefer to run butane tool in a container.
-#+begin_src bash
+#+BEGIN_SRC bash
 docker run -it --rm --volume $(pwd):/data --workdir /data \
   quay.io/coreos/butane:release --pretty --strict conf.yaml -o conf.ign
-#+end_src
+#+END_SRC
 
 ** Download Fedora CoreOS image
 
@@ -139,30 +139,30 @@ docker run -it --rm --volume $(pwd):/data --workdir /data \
 
    To make sure each VM has it's own unique hostname, a ignite file (with
    different hostname) is needed. There might be a better way to achieve this.
-#+begin_src bash
+#+BEGIN_SRC bash
 virt-install --connect="qemu:///system" --name="fcos-master-01" --vcpus=2 \
              --memory=2048 --disk="size=10,backing_store=${IMG}" \
              --os-variant="fedora-unknown" --import --graphcs=none \
              --noautoconsole --network network=bridged-network \
              --qemu-commandline="-fw_cfg name=opt/com.coreos/config,file=${IGN}"
-#+end_src
+#+END_SRC
 
    You can use =virsh= tool to check the VM just created.
-#+begin_src bash
+#+BEGIN_SRC bash
 virsh list
  Id   Name             State
 --------------------------------
   1   fcos-master-01   running
-#+end_src
+#+END_SRC
 
 Since option =noautoconsole= was added to force the VM created in background,
 You will need to attach to it's console manually.
-#+begin_src bash
+#+BEGIN_SRC bash
 virsh console fcos-master-01
-#+end_src
+#+END_SRC
 
 ** Setup k8s repo (can be done in ignite file)
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos-master-01 ~]$ echo '[kubernetes]
   name=Kubernetes
   baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
@@ -171,29 +171,29 @@ virsh console fcos-master-01
   repo_gpgcheck=1
   gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg' \
  | sudo tee /etc/yum.repos.d/kubernetes.repo
-#+end_src
+#+END_SRC
 
 ** Install k8s tools.
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos-master-01 ~]$ sudo rpm-ostree install kubadmin kubelet kubectl
 [core@fcos-master-01 ~]$ sudo systemctl reboot
-#+end_src
+#+END_SRC
 
   Enable needed services.
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos-master-01 ~]$ sudo systemctl enable docker
 [core@fcos-master-01 ~]$ sudo systemctl enable kubelet
-#+end_src
+#+END_SRC
 
   Disable SELinux if necessary.
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos-master-01 ~]$ sudo setenforce 0
 [core@fcos-master-01 ~]$ sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
-#+end_src
+#+END_SRC
 
 ** Configure k8s master
    The default =flex-volum-plugin-dir= on CoreOS is read-only, so we need to use a different folder, otherwise the =kube-controller-manager= pod won't be running.
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos-master-01 ~]$ cat <<EOF > kubeadm-custom.yml
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
@@ -205,11 +205,11 @@ networking:
   podSubnet: 10.244.0.0/16
 EOF
 [core@fcos-master-01 ~]$ sudo kubeadm init --config kubeadm-custom.yml
-#+end_src
+#+END_SRC
 
 ** Install Pod network add-on
 
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos-master-01 ~]$ curl -OL https://docs.projectcalico.org/manifests/calico.yaml
 [core@fcos-master-01 ~]$ sed -i s'!/usr/libexec/kubernetes!/etc/kubernetes!' calico.yaml
 # login to docker to pull calico images
@@ -221,14 +221,14 @@ EOF
 
 # check if nodes are ready
 [core@fcos-master-01 ~]$ kubectl get nodes
-#+end_src
+#+END_SRC
 
 ** Join worker notes
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos-worker-01 ~]$ sudo kubeadm join <master>:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash>
 # check nodes again
 [core@fcos-master-01 ~]$ kubectl get node
-#+end_src
+#+END_SRC
 
 ** Create pods
 
@@ -236,13 +236,13 @@ Docker Hub has limitation for unregistered user, make sure that your k8s
 cluster knows how to login to Docker Hub with *secret*.
 
 First get login info.
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos ~]$ docker login
 [core@fcos ~]$ cat ~/.docker/config.json
-#+end_src
+#+END_SRC
 
 It looks like this.
-#+begin_src json
+#+BEGIN_SRC json
 {
     "auths": {
         "https://index.docker.io/v1/": {
@@ -250,22 +250,22 @@ It looks like this.
         }
     }
 }
-#+end_src
+#+END_SRC
 
 Then create *secret* with =kubectl=.
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos ~]$ kubectl create secret generic regcred \
     --from-file=.dockerconfigjson=/home/core/.docker/config.json \
     --type=kubernetes.io/dockerconfigjson
-#+end_src
+#+END_SRC
 
 Check the *secret* you just created.
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos ~]$ kubectl get secret regcred --output=yaml
-#+end_src
+#+END_SRC
 
 It looks like this.
-#+begin_src yaml
+#+BEGIN_SRC yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -275,19 +275,19 @@ metadata:
 data:
   .dockerconfigjson: ...
 type: kubernetes.io/dockerconfigjson
-#+end_src
+#+END_SRC
 
 To check =.dockerconfigjson= contents.
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos ~]$ kubectl get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode
-#+end_src
+#+END_SRC
 
 Now create yaml file that uses the secret to create deployment.
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos ~]$ cat nginx.yml
-#+end_src
+#+END_SRC
 
-#+begin_src yaml
+#+BEGIN_SRC yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -311,48 +311,48 @@ spec:
         - containerPort: 80
       imagePullSecrets:
       - name: regcred
-#+end_src
+#+END_SRC
 
 Then create pods with it.
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos ~]$ kubectl apply -f nginx.yml
-#+end_src
+#+END_SRC
 
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos ~]$ kubectl expose deployment nginx-deployment --port=80 --type=NodePort
-#+end_src
+#+END_SRC
 
 * FAQs
 
 ** No permission to access ignite file
    This is an issue of AppArmor ([[https://unix.stackexchange.com/questions/578086/virt-install-error-cant-load-ignition-file][ref]]). The fix is add path of ignite files to
    apparmor configure file.
-#+begin_src sh
+#+BEGIN_SRC sh
 echo '#include <tunables/global>
 profile LIBVIRT_TEMPLATE flags=(attach_disconnected) {
   #include <abstractions/libvirt-qemu>
   /var/lib/libvirt/images/**.ign rk,
 }' | sudo tee /etc/apparmor.d/libvirt/TEMPLATE.qemu
-#+end_src
+#+END_SRC
 
 ** Using rpm-ostree behind proxy
 
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos ~]$ sudo mkdir -p /etc/systemd/system/rpm-ostreed.service.d
 [core@fcos ~]$ echo '[Service]
 Environment="http_proxy=http://<my-proxy>"' | \
 sudo tee /etc/systemd/system/rpm-ostreed.service.d/http-proxy.conf
 [core@fcos ~]$ systemctl daemon-reload
 [core@fcos ~]$ systemctl restart rpm-ostreed.service
-#+end_src
+#+END_SRC
 
 ** Using docker behind proxy
 
-#+begin_src bash
+#+BEGIN_SRC bash
 [core@fcos ~]$ echo '[Service]
 Environment="HTTP_PROXY=<proxy>"' | \
 sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
 [core@fcos ~]$ echo '[Service]
 Environment="HTTPS_PROXY=<proxy>"' | \
 sudo tee /etc/systemd/system/docker.service.d/https-proxy.conf
-#+end_src
+#+END_SRC

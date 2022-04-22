@@ -1,7 +1,6 @@
 #+TITLE:     Emacs and Elisp
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/article.css" />
-#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
-#+OPTIONS:   tex:verbatim
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
 
 * Basic
 
@@ -141,14 +140,14 @@
 *** Sorting order
     Emacs sorting use /lexicographic/ by default for all but /sort-numeric-field/.
     Sort with reverse order
-#+begin_src sh
+#+BEGIN_SRC sh
 C-u 1 M-x sort-lines
-#+end_src
+#+END_SRC
 
     Sort lines by second word
-#+begin_src sh
+#+BEGIN_SRC sh
 C-u 2 M-x sort-lines
-#+end_src
+#+END_SRC
 
 *** Sorting by Lines, Paragraphs and Pages
     /sort-lines/, /sort-paragraph/, /sort-pages/.
@@ -170,56 +169,56 @@ C-u 2 M-x sort-lines
 * Programming
 
 ** Find a function definition in buffer
-#+begin_src sh
+#+BEGIN_SRC sh
 M-x imenu
-#+end_src
+#+END_SRC
 
 ** Occurs of a regexp in buffer
-#+begin_src sh
+#+BEGIN_SRC sh
 M-x occur <regexp>
-#+end_src
+#+END_SRC
 
 ** Chinese Input
    - Using ibus in emacs
-#+begin_src sh
+#+BEGIN_SRC sh
 sudo apt install ibus-el
-#+end_src
+#+END_SRC
    and run following command in emacs to start ibus mode.
-#+begin_src sh
+#+BEGIN_SRC sh
 M-x ibus-mode
-#+end_src
+#+END_SRC
 
 ** Google C/C++ coding style for emacs
    Download google-c-style.el
-#+begin_src sh
+#+BEGIN_SRC sh
 $ wget http://google-styleguide.googlecode.com/svn/trunk/google-c-style.el
-#+end_src
+#+END_SRC
 
    Setup emacs to use Google C/C++ style. In =~/.emacs=
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (require 'google-c-style)
   ; 'return-and-indent is necessary for emacs < 24.4
   ; it's default behavior since 24.4
   (add-hook 'c-mode-common-hook 'google-make-newline-indent)
   (add-hook 'c-mode-common-hook 'google-set-c-style)
-#+end_src
+#+END_SRC
 
 * Yasnippet
 ** Install
-#+begin_src sh
+#+BEGIN_SRC sh
 $ sudo apt-get install yasnippet
-#+end_src
+#+END_SRC
 ** templates
    templates of yasnippet is directory structrue in =/usr/share/emacs/site-lisp/yasnippet/snippets/=, I'll use this folder as =$TOP= in later examples.
 
    to add =while= for =c-mode= and =c++-mode=, edit $TOP/text-mode/cc-mode/while
-#+begin_src c
+#+BEGIN_SRC c
   #name : while (...) { ... }
   # --
   while (${1:condition}) {
       $0
   }
-#+end_src
+#+END_SRC
 
 * Advanced
 

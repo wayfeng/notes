@@ -1,6 +1,6 @@
 #+TITLE:     Ubuntu + CUDA + Tensorflow + PyTorch
-#+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
-#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
 
 #+INDEX: tensorflow, pytorch, cuda
 
@@ -9,23 +9,23 @@
 
 * Install Nvidia Device Driver
   Add PPA repository of Nvidia drivers.
-#+begin_src sh
+#+BEGIN_SRC sh
   sudo add-apt-repository ppa:graphics-drivers/ppa
-#+end_src
+#+END_SRC
 
   List Nvidia devices
-#+begin_src sh
+#+BEGIN_SRC sh
   lspci | grep VGA
-#+end_src
+#+END_SRC
 
 #+begin_example
   01:00.0 VGA compatible controller: NVIDIA Corporation Device 1f07 (rev a1)
 #+end_example
 
   List available drivers
-#+begin_src sh
+#+BEGIN_SRC sh
   sudo ubuntu-drivers devices
-#+end_src
+#+END_SRC
 #+begin_example
   == /sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0 ==
   modalias : pci:v000010DEd00001F07sv00001043sd00008681bc03sc00i00
@@ -38,27 +38,27 @@
 #+end_example
 
   Install recommended driver
-#+begin_src sh
+#+BEGIN_SRC sh
   sudo ubuntu-drivers install
-#+end_src
+#+END_SRC
 
   Check installation
-#+begin_src sh
+#+BEGIN_SRC sh
   nvidia-smi
-#+end_src
+#+END_SRC
 * Install CUDA/CUDNN toolkit
   Should be easy.
 
 * Setup Python Environment
 ** Setup VirtualEnv
-#+begin_src sh
+#+BEGIN_SRC sh
   sudo apt install virtualenv
   virtualenv -p /usr/bin/python3 .env
   . .env/bin/activate
-#+end_src
+#+END_SRC
 
 ** Managing Python packages with *pip*
-#+begin_src sh
+#+BEGIN_SRC sh
   # install package
   pip install <package_name>
 
@@ -73,90 +73,90 @@
 
   # install requirements
   pip install -r requirements.txt
-#+end_src
+#+END_SRC
 
 *** Using local *pip* mirrors
     Create file =~/.pip/pip.conf=
-#+begin_src
+#+BEGIN_SRC
   [global]
   #index-url = https://mirrors.ustc.edu.cn/pypi/web/simple
   trusted-host = mirrors.aliyun.com
   index-url = http://mirrors.aliyun.com/pypi/simple
   format = columns
-#+end_src
+#+END_SRC
 
 * Install TensorFlow
   Install the stable version with GPU supported.
-#+begin_src sh
+#+BEGIN_SRC sh
   pip install tensorflow-gpu
-#+end_src
+#+END_SRC
   Install specific version.
-#+begin_src sh
+#+BEGIN_SRC sh
   pip install tensorflow-gpu==1.14.0
-#+end_src
+#+END_SRC
 
   The "Conv2D CUDNN handle issue"[fn:1][fn:2]
-#+begin_src python
+#+BEGIN_SRC python
   # for tf 1.x
   config = tf.ConfigProto(allow_soft_placement=True)
-  config.gpu_options.allow_growth = True
+  config.gpu_OPTIONS.allow_growth = True
   sess = tf.Session(config=config)
 
   # for tf 2.0
   gpus = tf.config.experimental.list_physical_devices('GPU')
   for gpu in gpus:
       tf.config.experimental.set_memory_growth(gpu, True)
-#+end_src
+#+END_SRC
 
 ** Build TensorFlow from source code[fn:3]
    Download tensorflow source code
-#+begin_src sh
+#+BEGIN_SRC sh
   git clone git@github.com:tensorflow/tensorflow.git
   git checkout r1.9
-#+end_src
+#+END_SRC
 
    Install bazel
-#+begin_src sh
+#+BEGIN_SRC sh
   wget https://github.com/bazelbuild/bazel/releases/download/0.26.1/bazel-0.26.1-installer-linux-x86_64.sh
   chmod a+x *.sh
   ./bazel-0.26.1-installer-linux-x86_64.sh --prefix=~/.local
   # set PATH if not yet
   # export PATH=$PATH:~/.local/bin
-#+end_src
+#+END_SRC
 
 * Install PyTorch
-#+begin_src sh
+#+BEGIN_SRC sh
   pip install torch torchvision
-#+end_src
+#+END_SRC
 
 * Install MxNet
   To install official release, check [[https://mxnet.apache.org][here]].
-#+begin_src sh
+#+BEGIN_SRC sh
   pip install mxnet-cu100mkl # for both CUDA 10.0 and MKLDNN
-#+end_src
+#+END_SRC
 
   To install branch with NumPy integrated, check [[https://numpy.mxnet.io][here]].
-#+begin_src sh
+#+BEGIN_SRC sh
   pip install https://apache-mxnet.s3-accelerate.amazonaws.com/dist/python/numpy/latest/mxnet_cu100mkl-1.5.0-py2.py3-none-manylinux1_x86_64.whl
-#+end_src
+#+END_SRC
 
 * Miscs
 ** Install Matplotlib
-#+begin_src sh
+#+BEGIN_SRC sh
 sudo apt install python3-tk
 pip install matplotlib
-#+end_src
+#+END_SRC
 
 ** Jupyter Notebook
    Install jupyter notebook.
-#+begin_src sh
+#+BEGIN_SRC sh
   pip install jupyter
-#+end_src
+#+END_SRC
 
    Start jupyter notebook
-#+begin_src sh
+#+BEGIN_SRC sh
   jupyter notebook
-#+end_src
+#+END_SRC
 
 [fn:1] [[https://tensorflow.google.cn/beta/guide/using_gpu][TF Guide: Using GPU]]
 [fn:2] [[https://github.com/tensorflow/tensorflow/issues/6698][issue-6698]]

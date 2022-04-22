@@ -1,12 +1,11 @@
 #+TITLE:     Docker
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/article.css" />
-#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
-#+OPTIONS:   tex:verbatim
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
 
 * Install Docker CE for Ubuntu
   See [[https://docs.docker.com/install/linux/docker-ce/ubuntu/][details]] about installing Docker CE.
 ** Install using the repository
-#+begin_src sh
+#+BEGIN_SRC sh
 sudo apt update
 sudo apt install ca-certificates curl gnupg lsb-release
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -15,21 +14,29 @@ echo \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt update
 sudo apt-get install docker-ce docker-ce-cli containerd.io
-#+end_src
+#+END_SRC
 
 ** Using Docker as non-root user
-#+begin_src sh
+#+BEGIN_SRC sh
   sudo usermod -aG docker $USER
-#+end_src
+#+END_SRC
 
 * Docker Compose
-** Install Compose V1
- #+begin_src sh
-   sudo curl -L https://github.com/docker/compose/releases/download/<version>/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-   sudo chmod a+x /usr/local/bin/docker-compose
- #+end_src
 
-** Install Compose V2
+** Install V1
+#+BEGIN_SRC sh
+  sudo curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+  sudo chmod a+x /usr/local/bin/docker-compose
+#+END_SRC
+
+** Install V2
+#+BEGIN_SRC sh
+  mkdir -p $HOME/.docker/cli-plugins
+  curl -SL https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64 -o $HOME/.docker/cli-plugins/docker-compose
+  chmod +x $HOME/.docker/cli-plugins/docker-compose
+  # check version
+  docker compose version
+#+END_SRC
 
 ** Environment Variables
    To use environment variables in docker compose file, put variables in =.env= file in the same folder of docker compose file.
@@ -37,7 +44,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io
 * Docker Proxy Setting
   [[https://stackoverflow.com/questions/26550360/docker-ubuntu-behind-proxy][ref]]
 
-#+begin_src sh
+#+BEGIN_SRC sh
   $ cat /etc/systemd/system/docker.service.d/http-proxy.conf
   [Service]
   Environment="HTTP_PROXY=http://proxy-prc.intel.com:912/" "NO_PROXY=localhost, 127.0.0.1, intel.com"
@@ -47,10 +54,10 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io
 
   $ sudo systemctl daemon-reload
   $ sudo systemctl restart docker
-#+end_src
+#+END_SRC
 
 To setup proxy in docker containers, edit =~/.docker/config.json=
-#+begin_src js
+#+BEGIN_SRC js
   {
           "proxies": {
                   "default": {
@@ -60,91 +67,91 @@ To setup proxy in docker containers, edit =~/.docker/config.json=
                   }
           }
   }
-#+end_src
+#+END_SRC
 
 * Docker Usages
 
 ** Run with bash
-#+begin_src sh
+#+BEGIN_SRC sh
   docker run -it ubuntu:18.04
-#+end_src
+#+END_SRC
 
 ** Attach to a container
-#+begin_src sh
+#+BEGIN_SRC sh
   docker exec -it <image> /bin/bash
-#+end_src
+#+END_SRC
 
 ** Check history
-#+begin_src sh
+#+BEGIN_SRC sh
   docker image history --no-trunc <image_name> > image_history
-#+end_src
+#+END_SRC
 
 ** Check logs of container
-#+begin_src sh
+#+BEGIN_SRC sh
   docker logs <container>
-#+end_src
+#+END_SRC
 
 ** Save image
-#+begin_src sh
+#+BEGIN_SRC sh
   docker save <image_name> > tmp.tar
   tar xvf tmp.tar
-#+end_src
+#+END_SRC
 
 ** List docker images by name
-#+begin_src sh
+#+BEGIN_SRC sh
   docker images "k8s.*"
   # or use filter
   docker images --filter reference='k8s.*'
-#+end_src
+#+END_SRC
 
 ** Remove all containers
-#+begin_src sh
+#+BEGIN_SRC sh
   docker rm -f $(docker ps -a -q)
-#+end_src
+#+END_SRC
 
 ** Delete all docker images
-#+begin_src sh
+#+BEGIN_SRC sh
   docker rmi -f $(docker images -q)
-#+end_src
+#+END_SRC
 
 ** Delete docker images with no tags
-#+begin_src sh
+#+BEGIN_SRC sh
   docker rmi $(docker images --filter dangling=true -q)
-#+end_src
+#+END_SRC
 
 ** Delete volumes
-#+begin_src sh
+#+BEGIN_SRC sh
   docker volume rm $(docker volume ls -qf dangling=true)
-#+end_src
+#+END_SRC
 
 ** Check IP addr of containers
-#+begin_src sh
+#+BEGIN_SRC sh
   docker inspect -f '{{ .NetworkSettings.IPAddress }}' mqtt-broker
 
   # all containers
   docker inspect -f '{{ .NetworkSettings.IPAddress }}' $(docker ps -aq)
-#+end_src
+#+END_SRC
 
 ** Ping container by name
    In order to let containers find each other by names instead of IP address,
    all containers have to be in same docker network. Keep in mind that the default
    network won't work.
-#+begin_src sh
+#+BEGIN_SRC sh
   docker network create testnet
   docker run --name mysql --network testnet mysql:latest
   docker run --network testnet busybox ping mysql -c 4
-#+end_src
+#+END_SRC
 
 ** Enable experimental features
 
    The experimental features of docker engine are disabled by default.
-#+begin_src sh
+#+BEGIN_SRC sh
 $ docker build --squash .
 "--squash" is only supported on a Docker daemon with experimental features enabled
-#+end_src
+#+END_SRC
 
    Configure docker daemon to enable experimental features.
-#+begin_src sh
+#+BEGIN_SRC sh
   $ cat <<EOF | sudo tee /etc/docker/daemon.json
   {
           "experimental": true
@@ -152,38 +159,38 @@ $ docker build --squash .
   EOF
   $ sudo systemctl daemon-reload
   $ sudo systemctl restart docker.service
-#+end_src
+#+END_SRC
 
 * Dockerfile Usages
 
 ** Heredoc
    To create text file with multiple lines, in bash we can use here-document.
-#+begin_src sh
+#+BEGIN_SRC sh
   cat <<EOF > /tmp/tmp.txt
   hello line #1
   hello line #2
   finish
   EOF
-#+end_src
+#+END_SRC
    Use =printf= in Dockerfile to get the equivalent.
-#+begin_src sh
+#+BEGIN_SRC sh
   RUN printf 'hello line #1\n\
   hello line #2\n\
   finish' > /tmp/tmp.txt
-#+end_src
+#+END_SRC
 
 * Docker China Mirrors
 
   Add configure file: =/etc/docker/daemon.json=, then restart docker.
 
-#+begin_src json
+#+BEGIN_SRC json
 {
     "registry-mirrors": ["https://registry.docker-cn.com"]
 }
-#+end_src
+#+END_SRC
 
   Alpine China mirror
 
-#+begin_src sh
+#+BEGIN_SRC sh
   sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
-#+end_src
+#+END_SRC

@@ -1,0 +1,95 @@
+#+TITLE:     Time Series Analysis
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+OPTIONS:   tex:t
+
+* Basics
+
+** Time Series
+
+   Values measured repeatedly over time become time series.
+
+** Autocorrelation
+
+   Values of a time series may be correlated with previous values in the same series.
+
+** Coefficient
+
+   Given a pair of random variables $X, Y$,
+
+   \begin{equation}
+   \rho_{X,Y} = \frac{cov(X, Y)}{\sigma_X\sigma_Y}
+   \end{equation}
+
+   Since,
+
+   \begin{equation}
+   cov(X,Y) = \mathbb{E}[(X - \mu_X)(Y - \mu_Y)],
+   \end{equation}
+
+   $\rho$ can be written as
+
+   \begin{equation}
+   \rho_{X,Y} = \frac{\mathbb{E}[(X-\mu_X)(Y-\mu_Y)]}{\sigma_X\sigma_Y}
+   \end{equation}
+
+   where:
+
+   - $\sigma_X$ and $\sigma_Y$ are standard deviation of $X$ and $Y$
+   - $\mu_X$ and $\mu_Y$ are mean of $X$ and $Y$
+   - $\mathbb{E}$ is the expectation.
+
+** ACF (Auto Correlation Function) & PACF (Partial ACF)
+
+   The partial autocorrelation function gives the partial correlation of a
+   stationary time series with its own lagged values.
+
+   Given a time series $y_t$, the partial correlation of lag $k$, denoted
+   $\rho_k$, is autocorrelation between $y_t$ and $y_{t-k}$.
+
+\begin{equation}
+y_{t} = \rho_{0} + \rho_{1} y_{t-1} + \rho_{2} y_{t-2} + \dots + \rho_{k} y_{t-k} + \epsilon_{t}
+\end{equation}
+
+** Stationary
+
+*** requirements
+   - mean $\mu$ is constant
+   - standard deviation $\sigma$ is constant
+   - there's no *seasonality*
+
+*** tests
+   - visual
+   - local test V.S. global test
+   - augmented Dickey-Fuller test
+
+*** making a time-series stationary
+
+    For non-stationary time-series
+    \begin{equation}
+    y_t = \beta_0 + \beta_{t} t + \epsilon_t
+    \end{equation}
+
+    \begin{align}
+    z_t &= y_t - y_{t-k} \\
+        &= (\beta_{t} - \beta_{t-k}) t + (\epsilon_t - \epsilon_{t-k})
+    \end{align}
+
+*** Unit Root Test
+    For a time-series $y_t$,
+    \begin{align}
+    y_t &= \phi y_{t-1} + \epsilon_t \\
+        &= \phi^t y_0 + \sum_{k=0}^{t-1}{\phi^k \epsilon_{t-k}}
+    \end{align}
+    where,
+    \begin{align}
+    var(y_t) &= \sigma^2[\sum_{k=0}^{t-1}{\phi^{2k}}] \\
+    \mathbb{E}(y_t) &= \phi\mathbb{E}(y_{t-1}) = \cdots = \phi^t y_0
+    \end{align}
+    $y_t$ is stationary only when $|\phi| < 1$.
+
+* Advanced
+
+* Tools
+
+* Projects

@@ -1,7 +1,7 @@
 #+TITLE:     Java \lambda-Expression
-#+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
-#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
-#+options: ^:nil
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+OPTIONS: ^:nil
 
 Lambda-expression[fn:3] (\lambda-expression) is the most important single feature of JVM 8.
 
@@ -12,45 +12,45 @@ Lambda-expression[fn:3] (\lambda-expression) is the most important single featur
 ** Process Collections Internally
    Currently, items of collection are processed by client code (externally). To parallel
    processing will increase complexity of client code.
-#+begin_src java
+#+BEGIN_SRC java
   List<T> lst;
   for (T t : lst) {
     process(t);
   }
-#+end_src
+#+END_SRC
 
    To handle items of collection internally. We need anonymous inner class.
-#+begin_src java
+#+BEGIN_SRC java
   interface Consumer<T> { void accept(T t); }
   lst.forEach(new Consumer<T>() {
       public void accept(T t) {
         process(t);
       }
     });
-#+end_src
+#+END_SRC
 
    With \lambda, the same effect can be achieved more concisely.
-#+begin_src java
+#+BEGIN_SRC java
   lst.forEach(t -> process(t));
-#+end_src
+#+END_SRC
 
 ** Functional Interfaces
    Any interface that has one and only one explicitly declared abstract method.
    (It may have non-abstract default method).
 
-#+begin_src java
+#+BEGIN_SRC java
   public interface Runnable { void run(); }
   public interface Callable<V> { V call() throws Exception; }
   public interface ActionListener { void actionPerformed(ActionEvent e); }
   public interface Comparator<T> { int compare(T o1, T o2); boolean equals(Object obj); }
-#+end_src
+#+END_SRC
 ** Default Method
    Many interfaces have been changed to support \lambda-expression. Changing an
    interface requires that all classes implementing that interface to be changed,
    meaning implementation of method added to that interface has to be added to
    those classes too. This is how does keyword =default= come.
 
-#+begin_src java
+#+BEGIN_SRC java
   interface InterfaceA {
     void foo();
   }
@@ -60,33 +60,33 @@ Lambda-expression[fn:3] (\lambda-expression) is the most important single featur
       // implementation of m
     }
   }
-#+end_src
+#+END_SRC
 
    When a new method =bar()= is added to =InterfaceA=, implementation of =bar()=
    has to be added to =MyClass= too.
 
-#+begin_src java
+#+BEGIN_SRC java
   interface InterfaceA {
     void foo();
     int bar();
   }
-#+end_src
+#+END_SRC
 
    With =default= keyword, we can give method =bar()= a  default implementation.
    In this way we avoid changes of MyClass.
 
-#+begin_src java
+#+BEGIN_SRC java
   interface InterfaceA {
     void foo();
     default int bar() { return 42; }
   }
-#+end_src
+#+END_SRC
 
 ** Conflicts with Multiple Interfaces
    There will be a conflict if a class implements multiple interfaces which has
    default methods with same signature. Java compiler will report error on this
    conflict.
-#+begin_src java
+#+BEGIN_SRC java
   interface InterfaceA {
     default int bar() { return 42; }
   }
@@ -101,25 +101,25 @@ Lambda-expression[fn:3] (\lambda-expression) is the most important single featur
       System.out.println(c.bar());
     }
   }
-#+end_src
+#+END_SRC
 
    The way to solve this is to provide default implementation in =MyClass=.
    Since I prefer =bar()= of =InterfaceA=, we call it directly from =MyClass=.
-#+begin_src java
+#+BEGIN_SRC java
   class MyClass implements InterfaceB, InterfaceA {
     default int bar() {
       return InterfaceA.super.bar();
     }
     ...
   }
-#+end_src
+#+END_SRC
 
 
 * JVM Lambda-Expression[fn:1][fn:2]
   For more info, see [[http://openjdk.java.net/projects/lambda/][project \lambda]] and [[http://lambdafaq.org][\lambda FAQ]].
 ** Syntax
 
-#+begin_src java
+#+BEGIN_SRC java
   ( parameters ) -> expression
   // or
   ( parameters ) -> { statements; }
@@ -130,33 +130,33 @@ Lambda-expression[fn:3] (\lambda-expression) is the most important single featur
   (int x, int y) -> x * x + y * y
   (String s) -> { System.out.println(s); }
   x -> { prepare(x); process(x); return x; }
-#+end_src
+#+END_SRC
 ** Collections
 
 *** Stream
-#+begin_src java
+#+BEGIN_SRC java
   static public void main(String [] args) {
     List<Integer> ints = Arrays.asList(1,2,3,4,5);
     ints.forEach(x -> System.out.println(x + 2));
     IntStream list = IntStream.range(1, 6);
     System.out.println(list.reduce(0, (x, y)->x+y));
   }
-#+end_src
+#+END_SRC
 
 * Implementing JVM \lambda-Expression[fn:5]
 
 ** Desugaring
 *** Stateless lambda
    No variable to be captured, only static parameter.
-#+begin_src java
+#+BEGIN_SRC java
   public class StatelessLambda {
     public static void foo(List<String> list) {
       list.forEach(s -> System.out.println(s));
     }
   }
-#+end_src
+#+END_SRC
    Previous code can be converted to following code.
-#+begin_src java
+#+BEGIN_SRC java
   public class StatelessLambda {
     public static void foo(List<String> list) {
       list.forEach([lambda for lambda$1 as Block]);
@@ -167,10 +167,10 @@ Lambda-expression[fn:3] (\lambda-expression) is the most important single featur
     }
   }
 
-#+end_src
+#+END_SRC
 *** Capture variables
    Variables captured from *lexical scope* are pass as dynamic parameters to \lambda method.
-#+begin_src java
+#+BEGIN_SRC java
   public class CaptureValues {
     public void captureFinal(List<String> persons) {
       final String name = "Jack";
@@ -181,11 +181,11 @@ Lambda-expression[fn:3] (\lambda-expression) is the most important single featur
       persons.removeIf(person -> name.equals(person)); // capture effectively final
     }
   }
-#+end_src
+#+END_SRC
 
    Previous code can be converted to following code, dynamic parameter =name= is appended
    in front of static parameter =person=.
-#+begin_src java
+#+BEGIN_SRC java
   public class CaptureValues {
     public void captureFinal(List<String> persons) {
       final String name = "Jack";
@@ -196,7 +196,7 @@ Lambda-expression[fn:3] (\lambda-expression) is the most important single featur
       return name.equals(person);
     }
   }
-#+end_src
+#+END_SRC
 
 ** =invokedynamic= [fn:6] and =CallSite=
    An =invokedynamic= instruction linked to a =CallSite= delegates all calls to the site's
@@ -208,15 +208,15 @@ Lambda-expression[fn:3] (\lambda-expression) is the most important single featur
     Compiler generates bootstrap methods which calls MetaFactory method with =invokestatic=.
     
     Following is an example of bootstrap.
-#+begin_src java
+#+BEGIN_SRC java
   CallSite bootstrap(MethodHandles.Lookup caller, String name, MethodType type) {
     MethodHandle mh = caller.findVirtual(this.class, name, type);
     return new ConstantCallSite(mh);
   }
-#+end_src
+#+END_SRC
 
     Bootstrap method of =StatelessLambda=.
-#+begin_src java
+#+BEGIN_SRC java
   0: #40 invokestatic java/lang/invoke/LambdaMetafactory.metafactory:(
       Ljava/lang/invoke/MethodHandles$Lookup;
       Ljava/lang/String;
@@ -228,10 +228,10 @@ Lambda-expression[fn:3] (\lambda-expression) is the most important single featur
       #41 (Ljava/lang/Object;)V
       #42 invokevirtual java/io/PrintStream.println:(Ljava/lang/String;)V
       #43 (Ljava/lang/String;)V
-#+end_src
+#+END_SRC
 
     Bootstrap methods of =CaptureValues=
-#+begin_src java
+#+BEGIN_SRC java
     0: #60 invokestatic java/lang/invoke/LambdaMetafactory.metafactory:(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Lja
       Method arguments:
         #61 (Ljava/lang/Object;)Z
@@ -243,18 +243,18 @@ Lambda-expression[fn:3] (\lambda-expression) is the most important single featur
         #67 invokestatic com/example/CaptureValues.lambda$captureEffFinal$1:(Ljava/lang/String;Ljava/lang/String;)Z
         #63 (Ljava/lang/String;)Z
 
-#+end_src
+#+END_SRC
 
     Bootstrap methods can be found in class file with lambda method.
     Check [[https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html][class file format]] for more details.
-#+begin_src sh
+#+BEGIN_SRC sh
   javap -c -v <name>.class
-#+end_src
+#+END_SRC
 
 ** \lambda MetaFactory
    Implementation of lambda expression is rely on =invokedynamic= added in Java 7.
 
-#+begin_src java
+#+BEGIN_SRC java
   static CallSite
   metaFactory(MethodHandles.Lookup caller,
               String invokedName,
@@ -262,30 +262,30 @@ Lambda-expression[fn:3] (\lambda-expression) is the most important single featur
               MethodType samMethodType,
               MethodHandle implMethod,
               MethodType instantiatedMethodType)
-#+end_src
+#+END_SRC
 
 ** Method References
     In previous example of =StatelessLambda=, lambda method =s -> System.out.println(s)= can be
     replaced with method reference =System.out::println=.
-#+begin_src java
+#+BEGIN_SRC java
   public class StatelessLambda {
     public static void foo(List<String> list) {
       list.forEach(System.out::println);
     }
   }
-#+end_src
+#+END_SRC
     The way it works is similar to lambda method. Compiler still generates a bootstrap method
     for this class, but it invokes =println= with =invokevirtual=, there is no lambda method.
-#+begin_src java
+#+BEGIN_SRC java
   0: #40 invokestatic java/lang/invoke/LambdaMetafactory.metafactory:(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;
     Method arguments:
       #41 (Ljava/lang/Object;)V
       #42 invokevirtual java/io/PrintStream.println:(Ljava/lang/String;)V
       #43 (Ljava/lang/String;)V
-#+end_src
+#+END_SRC
 
     Likely, previous example of =CaptureValues= can be rewrite with method references as
-#+begin_src java
+#+BEGIN_SRC java
   public class CaptureValues {
     public void captureFinal(List<String> persons) {
       final String name = "Jack";
@@ -296,19 +296,19 @@ Lambda-expression[fn:3] (\lambda-expression) is the most important single featur
       persons.removeIf(name::equals); // capture effectively final
     }
   }
-#+end_src
+#+END_SRC
 
 ** Backport \lambda-expression
    See project [[https://github.com/orfjackal/retrolambda][retrolambda]].
 
    To use retrolambda, first [[https://oss.sonatype.org/content/groups/public/net/orfjackal/retrolambda/retrolambda][download]] current version of retrolambda.jar, then
-#+begin_src sh
+#+BEGIN_SRC sh
   cd /path/to/your/class-with-package-path #  where com/example/*.class is
   java -Dretrolambda.inputDir=. \
        -Dretrolambda.classpath=. \
        -javaagent:/path/to/retrolambda.jar \
        -jar /path/to/retrolambda.jar
-#+end_src
+#+END_SRC
 
    Basically, retrolambda will convert lambda methods to inner classes and remove
    =invokedynamic=.

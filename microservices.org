@@ -1,0 +1,23 @@
+#+TITLE:     Microservices
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+
+* Foundation
+
+** Key Concepts of Microservices
+
+   - Independent Deployability
+   - Modeled Around a Business Domain
+   - Owning Their Own State
+   - Size
+   - Flexibility
+   - Alignment of Architecture and Organization
+
+#+begin_quote
+Any organization that designs a system (defined more broadly here than
+just information systems) will inevitably produce a design whose structure
+is a copy of the organization's communication structure.
+ --- Melvin E. Conway, "How Do Committees Invent?"
+#+end_quote
+
+** Monolith

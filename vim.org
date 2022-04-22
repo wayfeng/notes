@@ -1,7 +1,7 @@
 #+TITLE:     Daily Vim
-#+html_head: <link rel="stylesheet" type="text/css" href="../css/article.css" />
-#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
-#+options:   ^:nil
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+OPTIONS:   ^:nil
 #+INDEX: vim
 
 * Configuration
@@ -10,7 +10,7 @@
 ** commenting in vimrc
     Put a double quote in front of line you want to comment out.
 **  An example here.
-#+begin_src sh
+#+BEGIN_SRC sh
 filetype on
 syntax on
 set autoindent
@@ -20,7 +20,7 @@ set showmatch
 set tabstop=2
 set shiftwidth=2
 set hlsearch
-#+end_src
+#+END_SRC
 
 * Modes
 
@@ -36,18 +36,18 @@ set hlsearch
 * Files
 ** Open file
   Open remote file
-#+begin_src sh
+#+BEGIN_SRC sh
 vim src://user@host//path/to/file
-#+end_src
+#+END_SRC
   Open file to a given line number
-#+begin_src sh
+#+BEGIN_SRC sh
 vim filename +n
-#+end_src
+#+END_SRC
 
 ** Set File Formats
-#+begin_src sh
+#+BEGIN_SRC sh
 set fileformat=<dos|unix|mac>
-#+end_src
+#+END_SRC
 
 * Editing
 ** Search
@@ -56,22 +56,22 @@ set fileformat=<dos|unix|mac>
    - =N= to search backward.
 
 ** Search and Replace
-#+begin_src sh
+#+BEGIN_SRC sh
   # replace in current line
   :s/old/new/<flags>
   # replace all
   :%s/old/new/g
   # interactive replace
   :%s/old/new/gc
-#+end_src
+#+END_SRC
 
 ** Count Pattern Matched
-#+begin_src sh
+#+BEGIN_SRC sh
   :%s/pattern//n
-#+end_src
+#+END_SRC
 
 ** Sort lines
-#+begin_src sh
+#+BEGIN_SRC sh
   # Sort entire file in reverse
   :%sort!
   # Sort and remove duplicated lines
@@ -80,40 +80,40 @@ set fileformat=<dos|unix|mac>
   :sort n
   # Sort lines from 296 to 349, inclusively
   :296,349sort
-#+end_src
+#+END_SRC
 
 ** Delete Unwanted Whitespaces[fn:1]
    Add to =.vimrc=
-#+begin_src sh
+#+BEGIN_SRC sh
   # for one type of file
   autocmd BufWritePre *.pl %s/\s\+$//e
   # for some types of file
   autocmd FileType c,cpp,java,php autocmd BufWritePre <buffer> %s/\s\+$//e
-#+end_src
+#+END_SRC
 
 ** Convert exsiting TABs to Whitespaces
-#+begin_src sh
+#+BEGIN_SRC sh
   :set expandtab
   :retab
-#+end_src
+#+END_SRC
 
 ** Delete lines containing a pattern
-#+begin_src sh
+#+BEGIN_SRC sh
   :g/pattern/d
-#+end_src
+#+END_SRC
 
 ** Changing Case
-#+begin_src sh
+#+BEGIN_SRC sh
   gUw # change word to upper case
   guw # change word to lower case
   g~w # swap case of word
-#+end_src
+#+END_SRC
 
 ** Moving lines
    Reverse lines between /m/ and /n/:
-#+begin_src sh
+#+BEGIN_SRC sh
   :<m>,<n>g/^/m<m-1>
-#+end_src
+#+END_SRC
 
 ** Marks[fn:2]
    - =ma= set a mark at current cursor position with name =a=.
@@ -154,57 +154,57 @@ set fileformat=<dos|unix|mac>
 * Programming
 ** tags
   To generate tags file for VIM
-#+begin_src sh
+#+BEGIN_SRC sh
 ctags --recurse
-#+end_src
+#+END_SRC
 
   Some C++ code declares =class= like this
-#+begin_src c++
+#+BEGIN_SRC c++
 class MANAGED MyClass {
   ...;
 };
-#+end_src
+#+END_SRC
   or like this
-#+begin_src c++
+#+BEGIN_SRC c++
 struct MANAGED MyStruct {
   ...;
 };
-#+end_src
+#+END_SRC
   To let =ctags= handle it correctly, we'll need regular expressions.
-#+begin_src sh
+#+BEGIN_SRC sh
 ctags --regex-c++='/(struct|class) +MANAGED +([a-zA-Z][a-zA-Z0-9]*)/\2/'
-#+end_src
+#+END_SRC
 
   Best way of Exuberant Ctags is to use =identifier-list=
-#+begin_src sh
+#+BEGIN_SRC sh
 ctags -I MANAGED -R
-#+end_src
+#+END_SRC
 
   Some C++ code are more confusing like this one
-#+begin_src c++
+#+BEGIN_SRC c++
   class PACKED(4) MyClass FINAL {
     ...;
   }
-#+end_src
+#+END_SRC
 
   Use =identifier-list= as
-#+begin_src sh
+#+BEGIN_SRC sh
 ctags -I PACKED+,FINAL -R
-#+end_src
+#+END_SRC
 
   Following command will start vi and put cursor in where the 'tag' is.
-#+begin_src sh
+#+BEGIN_SRC sh
   vi -t `tag-you-want-to-search'
-#+end_src
+#+END_SRC
   Or, you can also find a 'tag' in vi.
-#+begin_src sh
+#+BEGIN_SRC sh
   :ta `tag-you-want-to-search'
-#+end_src
+#+END_SRC
 
   When there are multiple locations found
-#+begin_src sh
+#+BEGIN_SRC sh
 :ts(elect) `tag-you-want'
-#+end_src
+#+END_SRC
 
   Useful key bindings
 
@@ -215,44 +215,44 @@ For more information, see =:help tags=.
 
 ** Folding setting
   - automatically folding functions
-#+begin_src sh
+#+BEGIN_SRC sh
 :set foldmethod=syntax
-#+end_src
+#+END_SRC
   - open/close a fold block
     - *z c* fold a block
     - *z C* fold every possible block
     - *z o* open a folder, without sub-folders
     - *z O* open all sub-folders
   - more information
-#+begin_src sh
+#+BEGIN_SRC sh
 :help folding
-#+end_src
+#+END_SRC
 
 ** HEX mode
   Vim does not have a hex mode, use xxd can stream file into hex.
   - enter hex mode
-#+begin_src sh
+#+BEGIN_SRC sh
 :%!xxd
-#+end_src
+#+END_SRC
   - exit hex mode
-#+begin_src sh
+#+BEGIN_SRC sh
 :%!xxd -r
-#+end_src
+#+END_SRC
   So this method will change the file, you can always press =u= to recover.
 
 ** cscope
 *** Generate cscope ref file
-#+begin_src sh
+#+BEGIN_SRC sh
 cscope -Rb
-#+end_src
+#+END_SRC
 *** Use cscope ref file in vim
-#+begin_src sh
+#+BEGIN_SRC sh
 :cs add cscope.out
-#+end_src
+#+END_SRC
 
 *** Keybindings
     Example of keybindings in  =~/.vimrc=
-#+begin_src
+#+BEGIN_SRC
   " cscope settings
   if has("cscope")
       " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
@@ -386,34 +386,34 @@ cscope -Rb
 
   endif
 
-#+end_src
+#+END_SRC
 
 *** Scenarios
 
     - Find who includes current file
       Register =%= contains the name of current file,
       while register =#= contains the name of the alternate file.
-#+begin_src sh
+#+BEGIN_SRC sh
   :cs find i %:t
-#+end_src
+#+END_SRC
 
     - Find who calls current function
       Note that pressing =Ctrl-R= then =Ctrl-W= to put word under cursor.
-#+begin_src sh
+#+BEGIN_SRC sh
   :cs find c <Ctrl-R><Ctrl-W>
-#+end_src
+#+END_SRC
 
 
 ** Fix Annoying Indentation while Pasting Code
-#+begin_src sh
+#+BEGIN_SRC sh
 set paste
-#+end_src
+#+END_SRC
 
 ** Debugging
-#+begin_src sh
+#+BEGIN_SRC sh
 :packadd termdebug
 :Termdebug
-#+end_src
+#+END_SRC
 
 * History of Vim
   [[https://twobithistory.org/2018/08/05/where-vim-came-from.html][Twobithistory]] has an article about history of Vim.
