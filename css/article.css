@@ -1,6 +1,6 @@
 html {
-    font-family: Serif; // "Droid Serif", "Dejavu Serif", Georgia, Verdana, Times, Serif;
-    font-size: 12pt;
+    font-family: Georgia, Verdana, Times, Serif;
+    font-size: 14pt;
     background-color: white;
 }
 
@@ -15,26 +15,20 @@ body #content {
     min-width: 600px;
     margin-left: 20px;
     background-color: white;
-    padding: 2em;
+    padding: 1em;
 }
 
-.title {
+h1.title {
     text-align: left;
-    font-size: 2em;
-    //color: gray;
+    font-size: 3em;
     color: #005a9c;
-    //border-bottom: 1px solid #DDD;
-    padding: 5px, 0px, 5px, 0px;
     margin-bottom: 1em;
 }
 
 .subtitle {
     text-align: left;
-    font-size: 2em;
-    //color: gray;
+    font-size: 2rem;
     color: #005a9c;
-    //border-bottom: 1px solid #DDD;
-    padding: 5px, 0px, 5px, 0px;
 }
 
 h2 {
@@ -46,25 +40,37 @@ h2 {
 h3, h4, h5 {
     font-size: 1em;
 }
-//h2, h3, h4, h5 { color: #005a9c; }
-/* h2:before { */
-/*     content: "* "; */
-/* } */
+h2, h3, h4, h5 { color: #005a9c; }
 
-/* h3:before { */
-/*     content: "** "; */
-/* } */
-dd {
+/* h2:before {
+    content: "* ";
+} */
+
+/* h3:before {
+    content: "** ";
+} */
+
+/*
+dl {
     font-size: 1.2em;
-    color: #005a9c;
+}
+*/
+.org-dl {
+    //text-align: right;
 }
 
 dt {
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #005a9c;
     margin: .4rem 0 .4rem 0;
 }
 
+dd {
+}
+
 code {
-    font-family: consolas, inconsolata, "Courier New", monospace;
+    font-family: mononoki, consolas, inconsolata, "Courier New", monospace;
     font-size: 1em;
 }
 
@@ -79,8 +85,7 @@ pre {
 }
 
 pre.src {
-    font-family: consolas, inconsolata, "Courier New", monospace;
-    //font-size: 90%;
+    font-family: mononoki, consolas, inconsolata, "Courier New", monospace;
     font-size: 11pt;
 }
 
