@@ -1,8 +1,11 @@
-#+TITLE:     Ubuntu + CUDA + Tensorflow + PyTorch
+#+TITLE:     Deep Learning Setup with Ubuntu
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
-
-#+INDEX: tensorflow, pytorch, cuda
+#+INDEX: tensorflow
+#+INDEX: pytorch
+#+INDEX: cuda
+#+INDEX: ubuntu
+#+INDEX: mxnet
 
 * Install Ubuntu 18.04
   Should be easy.
