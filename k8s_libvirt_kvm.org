@@ -1,7 +1,9 @@
 #+TITLE: Bootstrapping k8s cluster on KVM/libvirt
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
-#+INDEX: k8s kvm libvirt
+#+INDEX: k8s
+#+INDEX: kvm
+#+INDEX: libvirt
 
 * KVM & qemu & libvirt
 

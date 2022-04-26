@@ -1,31 +1,30 @@
-#+TITLE:     Emacs and Elisp
+#+TITLE:     Daily Emacs
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+INDEX: emacs
+#+INDEX: elisp
 
-* Basic
+* Basic Usage
 
-** Basic Search
+** Search & Replace
 
-| key binding   | description         |
-|---------------+---------------------|
-| 'C-s'         | search forward      |
-| 'C-r'         | search backward     |
-| 'C-M-5'       | query replace       |
-| 'C-s C-q C-j' | search for new line |
-| 'C-s C-q tab' | search for tab      |
+   #+CAPTION: key bindings of searching & replacing
+| key binding     | description                       |
+|-----------------+-----------------------------------|
+| C-s             | search forward                    |
+| C-r             | search backward                   |
+| C-M-5           | query replace                     |
+| C-s C-q C-j     | search for new line               |
+| C-s C-q tab     | search for tab                    |
+| C-M-s           | regexp search                     |
+| C-M-%           | regexp replace                    |
+| M-x occur       | regexp search for all occurrences |
+| M-x re-builder  | try regexp with current buffer    |
 
-** [[http://www.emacswiki.org/emacs/RegularExpression][Regular Expression]]
-  Key bindings
+** Regular Expression
+   More detail in [[http://www.emacswiki.org/emacs/RegularExpression][Regular Expression]]
 
-| key binding      | description                       |
-|------------------+-----------------------------------|
-| `C-M-s'          | regexp search                     |
-| `C-M-%'          | regexp replace                    |
-| `M-x occur'      | regexp search for all occurrences |
-| `M-x re-builder' | try regexp with current buffer    |
-
-  Syntax
-
+   #+CAPTION: regular expressions
 | code     | description                                            |
 |----------+--------------------------------------------------------|
 | .        | any character (but newline)                            |
@@ -54,9 +53,10 @@
 | \=       | match succeeds if it is located at point               |
 
 ** Swapping
-	 - To swap chars such as "ab", put cursor at 'b', then press 'C-t', you'll get "ba".
-	 - To swap words such as "first second", put cursor at "second", then press 'M-t', you'll get "first second".
-	 - To swap lines such as "first line\n second line", put cursor at "second line", then press 'C-x C-t'.
+   - To swap chars such as "ab", put cursor at 'b', then press 'C-t', you'll get "ba".
+   - To swap words such as "first second", put cursor at "second", then press 'M-t', you'll get "first second".
+   - To swap lines such as "first line\n second line", put cursor at "second line", then press 'C-x C-t'.
+
 ** Key Binding
   Global key map
 #+BEGIN_SRC elisp
@@ -71,6 +71,10 @@
   (define-key (current-local-map) key binding)
 #+END_SRC
 
+** Variables
+*** Get content of a variable
+    : C-h v RET
+
 ** Macros
 
 | key binding | description                            |
@@ -82,7 +86,8 @@
 | C-x h       | mark the whole buffer;                 |
 | M-z         | zap-to-char;                           |
 
-** [[http://www.gnu.org/software/emacs/elisp/html_node/Time-Parsing.html][Parsing and Formatting times]]
+** TimeStamp
+   More details [[http://www.gnu.org/software/emacs/elisp/html_node/Time-Parsing.html][here]].
 *** Get Current Time
 #+BEGIN_SRC elisp
     (current-time)
@@ -93,7 +98,8 @@
 #+END_SRC
     will get this
 : 2011-09-23 Fri
-    Some useful formatting sequences:
+
+   Some useful formatting sequences:
 | key | description                         |
 |-----+-------------------------------------|
 | %a  | abbreviated name of the day of week |
@@ -104,6 +110,31 @@
 | %y  | 2 digits format of year             |
 | %m  | month                               |
 | %d  | day of month                        |
+
+** Sorting
+*** Case sensitive
+    Emacs sorting is case sensitive by default, set variable /sort-fold-case/ to /t/ to make it case insensitive.
+
+*** Sorting order
+    Emacs sorting use /lexicographic/ by default for all but /sort-numeric-field/.
+    Sort with reverse order
+    : C-u 1 M-x sort-lines
+
+    Sort lines by second word
+    : C-u 2 M-x sort-lines
+
+*** Sorting by Lines, Paragraphs and Pages
+    : sort-lines
+    : sort-paragraph
+    : sort-pages
+    The variables /paragraph-start/ and /paragraph-separate/ controls how paragraph works.
+
+*** Sorting by Field
+    : sort-field
+    : sort-numeric-field
+
+*** Sorting by Regular Expression
+    : sort-regexp-field
 
 ** Set Default Coding
 #+BEGIN_SRC elisp
@@ -133,50 +164,36 @@
                              ("https" . "proxy.work.com:port")))
 #+END_SRC
 
-* Sorting
-*** Case sensitive
-    Emacs sorting is case sensitive by default, set variable /sort-fold-case/ to /t/ to make it case insensitive.
+** Rectangle Operation
+   - to select a rectangle, set mark to one end then move cursor to opposite end.
+   - 'kill-rectangle' does what it says
+   - 'yank-rectangle' too
+   - 'M-x string-insert-rectangle' too
+   - 'C-x r t string <RET>' to replace a rectangle
 
-*** Sorting order
-    Emacs sorting use /lexicographic/ by default for all but /sort-numeric-field/.
-    Sort with reverse order
-#+BEGIN_SRC sh
-C-u 1 M-x sort-lines
-#+END_SRC
+** Install Packages
 
-    Sort lines by second word
-#+BEGIN_SRC sh
-C-u 2 M-x sort-lines
-#+END_SRC
+   Setup package repositories
+ #+BEGIN_SRC elisp
+ ;; configure package archives
+ (require 'package)
+ (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+ (package-initialize)
+ #+END_SRC
 
-*** Sorting by Lines, Paragraphs and Pages
-    /sort-lines/, /sort-paragraph/, /sort-pages/.
-    The variables /paragraph-start/ and /paragraph-separate/ controls how paragraph works.
+   show available/installed packages
+ : M-x list-packages
 
-*** Sorting by Field
-    /sort-field/ and /sort-numeric-field/.
-
-*** Sorting by Regular Expression
-    /sort-regexp-field/
-
-* Rectangle Operation
-  - to select a rectangle, set mark to one end then move cursor to opposite end.
-  - 'kill-rectangle' does what it says
-  - 'yank-rectangle' too
-  - 'M-x string-insert-rectangle' too
-  - 'C-x r t string <RET>' to replace a rectangle
+   install package
+ : M-x package-install RET <package_name> RET
 
 * Programming
 
 ** Find a function definition in buffer
-#+BEGIN_SRC sh
-M-x imenu
-#+END_SRC
+   : M-x imenu
 
 ** Occurs of a regexp in buffer
-#+BEGIN_SRC sh
-M-x occur <regexp>
-#+END_SRC
+   : M-x occur <regexp>
 
 ** Chinese Input
    - Using ibus in emacs
@@ -184,9 +201,7 @@ M-x occur <regexp>
 sudo apt install ibus-el
 #+END_SRC
    and run following command in emacs to start ibus mode.
-#+BEGIN_SRC sh
-M-x ibus-mode
-#+END_SRC
+   : M-x ibus-mode
 
 ** Google C/C++ coding style for emacs
    Download google-c-style.el
@@ -195,7 +210,7 @@ $ wget http://google-styleguide.googlecode.com/svn/trunk/google-c-style.el
 #+END_SRC
 
    Setup emacs to use Google C/C++ style. In =~/.emacs=
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (require 'google-c-style)
   ; 'return-and-indent is necessary for emacs < 24.4
   ; it's default behavior since 24.4
@@ -203,22 +218,31 @@ $ wget http://google-styleguide.googlecode.com/svn/trunk/google-c-style.el
   (add-hook 'c-mode-common-hook 'google-set-c-style)
 #+END_SRC
 
-* Yasnippet
-** Install
-#+BEGIN_SRC sh
-$ sudo apt-get install yasnippet
-#+END_SRC
-** templates
-   templates of yasnippet is directory structrue in =/usr/share/emacs/site-lisp/yasnippet/snippets/=, I'll use this folder as =$TOP= in later examples.
+** Yasnippet
+*** Install
+    : package-install yasnippet
 
-   to add =while= for =c-mode= and =c++-mode=, edit $TOP/text-mode/cc-mode/while
-#+BEGIN_SRC c
-  #name : while (...) { ... }
-  # --
-  while (${1:condition}) {
-      $0
-  }
-#+END_SRC
+*** templates
+    templates of yasnippet is directory structrue in =/usr/share/emacs/site-lisp/yasnippet/snippets/=, I'll use this folder as =$TOP= in later examples.
+
+    to add =while= for =c-mode= and =c++-mode=, edit $TOP/text-mode/cc-mode/while
+ #+BEGIN_SRC c
+   #name : while (...) { ... }
+   # --
+   while (${1:condition}) {
+       $0
+   }
+ #+END_SRC
+
+** Ebrowse
+*** Generate database from source code
+ #+BEGIN_SRC sh
+ ebrowse *.h *.cc
+ #+END_SRC
+*** Open browse file
+ : C-x C-f BROWSE
+*** Find class
+ : / <ClassName>
 
 * Advanced
 
@@ -229,45 +253,3 @@ $ sudo apt-get install yasnippet
    - [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Derived-Modes.html][Derived Modes]]
 
 
-* Ebrowse
-** Generate database from source code
-#+BEGIN_SRC sh
-ebrowse *.h *.cc
-#+END_SRC
-** Open browse file
-: C-x C-f BROWSE
-** Find class
-: / <ClassName>
-
-* Install Packages
-
-  Setup package repositories
-#+BEGIN_SRC elisp
-;; configure package archives
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
-(package-initialize)
-#+END_SRC
-
-  show available/installed packages
-: M-x list-packages
-
-  install package
-: M-x package-install
-
-* Manually Compile & Install
-Prepare ubuntu
-
-#+BEGIN_SRC sh
-sudo apt-get install build-essential
-sudo apt-get build-dep emacs24
-#+END_SRC
-
-Download emacs24.4, then compile
-
-#+BEGIN_SRC sh
-./configure
-make
-sudo make install
-#+END_SRC

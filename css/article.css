@@ -1,6 +1,6 @@
 html {
-    font-family: Serif; // "Droid Serif", "Dejavu Serif", Georgia, Verdana, Times, Serif;
-    font-size: 12pt;
+    font-family: Georgia, Verdana, Times, Serif;
+    font-size: 14pt;
     background-color: white;
 }
 
@@ -15,26 +15,28 @@ body #content {
     min-width: 600px;
     margin-left: 20px;
     background-color: white;
-    padding: 2em;
+    padding: 1em;
 }
 
-.title {
+h1.title {
     text-align: left;
-    font-size: 2em;
-    //color: gray;
+    font-size: 3em;
     color: #005a9c;
-    //border-bottom: 1px solid #DDD;
-    padding: 5px, 0px, 5px, 0px;
     margin-bottom: 1em;
 }
 
 .subtitle {
     text-align: left;
-    font-size: 2em;
-    //color: gray;
+    font-size: 2rem;
     color: #005a9c;
-    //border-bottom: 1px solid #DDD;
-    padding: 5px, 0px, 5px, 0px;
+}
+
+.todo {
+    color: red;
+}
+
+.done {
+    color: green;
 }
 
 h2 {
@@ -46,25 +48,37 @@ h2 {
 h3, h4, h5 {
     font-size: 1em;
 }
-//h2, h3, h4, h5 { color: #005a9c; }
-/* h2:before { */
-/*     content: "* "; */
-/* } */
+h2, h3, h4, h5 { color: #005a9c; }
 
-/* h3:before { */
-/*     content: "** "; */
-/* } */
-dd {
-    font-size: 1.2em;
-    color: #005a9c;
+dl {
+    //border: 3px double #ccc;
+    padding: 0.5em;
 }
-
 dt {
-    margin: .4rem 0 .4rem 0;
+    font-weight: bold;
+    //color: #005a9c;
+    text-decoration: underline;
 }
+dt::after {
+    content: ":";
+}
+dd {
+    margin: 10px 0 0 20px;
+    padding: 0 0 0.5em 0;
+}
+
+/*
+div.figure {
+    text-align: center;
+}
+
+img {
+    text-align: center;
+}
+*/
 
 code {
-    font-family: consolas, inconsolata, "Courier New", monospace;
+    font-family: mononoki, consolas, inconsolata, "Courier New", monospace;
     font-size: 1em;
 }
 
@@ -75,19 +89,19 @@ pre {
     box-shadow: 5px 5px 5px #888;
     border: medium none;
     overflow: auto;
-    margin-bottom: 12pt;
+    margin-bottom: 1rem;
 }
 
 pre.src {
-    font-family: consolas, inconsolata, "Courier New", monospace;
-    //font-size: 90%;
-    font-size: 11pt;
+    font-family: mononoki, consolas, inconsolata, "Courier New", monospace;
+    //font-size: 11pt;
 }
 
 pre.example {
-    font-family: "Droid Serif", "Dejavu Serif", Georgia, Verdana, Times, Serif;
+    //font-family: "Droid Serif", "Dejavu Serif", Georgia, Verdana, Times, Serif;
+    font-family: mononoki, consolas, inconsolata, "Courier New", monospace;
     white-space: pre-wrap;
-    width: 90%;
+    //width: 90%;
 }
 
 pre span.org-builtin                     {color:#006FE0;font-weight:bold;}
@@ -148,6 +162,8 @@ span.tag {
 
 table {
     margin: 0;
+    max-width: 100%;
+    min-width: 80%;
 }
 
 thead {

@@ -1,34 +1,36 @@
-# MQTT
+#+TITLE: MQTT
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
 
-## Simple Demo
+* Simple Demo
 
 Start a MQTT broker.
 
-```bash
+#+BEGIN_SRC bash
 $ docker run -d --rm --name mqtt-broker -p 1883:1883 eclipse-mosquitto
-```
+#+END_SRC
 
 Install mosquitto client.
-```bash
+#+BEGIN_SRC bash
 $ sudo apt install mosquitto-clients
-```
+#+END_SRC
 
 Subscribe to the broker in one terminal.
-```bash
+#+BEGIN_SRC bash
 $ mosquitto-sub -t sensors/temperature
-```
+#+END_SRC
 
 Publish to the broker in another terminal.
-```bash
+#+BEGIN_SRC bash
 $ mosquitto-pub -t sensors/temperature -m 25
-```
+#+END_SRC
 
 The subscribe terminal will show 25.
 
-## Create a Virtual MQTT Device
+* Create a Virtual MQTT Device
 
 Following javascript file create a device which generate a random number every 15 seconds.
-```js
+#+BEGIN_SRC js
 // mock-device.js
 function getRandomFloat(min, max) {
     return Math.random() * (max - min) + min;
@@ -68,52 +70,52 @@ subscribe("CommandTopic" , (topic, val) => {
     }
     publish( "ResponseTopic", JSON.stringify(data));
 });
-```
+#+END_SRC
 
 Run with *mqtt-scripts*
-```bash
+#+BEGIN_SRC bash
 $ docker run -d --restart always --name mqtt-scripts \
   -v /path/to/mqtt-scripts:/scripts dersimn/mqtt-scripts \
   --url mqtt://172.17.0.1 --dir /scripts
-```
+#+END_SRC
 
-### Test Virtual Device
+** Test Virtual Device
 
 Now we should have docker container running as broker and device.
-```bash
+#+BEGIN_SRC bash
 $ docker ps --format '{{.Image}}\t{{.Names}}'
 eclipse-mosquitto       mqtt-broker
 dersimn/mqtt-scripts    mqtt-scripts
-```
+#+END_SRC
 
 To receive random number, we subscribe to topic *DataTopic*.
-```bash
+#+BEGIN_SRC bash
 $ mosquitto_sub -t DataTopic
 {"name":"MQ_DEVICE","cmd":"randnum","randnum":"27.6"}
 {"name":"MQ_DEVICE","cmd":"randnum","randnum":"27.3"}
-```
+#+END_SRC
 
 To verify *CommandTopic* and *ResponseTopic*, subscribe to *ResponseTopic* in one terminal,
-```bash
+#+BEGIN_SRC bash
 $ mosquitto_sub -t ResponseTopic
-```
+#+END_SRC
 
 Then publish to *CommandTopic* in another terminal,
-```bash
+#+BEGIN_SRC bash
 $ mosquitto_pub -t CommandTopic -m test
-```
+#+END_SRC
 
-## Start broker with docker compose and some issues of latest mosquitto
+* Start broker with docker compose and some issues of latest mosquitto
 
-### Issues
+** Issues
 
 1. Latest version of eclipse mosquitto broker won't accept anonymous users by default.
 2. Mosquitto change ownership of empty volumns.
 
-### Solutions
+** Solutions
 For issue #1, we need to customize mosquitto configure file.
 
-```
+#+BEGIN_SRC bash
 allow_anonymous true # Anyone can connect
 
 # Mosquitto v2+ requires that a listener be definer (otherwise it listens on loopback)
@@ -143,10 +145,10 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 #persistence_file mosquitto.db
 
 max_queued_messages 0
-```
+#+END_SRC
 
 And create directory structure for mosquitto container. I added a readme.md file in each folder so that ownership of local folders wno't be changed to 1883 (issue #2).
-```bash
+#+BEGIN_SRC bash
 tree ./mosquitto
 ./mosquitto/
 ├── config
@@ -156,11 +158,11 @@ tree ./mosquitto
 └── log
     ├── mosquitto.log
     └── readme.md
-```
+#+END_SRC
 
 Then customize our docker-compose.yml file.
 
-```yml
+#+BEGIN_SRC yml
 version: "3"
 
 networks:
@@ -187,13 +189,13 @@ services:
       - 1883:1883
     networks:
       - iot
-```
+#+END_SRC
 
 Now we can start eclipse mosquitto broker with docker compose.
 
-```bash
+#+BEGIN_SRC bash
 $ docker-compose up -d
 [+] Running 2/2
  ⠿ Network demo_iot       Created            0.0s
  ⠿ Container demo-mqtt-1  Started            0.4s
-```
+#+END_SRC
