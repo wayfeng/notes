@@ -9,8 +9,12 @@
    =~/.vimrc=
 ** commenting in vimrc
     Put a double quote in front of line you want to comment out.
+#+BEGIN_SRC vimrc
+  " this line is comment
+#+END_SRC
+
 **  An example here.
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
 filetype on
 syntax on
 set autoindent
@@ -45,7 +49,7 @@ vim filename +n
 #+END_SRC
 
 ** Set File Formats
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
 set fileformat=<dos|unix|mac>
 #+END_SRC
 
@@ -56,7 +60,7 @@ set fileformat=<dos|unix|mac>
    - =N= to search backward.
 
 ** Search and Replace
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
   # replace in current line
   :s/old/new/<flags>
   # replace all
@@ -66,12 +70,12 @@ set fileformat=<dos|unix|mac>
 #+END_SRC
 
 ** Count Pattern Matched
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
   :%s/pattern//n
 #+END_SRC
 
 ** Sort lines
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
   # Sort entire file in reverse
   :%sort!
   # Sort and remove duplicated lines
@@ -84,7 +88,7 @@ set fileformat=<dos|unix|mac>
 
 ** Delete Unwanted Whitespaces[fn:1]
    Add to =.vimrc=
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
   # for one type of file
   autocmd BufWritePre *.pl %s/\s\+$//e
   # for some types of file
@@ -92,26 +96,26 @@ set fileformat=<dos|unix|mac>
 #+END_SRC
 
 ** Convert exsiting TABs to Whitespaces
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
   :set expandtab
   :retab
 #+END_SRC
 
 ** Delete lines containing a pattern
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
   :g/pattern/d
 #+END_SRC
 
 ** Changing Case
-#+BEGIN_SRC sh
+#+BEGIN_EXAMPLE
   gUw # change word to upper case
   guw # change word to lower case
   g~w # swap case of word
-#+END_SRC
+#+END_EXAMPLE
 
 ** Moving lines
    Reverse lines between /m/ and /n/:
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
   :<m>,<n>g/^/m<m-1>
 #+END_SRC
 
@@ -197,12 +201,12 @@ ctags -I PACKED+,FINAL -R
   vi -t `tag-you-want-to-search'
 #+END_SRC
   Or, you can also find a 'tag' in vi.
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
   :ta `tag-you-want-to-search'
 #+END_SRC
 
   When there are multiple locations found
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
 :ts(elect) `tag-you-want'
 #+END_SRC
 
@@ -215,7 +219,7 @@ For more information, see =:help tags=.
 
 ** Folding setting
   - automatically folding functions
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
 :set foldmethod=syntax
 #+END_SRC
   - open/close a fold block
@@ -224,18 +228,18 @@ For more information, see =:help tags=.
     - *z o* open a folder, without sub-folders
     - *z O* open all sub-folders
   - more information
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
 :help folding
 #+END_SRC
 
 ** HEX mode
   Vim does not have a hex mode, use xxd can stream file into hex.
   - enter hex mode
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
 :%!xxd
 #+END_SRC
   - exit hex mode
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
 :%!xxd -r
 #+END_SRC
   So this method will change the file, you can always press =u= to recover.
@@ -246,13 +250,13 @@ For more information, see =:help tags=.
 cscope -Rb
 #+END_SRC
 *** Use cscope ref file in vim
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
 :cs add cscope.out
 #+END_SRC
 
 *** Keybindings
     Example of keybindings in  =~/.vimrc=
-#+BEGIN_SRC
+#+BEGIN_SRC vimrc
   " cscope settings
   if has("cscope")
       " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
@@ -385,7 +389,6 @@ cscope -Rb
       "set ttimeoutlen=100
 
   endif
-
 #+END_SRC
 
 *** Scenarios
@@ -393,30 +396,38 @@ cscope -Rb
     - Find who includes current file
       Register =%= contains the name of current file,
       while register =#= contains the name of the alternate file.
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
   :cs find i %:t
 #+END_SRC
 
     - Find who calls current function
       Note that pressing =Ctrl-R= then =Ctrl-W= to put word under cursor.
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
   :cs find c <Ctrl-R><Ctrl-W>
 #+END_SRC
 
 
 ** Fix Annoying Indentation while Pasting Code
-#+BEGIN_SRC sh
+#+BEGIN_SRC vimrc
 set paste
 #+END_SRC
 
 ** Debugging
-#+BEGIN_SRC sh
-:packadd termdebug
-:Termdebug
+#+BEGIN_SRC vimrc
+  :packadd termdebug
+  :Termdebug
 #+END_SRC
+
+** Vimdiff
+   Start vim with diff mode =vim -d file1 file2=.
+
+   Merge code with command =:diffget= and =:diffput=.
+
+   To ignore whitespaces in diff mode, =:set diffopt+=iwhite=.
 
 * History of Vim
   [[https://twobithistory.org/2018/08/05/where-vim-came-from.html][Twobithistory]] has an article about history of Vim.
+
 
 [fn:1] http://vim.wikia.com/wiki/Remove_unwanted_spaces
 [fn:2] http://vim.wikia.com/wiki/Using_marks

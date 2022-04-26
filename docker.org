@@ -1,6 +1,7 @@
 #+TITLE:     Docker
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+INDEX: docker
 
 * Install Docker CE for Ubuntu
   See [[https://docs.docker.com/install/linux/docker-ce/ubuntu/][details]] about installing Docker CE.
@@ -47,25 +48,25 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io
 #+BEGIN_SRC sh
   $ cat /etc/systemd/system/docker.service.d/http-proxy.conf
   [Service]
-  Environment="HTTP_PROXY=http://proxy-prc.intel.com:912/" "NO_PROXY=localhost, 127.0.0.1, intel.com"
+  Environment="HTTP_PROXY=http://proxy.address:port/" "NO_PROXY=localhost, 127.0.0.1"
   $ cat /etc/systemd/system/docker.service.d/https-proxy.conf
   [Service]
-  Environment="HTTPS_PROXY=http://proxy-prc.intel.com:912/" "NO_PROXY=localhost, 127.0.0.1, intel.com"
+  Environment="HTTPS_PROXY=http://proxy.address:port/" "NO_PROXY=localhost, 127.0.0.1"
 
   $ sudo systemctl daemon-reload
   $ sudo systemctl restart docker
 #+END_SRC
 
 To setup proxy in docker containers, edit =~/.docker/config.json=
-#+BEGIN_SRC js
+#+BEGIN_SRC json
   {
-          "proxies": {
-                  "default": {
-                          "httpProxy": "http://proxy.address:port",
-                          "httpsProxy": "http://proxy.address:port",
-                          "noProxy": "localhost"
-                  }
+      "proxies": {
+          "default": {
+              "httpProxy": "http://proxy.address:port",
+              "httpsProxy": "http://proxy.address:port",
+              "noProxy": "localhost"
           }
+      }
   }
 #+END_SRC
 
@@ -173,7 +174,7 @@ $ docker build --squash .
   EOF
 #+END_SRC
    Use =printf= in Dockerfile to get the equivalent.
-#+BEGIN_SRC sh
+#+BEGIN_SRC dockerfile
   RUN printf 'hello line #1\n\
   hello line #2\n\
   finish' > /tmp/tmp.txt

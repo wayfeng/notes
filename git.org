@@ -220,9 +220,9 @@ git diff --name-only <ci1> <ci2>
 
 ** Replace URL
 
-#+BEGIN_SRC
-[url "http://fastmirror.com/path/proj.git"]
-        insteadOf = https://github.com/path/proj.git
+#+BEGIN_SRC conf
+  [url "http://fastmirror.com/path/proj.git"]
+      insteadOf = https://github.com/path/proj.git
 #+END_SRC
 * Git Configuration
 
