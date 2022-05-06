@@ -61,11 +61,11 @@ set fileformat=<dos|unix|mac>
 
 ** Search and Replace
 #+BEGIN_SRC vimrc
-  # replace in current line
+  " replace in current line
   :s/old/new/<flags>
-  # replace all
+  " replace all
   :%s/old/new/g
-  # interactive replace
+  " interactive replace
   :%s/old/new/gc
 #+END_SRC
 
@@ -76,22 +76,22 @@ set fileformat=<dos|unix|mac>
 
 ** Sort lines
 #+BEGIN_SRC vimrc
-  # Sort entire file in reverse
+  " Sort entire file in reverse
   :%sort!
-  # Sort and remove duplicated lines
+  " Sort and remove duplicated lines
   :%sort u
-  # Sort in numeric
+  " Sort in numeric
   :sort n
-  # Sort lines from 296 to 349, inclusively
+  " Sort lines from 296 to 349, inclusively
   :296,349sort
 #+END_SRC
 
 ** Delete Unwanted Whitespaces[fn:1]
    Add to =.vimrc=
 #+BEGIN_SRC vimrc
-  # for one type of file
+  " for one type of file
   autocmd BufWritePre *.pl %s/\s\+$//e
-  # for some types of file
+  " for some types of file
   autocmd FileType c,cpp,java,php autocmd BufWritePre <buffer> %s/\s\+$//e
 #+END_SRC
 

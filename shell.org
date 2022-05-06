@@ -2,7 +2,9 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
 #+OPTIONS:   ^:nil
-#+TAGS:      awk(a) bash(b) curl(c) diff(d) find(f) grep(g) rsync(r) sed(s) ssh(h) sort(t) others(o)
+#+TAGS:      awk(a) bash(b) curl(c) diff(d) find(f) grep(g) network(n) rsync(r) sed(s) ssh(h) sort(t) others(o)
+#+INDEX:     shell
+#+INDEX:     bash
 
 * one-liners
 ** convert decimal to hexadecimal                                    :others:
@@ -216,6 +218,29 @@ curl -X POST -F 'image=@/path/to/pictures/pic.jpg' http://docmain/upload
 #+BEGIN_SRC bash
 rsync -aP --exclude-from=blacklist.txt $HOME /path/to/home_backup
 rsync -aP --include-from=whitelist.txt $HOME /path/to/home_backup
+#+END_SRC
+
+** Who has logged in recently                                       :network:
+#+BEGIN_SRC bash
+last | head
+# or
+lastlog
+#+END_SRC
+
+#+BEGIN_SRC bash
+# has user logged in recently
+last <user> | head
+# or
+lastlog -u <user>
+#+END_SRC
+
+#+BEGIN_SRC bash
+grep -i "new session" /var/log/auth.log
+#+END_SRC
+
+** Monitoring outgoing connections on port 22                       :network:
+#+BEGIN_SRC bash
+watch -n1 lsof -i TCP:22,80
 #+END_SRC
 
 * bash
