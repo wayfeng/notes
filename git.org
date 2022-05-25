@@ -103,6 +103,17 @@ git tag -l
 #+BEGIN_SRC sh
 git checkout tags/<tagname>
 #+END_SRC
+** Create tag
+   An annotated tag is stored as full object in Git database.
+   While lightweight tag is merely a pointer to a commit.
+#+BEGIN_SRC sh
+  git tag -a v1.0 -m 'version 1.0' # annotated tag
+  git tag v1.0-lw # lightweight tag
+#+END_SRC
+** Share a tag
+#+BEGIN_SRC sh
+  git push origin v1.0
+#+END_SRC
 ** Revert just added file
 #+BEGIN_SRC sh
   git reset <file>

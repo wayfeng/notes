@@ -240,9 +240,12 @@ grep -i "new session" /var/log/auth.log
 
 ** Monitoring outgoing connections on port 22                       :network:
 #+BEGIN_SRC bash
-watch -n1 lsof -i TCP:22,80
+watch -n1 lsof -i TCP:22
 #+END_SRC
 
+#+BEGIN_SRC bash
+sudo iptables -A OUTPUT -p tcp --dport 22 -j LOG --log-prefix '[output@tcp:22] '
+#+END_SRC
 * bash
 ** To run a script with current environment
 #+BEGIN_SRC sh
