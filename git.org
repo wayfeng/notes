@@ -126,7 +126,7 @@ A - B - C - D - E - F
 #+END_SRC
    and you want to roll back to /C/ and discard /D/, /E/ and /F/.
 
-   First, you shold will need the hash id of /C/, the first several number is sufficient (db7c2b7 for example).
+   First, you will need the hash id of /C/, the first several number is sufficient (db7c2b7 for example).
 
    Then execute the reset command of git:
 #+BEGIN_SRC sh
@@ -148,27 +148,7 @@ git push --force origin
 git reflog
 #+END_SRC
 
-** Git behind proxy
-   - install socat
-#+BEGIN_SRC sh
-   $ sudo apt-get install socat
-#+END_SRC
-   - create proxy-cmd.sh containing (replace your_proxy and your_proxy_port)
-#+BEGIN_SRC sh
-   #!/bin/bash
-   socat STDIO PROXY:your_proxy:$1:$2,proxyport=your_proxy_port
-#+END_SRC
-   - change perm and export
-#+BEGIN_SRC sh
-   $ chmod +x proxy-cmd.sh
-   $ export GIT_PROXY_COMMAND=proxy-cmd.sh
-#+END_SRC
-
-** Ignore SSL certification
-#+BEGIN_SRC sh
-env GIT_SSL_NO_VERIFY=true git clone https://github...
-#+END_SRC
-
+* Git Configuration
 ** Automatic template for commit messages
    You can set a global template for all git projects.
 #+BEGIN_SRC sh
@@ -183,6 +163,16 @@ env GIT_SSL_NO_VERIFY=true git clone https://github...
 #+BEGIN_SRC sh
   git config --global user.name <user name>
   git config --global user.email <user@domain.com>
+#+END_SRC
+
+** Default main branch
+#+BEGIN_SRC sh
+git config --global init.defaultBranch main
+#+END_SRC
+
+** FastForward pull only
+#+BEGIN_SRC sh
+git config --global pull.ff only
 #+END_SRC
 
 * Git Advance
@@ -235,89 +225,6 @@ git diff --name-only <ci1> <ci2>
   [url "http://fastmirror.com/path/proj.git"]
       insteadOf = https://github.com/path/proj.git
 #+END_SRC
-* Git Configuration
-
-* Gitosis (Obsoleted)
-** Installation and Configuration
-   Install gitosis
-#+BEGIN_SRC sh
-   $ sudo apt-get install gitosis
-#+END_SRC
-   You might want to put repositories in /home/git/ rather than /srv/gitosis/.
-#+BEGIN_SRC sh
-   $ sudo usermod -d /home/git/ gitosis
-#+END_SRC
-   Or add a new git management user
-#+BEGIN_SRC sh
-   $ sudo adduser \
-   --system \
-   --shell /bin/sh \
-   --gecos 'git verison control' \
-   --group \
-   --disabled-password \
-   --home /home/git \
-   git
-#+END_SRC
-   You will need a public ssh key to continue.
-#+BEGIN_SRC sh
-   $ ssh-keygen -t rsa
-#+END_SRC
-   Then initialize the gitosis repository with the rss key.
-#+BEGIN_SRC sh
-   $ sudo -H -u gitosis gitosis-init < /tmp/id_dsa.pub
-#+END_SRC
-   You'll see messages like this.
-#+BEGIN_SRC sh
-   Initialized empty Git repository in /home/git/repositories/gitosis-admin.git/
-   Reinitialized existing Git repository in /home/git/repositories/gitosis-admin.git/
-#+END_SRC
-   Now you can get the admin files
-#+BEGIN_SRC sh
-   $ git clone git@HOST:gitosis-admin.git
-#+END_SRC
-** Add Users
-   Gather users' SSH public key and add them to gitosis-admin.
-#+BEGIN_SRC sh
-   $ cd gitosis-admin
-   $ cp ~/alice.pub ~/bob.pub keydir/
-   $ git add keydir/
-#+END_SRC
-   Change gitosis.conf
-#+BEGIN_SRC sh
-[group myteam]
-- member = fw  
-+ member = fw alice bob  
-writable = project
-#+END_SRC
-   The push it to the git repository.
-#+BEGIN_SRC sh
-   $ git commit -a -m 'Granted Alice and Bob commit rights to project'
-   $ git push
-#+END_SRC
-** Add Repositories
-   Change the gitosis.conf
-#+BEGIN_SRC sh
-[group mygroup] 
-members = member1 member2 member3
-writable = projectA projectB
-#+END_SRC
-   The push it to the gitosis-admin.
-
-   Add a project
-#+BEGIN_SRC sh
-mdkir projectA
-cd projectA
-git init
-git add .
-git remote add origin git@HOST:projectA.git
-do some work
-git push origin master:refs/heads/master
-#+END_SRC
-** Public Access
-#+BEGIN_SRC sh
-  sudo -u git git-daemon --base-path=/home/git/repositories/ --export-all
-#+END_SRC
-
 
 * Github
 ** config SSH client
@@ -330,7 +237,7 @@ git push origin master:refs/heads/master
 
    If you're behind a proxy, install corkscrew first.
 #+BEGIN_SRC sh
-  sudo dnf install corkscrew
+  sudo apt install corkscrew
 #+END_SRC
 
    Then configure ssh by editing =.ssh/config=.
@@ -339,8 +246,8 @@ git push origin master:refs/heads/master
     hostname ssh.github.com
     user git
     port 443
-    ProxyCommand corkscrew proxy.domain.com port %h %p
     IdentityFile ~/.ssh/id_dsa
+    ProxyCommand corkscrew proxy.domain.com port %h %p
 #+END_SRC
 
    Some proxy server may block port 22, so you have to use =ssh.github.com=
@@ -363,6 +270,10 @@ ssh -T github.com
 
    Congrats! Now you can pull/push your code from/to github through SSH.
 
+** Ignore SSL certification
+#+BEGIN_SRC sh
+env GIT_SSL_NO_VERIFY=true git clone https://github...
+#+END_SRC
 
 * Git Best Practices
 ** Branching Model

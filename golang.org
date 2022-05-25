@@ -68,3 +68,15 @@ For older version of Go, =GO111MODULE= mode is also needed to be turned on.
   export GO111MODULE=on
   export GOPROXY=https://goproxy.io
 #+END_SRC
+
+* Debugging
+
+  Install dlv
+#+BEGIN_SRC bash
+go install github.com/go-delve/delve/cmd/dlv@latest
+#+END_SRC
+
+  Debug go application with dlv
+#+BEGIN_SRC bash
+dlv debug <app>
+#+END_SRC

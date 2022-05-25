@@ -277,6 +277,28 @@ sudo iptables -A OUTPUT -p tcp --dport 22 -j LOG --log-prefix '[output@tcp:22] '
       echo "var is set to '$var'";
   fi
 #+END_SRC
+** On Bash variables
+   To declare a variable in current bash context.
+#+BEGIN_SRC sh
+  VAR=abc
+  echo $VAR
+  #abc
+#+END_SRC
+   To declare a variable in current user environment.
+#+BEGIN_SRC sh
+  export VAR=abc
+  env | grep VAR
+  #VAR=abc
+#+END_SRC
+   To unset a variable
+#+BEGIN_SRC sh
+  unset VAR
+#+END_SRC
+   To reset environment variables.
+#+BEGIN_SRC sh
+  env -i bash
+#+END_SRC
+
 ** Expressions used with if
 | Primary      | Meaning                                               |
 |--------------+-------------------------------------------------------|
@@ -351,19 +373,21 @@ alt+n alt+.
 #+BEGIN_SRC sh
 >file.txt
 #+END_SRC
+
 ** Replace string of previous cmd
 #+BEGIN_SRC sh
 ^old^new
 #+END_SRC
-	 this is equivalent to
+   this is equivalent to
 #+BEGIN_SRC sh
 !!:s/old/new/
 #+END_SRC
-	 to replace all instances of 'old' in previous command
+   to replace all instances of 'old' in previous command
 #+BEGIN_SRC sh
 !!:gs/old/new/
 #+END_SRC
-	 more details [[http://www.gnu.org/software/bash/manual/bashref.html#History-Interaction][here]].
+   more details [[http://www.gnu.org/software/bash/manual/bashref.html#History-Interaction][here]].
+
 ** Handle file paths
    List directory find in last argument of previous cmd.
 #+BEGIN_SRC sh
@@ -373,6 +397,7 @@ alt+n alt+.
 #+BEGIN_SRC sh
   echo $(basename [alt+.])
 #+END_SRC
+
 ** Result of last cmd
 #+BEGIN_SRC sh
 echo $?
