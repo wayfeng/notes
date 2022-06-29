@@ -300,8 +300,8 @@ sudo iptables -A OUTPUT -p tcp --dport 22 -j LOG --log-prefix '[output@tcp:22] '
 #+END_SRC
 
 ** Expressions used with if
-| Primary      | Meaning                                               |
-|--------------+-------------------------------------------------------|
+| Primary    | Meaning                                             |
+|------------+-----------------------------------------------------|
 | =[ -a FILE]= | True if =FILE= exists                                 |
 | =[ -b FILE]= | True if =FILE= exists and is a block special file     |
 | =[ -c FILE]= | True if =FILE= exists and is a character special file |
@@ -342,7 +342,7 @@ ctrl-x e
 #+BEGIN_SRC sh
 sudo !!
 #+END_SRC
-** Run a command N times																							 :bash:
+** Run a command N times
 #+BEGIN_SRC sh
   for i in {1..$N}; do <CMD>; done
 #+END_SRC

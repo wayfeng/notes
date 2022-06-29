@@ -6,15 +6,15 @@
 * Git Concept
 ** Terms
 
-| name         | explanation                                                                                                      |
-|--------------+------------------------------------------------------------------------------------------------------------------|
+| name         | explanation                                                                                                  |
+|--------------+--------------------------------------------------------------------------------------------------------------|
 | repository   | A *repository* is a collection of *commits*                                                                      |
-| staging area | Before changes of *working tree* are committed to *repository*, it goes to *staging area* first.                 |
-| working tree | A derectory on file system which has a *repository* associated to it.                                            |
+| staging area | Before changes of *working tree* are committed to *repository*, it goes to *staging area* first.                   |
+| working tree | A derectory on file system which has a *repository* associated to it.                                          |
 | commit       | A *commit* is a snapshot of your *working tree* at some point in time                                            |
-| branch       | A *branch* is a name for a *commit*, also called a *reference*.                                                  |
+| branch       | A *branch* is a name for a *commit*, also called a *reference*.                                                    |
 | tag          | A *tag* is also a name of a *commit*, but it always names the same commit and can have its own description text. |
-| master       | the mainline of development branch                                                                               |
+| master       | the mainline of development branch                                                                           |
 | HEAD         | *HEAD* indicates what is checked out in current *working tree*.                                                  |
 
 ** Readings

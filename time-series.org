@@ -45,51 +45,82 @@
    stationary time series with its own lagged values.
 
    Given a time series $y_t$, the partial correlation of lag $k$, denoted
-   $\rho_k$, is autocorrelation between $y_t$ and $y_{t-k}$.
+   $\alpha_k$, is autocorrelation between $y_t$ and $y_{t-k}$.
 
-\begin{equation}
-y_{t} = \rho_{0} + \rho_{1} y_{t-1} + \rho_{2} y_{t-2} + \dots + \rho_{k} y_{t-k} + \epsilon_{t}
-\end{equation}
+   \begin{equation}
+   y_{t} = \alpha_{0} + \alpha_{1} y_{t-1} + \alpha_{2} y_{t-2} + \dots + \alpha_{k} y_{t-k} + \epsilon_{t}
+   \end{equation}
+
+** AutoRegression
+   \begin{align}
+   AR(1) &\rightarrow y_t = \alpha_1 y_{t-1} + \epsilon_t \\
+   AR(2) &\rightarrow y_t = \alpha_1 y_{t-1} + \alpha_2 y_{t-2} + \epsilon_t \\
+   AR(p) &\rightarrow y_t = \alpha_1 y_{t-1} + \alpha_2 y_{t-2} + \dots + \alpha_p y_{t-p} + \epsilon_t \\
+   \end{align}
+
 
 ** Stationary
 
 *** requirements
    - mean $\mu$ is constant
    - standard deviation $\sigma$ is constant
-   - there's no *seasonality*
+   - no *seasonality* component
 
 *** tests
    - visual
    - local test V.S. global test
-   - augmented Dickey-Fuller test
+   - Augmented Dickey-Fuller Test
 
 *** making a time-series stationary
 
     For non-stationary time-series
-    \begin{equation}
-    y_t = \beta_0 + \beta_{t} t + \epsilon_t
-    \end{equation}
-
     \begin{align}
+    y_t &= \beta_0 + \beta_{t} t + \epsilon_t \\
+
     z_t &= y_t - y_{t-k} \\
         &= (\beta_{t} - \beta_{t-k}) t + (\epsilon_t - \epsilon_{t-k})
     \end{align}
 
-*** Unit Root Test
-    For a time-series $y_t$,
+*** Unit Root
+    If a time series has unit root, it is non-stationary but does not always have a trend.
+
+    For AR(1) model $y_t = \alpha y_{t-1} + \epsilon_t$, where \epsilon \leftarrow \Nu(0, \sigma^2),
     \begin{align}
-    y_t &= \phi y_{t-1} + \epsilon_t \\
-        &= \phi^t y_0 + \sum_{k=0}^{t-1}{\phi^k \epsilon_{t-k}}
+    \mathbb{E}(y_t) &= \alpha\mathbb{E}(y_{t-1}) + \mathbb{E}(\epsilon_t) = \alpha^t y_0 \\
+    var(y_t) &= \alpha^2 var(y_{t-1}) + var(\epsilon_t) = \alpha^2 var(y_{t-1}) + \sigma^2 \\
+             &= \sigma^2\sum_{k=0}^{t-1}{\alpha^{2k}} \\
     \end{align}
-    where,
-    \begin{align}
-    var(y_t) &= \sigma^2[\sum_{k=0}^{t-1}{\phi^{2k}}] \\
-    \mathbb{E}(y_t) &= \phi\mathbb{E}(y_{t-1}) = \cdots = \phi^t y_0
-    \end{align}
-    $y_t$ is stationary only when $|\phi| < 1$.
+
+    - If $\alpha > 1$, both mean and variance are infinite overtime.
+    - If $\alpha = 1$, the process has a unit root. $\mathbb{E}(y_t)$ is constant but $var(y_t) \rightarrow \infty$.
+    - $y_t$ is stationary only when $|\alpha| < 1$.
+
+
+** Moving Average
 
 * Advanced
+** ARMA
+** ARIMA
+*** AutoRegression
+*** Integrated
+
+*** Moving Average
+
+*** ARIMA(p,q,d)
+    \begin{equation}
+    \left(1-\sum_{i=1}^p\phi_i L^i\right)(1-L)^d X_t = \left(1+\sum^q_{i=1}\theta_iL^i\right)\epsilon_t
+    \end{equation}
+
+*** AIC
+    \begin{equation}
+    AIC = 2k - 2\ln(\hat{L})
+    \end{equation}
+** SARIMAX
 
 * Tools
-
+** Python
+   - Numpy
+   - Pandas
+   - Statsmodels
+   - Scipy
 * Projects
