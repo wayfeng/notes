@@ -1,0 +1,40 @@
+html {
+    font-size: 14pt;
+    background-color: white;
+}
+
+body {
+    margin: auto;
+    line-height: 1.2;
+}
+
+body #content {
+    padding-top: 0px;
+    max-width: 80%;
+    min-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: white;
+    padding: 1em;
+}
+
+h1.title {
+    text-align: left;
+    font-size: 2em;
+    color: black;
+    margin-bottom: 1em;
+}
+
+.subtitle {
+    text-align: left;
+    font-size: 1rem;
+    color: black;
+    margin-left: 2rem;
+}
+
+pre.poem {
+    font-family: Gentium, Calibri, Times, Serif;
+    color: black;
+    border-left: 4px solid #3f1aa8;
+    padding-left: 15px;
+}

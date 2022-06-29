@@ -48,7 +48,9 @@ h2 {
 h3, h4, h5 {
     font-size: 1em;
 }
-h2, h3, h4, h5 { color: #005a9c; }
+
+h2, h3 { color: #005a9c; }
+h4, h5 { color: black; }
 
 dl {
     //border: 3px double #ccc;
@@ -149,15 +151,18 @@ blockquote {
 }
 
 span.tag>span:before {
-    content: '<'
+    content: '<<'
 }
 
 span.tag>span:after {
-    content: '>'
+    content: '>>'
 }
 span.tag {
     float : right;
-    background-color: yellow;
+    background-color: #008000;
+    color: white;
+    font-family: Consolas, Mononoki, Courier, Monospace;
+    font-size: small;
 }
 
 table {
@@ -181,7 +186,7 @@ tbody > tr {
 }
 
 tbody>tr:hover {
-    background-color: yellow;
+    background-color: #7388d6;
 }
 
 td {

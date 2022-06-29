@@ -10,6 +10,7 @@
     text-align: right;
     /* ensure doesn't flow off the screen when expanded */
     max-height: 80%;
+    min-width: 12em;
     overflow: auto;
     z-index: 200;
 }
