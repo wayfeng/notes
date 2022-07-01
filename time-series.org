@@ -9,6 +9,17 @@
 
    Values measured repeatedly over time become time series.
 
+** Components of Time Series
+   - Trend
+   - Seasonal variation
+   - Cyclic variation
+   - Irregular variation
+
+** Additive Model VS Multiplicative Model
+   Multiplicative: Y = T \times S \times C \times I
+
+   Additive: Y = T + S + C + I
+
 ** Autocorrelation
 
    Values of a time series may be correlated with previous values in the same series.
@@ -71,56 +82,93 @@
    - local test V.S. global test
    - Augmented Dickey-Fuller Test
 
-*** making a time-series stationary
+** Integrated (Differentiate)
+   Integrating can be used to make a time-series stationary.
 
-    For non-stationary time-series
-    \begin{align}
-    y_t &= \beta_0 + \beta_{t} t + \epsilon_t \\
+   For non-stationary time-series
+   \begin{align}
+   y_t &= \beta_0 + \beta_{t} t + \epsilon_t \\
 
-    z_t &= y_t - y_{t-k} \\
-        &= (\beta_{t} - \beta_{t-k}) t + (\epsilon_t - \epsilon_{t-k})
-    \end{align}
+   z_t &= y_t - y_{t-k} \\
+       &= (\beta_{t} - \beta_{t-k}) t + (\epsilon_t - \epsilon_{t-k})
+   \end{align}
 
-*** Unit Root
-    If a time series has unit root, it is non-stationary but does not always have a trend.
+** Unit Root
+   If a time series has unit root, it is non-stationary but does not always have a trend.
 
-    For AR(1) model $y_t = \alpha y_{t-1} + \epsilon_t$, where \epsilon \leftarrow \Nu(0, \sigma^2),
-    \begin{align}
-    \mathbb{E}(y_t) &= \alpha\mathbb{E}(y_{t-1}) + \mathbb{E}(\epsilon_t) = \alpha^t y_0 \\
-    var(y_t) &= \alpha^2 var(y_{t-1}) + var(\epsilon_t) = \alpha^2 var(y_{t-1}) + \sigma^2 \\
-             &= \sigma^2\sum_{k=0}^{t-1}{\alpha^{2k}} \\
-    \end{align}
+   For AR(1) model y_t = \alpha y_{t-1} + \epsilon_t, where \epsilon \sim \Nu(0, \sigma^2),
+   \begin{align}
+   \mathbb{E}(y_t) &= \alpha\mathbb{E}(y_{t-1}) + \mathbb{E}(\epsilon_t) = \alpha^t y_0 \\
+   var(y_t) &= \alpha^2 var(y_{t-1}) + var(\epsilon_t) = \alpha^2 var(y_{t-1}) + \sigma^2 \\
+            &= \sigma^2\sum_{k=0}^{t-1}{\alpha^{2k}} \\
+   \end{align}
 
-    - If $\alpha > 1$, both mean and variance are infinite overtime.
-    - If $\alpha = 1$, the process has a unit root. $\mathbb{E}(y_t)$ is constant but $var(y_t) \rightarrow \infty$.
-    - $y_t$ is stationary only when $|\alpha| < 1$.
+   - If $\alpha > 1$, both mean and variance are infinite overtime.
+   - If $\alpha = 1$, the process has a unit root. $\mathbb{E}(y_t)$ is constant but $\lim_{t \to \infty}var(y_t) \to \infty$.
+   - $y_t$ is stationary only when $|\alpha| < 1$.
 
 
 ** Moving Average
+   For time series $y_t$ with error \epsilon \sim \Nu(\mu_\epsilon, \sigma_\epsilon^2),
 
-* Advanced
-** ARMA
-** ARIMA
-*** AutoRegression
-*** Integrated
+   \begin{align}
+   MA(1) &\rightarrow \hat{y}_t = \mu + \beta_1 \epsilon_{t-1} \\
+   MA(2) &\rightarrow \hat{y}_t = \mu + \beta_1 \epsilon_{t-1} + \beta_2 \epsilon_{t-2} \\
+   MA(q) &\rightarrow \hat{y}_t = \mu + \beta_1 \epsilon_{t-1} + \beta_2 \epsilon_{t-2} + \cdots + \beta_q \epsilon_{t-q} \\
+   \end{align}
 
-*** Moving Average
+** Exogenous Variables
+   A parallel time series that not modeled directly but is used as a weighted input to the model.
 
-*** ARIMA(p,q,d)
-    \begin{equation}
-    \left(1-\sum_{i=1}^p\phi_i L^i\right)(1-L)^d X_t = \left(1+\sum^q_{i=1}\theta_iL^i\right)\epsilon_t
-    \end{equation}
+   e.g. Consider daily based number of customers of a restaurant. Whether the day is weekend or holiday will affect the number.
 
-*** AIC
-    \begin{equation}
-    AIC = 2k - 2\ln(\hat{L})
-    \end{equation}
+** AIC (Akaike Information Criterion)
+   \begin{equation}
+   AIC = 2k - 2\ln(\hat{L})
+   \end{equation}
+
+** BIC (Bayesian Information Criterion)
+   \begin{equation}
+   BIC = 2 \ln{N} k - 2 \ln{L}
+   \end{equation}
+** HQIC
+** Invertible
+
+* Models
+** ARMA(p, q)
+   \begin{equation}
+   y_t = \phi_1 y_{t-1} + \phi_2 y_{t-2} + \ldots + \phi_p y_{t-p} + \theta_1\epsilon_{t-1}
+         + \theta_2 \epsilon_{t-2} + \ldots + \theta_q \epsilon_{t-q} + \epsilon_t
+   \end{equation}
+** ARIMA(p, d, q)
+   \begin{equation}
+   \left(1-\sum_{i=1}^p\phi_i L^i\right)(1-L)^d X_t = \left(1+\sum^q_{i=1}\theta_iL^i\right)\epsilon_t
+   \end{equation}
+
 ** SARIMAX
+
+** VAR
+   
+   2-dimensional VAR(1) model:
+   \begin{align}
+   y_{1,t} &= \phi_{1,1}y_{1,t-1} + \phi_{1,2}y_{2,t-1} + \epsilon_{1,t} \\
+   y_{2,t} &= \phi_{2,1}y_{1,t-1} + \phi_{2,2}y_{2,t-1} + \epsilon_{2,t} \\
+   \end{align}
+
+** VARMA
+
+   2-dimensional VARMA(1,1) model:
+   \begin{align}
+   y_{1,t} &= \phi_{1,1}y_{1,t-1} + \phi_{1,2}y_{2,t-1} + \theta_{1,1}\epsilon_{1,t-1} + \theta_{1,2}\epsilon_{2,t-1} + \epsilon_{1,t} \\
+   y_{2,t} &= \phi_{2,1}y_{1,t-1} + \phi_{2,2}y_{2,t-1} + \theta_{2,1}\epsilon_{1,t-1} + \theta_{2,2}\epsilon_{2,t-1} + \epsilon_{2,t} \\
+   \end{align}
 
 * Tools
 ** Python
    - Numpy
    - Pandas
-   - Statsmodels
+   - Statsmodels.tsa
+   - pdmarima
    - Scipy
+
 * Projects
