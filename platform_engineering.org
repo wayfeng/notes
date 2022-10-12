@@ -1,0 +1,84 @@
+#+TITLE:     Platform Engineering
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+HTML_HEAD: <script src="js/mermaid.min.js" type="text/javascript"></script>
+#+HTML_HEAD_EXTRA: <script src="js/org-info.js" type="text/javascript"></script>
+#+OPTIONS:   tex:t
+#+INDEX: IDP
+#+INDEX: SOA
+#+INDEX: Cloud-Native
+
+* What is Platform Engineering
+
+- Platform Engineering :: Aims to give developers in an organisation the capacity to self-serve
+  their infrastructure needs, as well as deploy, operate, browse, monitor and template all
+  services available in the organisation.[fn:2] Platform engineering team provides IDP as a product.
+
+- Internal Developer Platform (IDP) :: A self-service layer that allows developers to interact
+   independently with their organization’s delivery setup, enabling them to self-serve
+   environments, deployments, databases, logs and anything else they need to run their applications.[fn:1]
+
+* Why is Platform Engineering needed
+
+#+Keywords: efficiency, cognitive load, workflow, self-service
+
+* Challenges with SOA and Cloud-Native
+
+** Terms
+
+- Service-Oriented Architecture (SOA) :: SOA is an architectural style that focuses on discrete
+  services instead of a monolithic design.
+
+  1. A service represents a repeatable business activity with a specified outcome. [fn:3]
+
+  2. A service is self-contained.
+
+  3. A service is a black box for its consumers.
+
+  4. A service may be composed of other services.
+
+- Cloud-Native :: Cloud-native technologies empower organizations to build and run scalable
+  applications in modern, dynamic environments such as public, private, and hybrid clouds.
+  Containers, service meshes, microservices, immutable infrastructure, and declarative APIs
+  exemplify this approach.[fn:4]
+
+- Infrastructure as Code (IaC) :: IaC is the process of managing and provisioning computer data
+  centers through machine-readable definition files, rather than physical hardware configuration
+  or interactive configuration tools.
+
+** Challenges
+
+- Increasing cognitive load for product developers (customers of services).
+  - Infrastructure decisions
+  - (micro) services
+
+- Managing multi-cloud architecture.
+  
+* Principles of Platform Engineering [fn:2]
+
+- Clear mission and role
+- Treat your platform as a product
+- Focus on common problems
+- Glue is valuable
+- Don't reinvent the wheel
+
+* Status of Platform Engineering
+
+Platform engineering is in it's early days.
+#+CAPTION: Gartner Hype Cycle, 2022
+#+attr_html: :width 1000px
+[[./img/gartner_2022aug.png]]
+
+* Examples of Platform Engineering
+
+** [[https://aiven.io][Aiven]]
+
+** [[https://cloudify.co][Cloudify]]
+
+** [[https://dropbox.tech/infrastructure/atlas--our-journey-from-a-python-monolith-to-a-managed-platform][Dropbox Atlas]]
+
+
+[fn:1] https://platformengineering.org/blog/what-is-platform-engineering
+[fn:2] https://www.contino.io/insights/platform-engineering
+[fn:3] https://en.wikipedia.org/wiki/Service-oriented_architecture
+[fn:4] https://github.com/cncf/foundation/blob/master/charter.md

@@ -1,0 +1,12 @@
+#+TITLE:     Platform as a Service
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+HTML_HEAD: <script src="js/mermaid.min.js" type="text/javascript"></script>
+#+HTML_HEAD_EXTRA: <script src="js/org-info.js" type="text/javascript"></script>
+#+OPTIONS:   tex:t
+
+* What is PaaS
+
+#+CAPTION: IaaS vs PaaS vs SaaS
+#+attr_html: :width 600px
+[[./img/iaas-paas-saas-diagram3-1638x1046.png]]
