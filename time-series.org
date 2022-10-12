@@ -1,14 +1,25 @@
 #+TITLE:     Time Series Analysis
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+HTML_HEAD: <script src="js/mermaid.min.js" type="text/javascript"></script>
+#+HTML_HEAD_EXTRA: <script src="js/org-info.js" type="text/javascript"></script>
 #+OPTIONS:   tex:t
 
-* Basics
+* Define Time-Series Data
 
-** Time Series
+Values measured repeatedly over fixed interval become *time series*.
 
-   Values measured repeatedly over time become time series.
+* Categories of Time-Series Data
 
+- Uni-variate
+- Multi-variate
+- Tensor-field
+  - Time-series of graph and network
+  - Time-series of spatial positions of moving objects
+  - Time-series of spatial configurations and distributions
+- Multi-field
+
+* Properties of Time-Series Data
 ** Components of Time Series
    - Trend
    - Seasonal variation
@@ -16,159 +27,480 @@
    - Irregular variation
 
 ** Additive Model VS Multiplicative Model
-   Multiplicative: Y = T \times S \times C \times I
+Multiplicative: X = T \times S \times C \times I
 
-   Additive: Y = T + S + C + I
-
-** Autocorrelation
-
-   Values of a time series may be correlated with previous values in the same series.
-
-** Coefficient
-
-   Given a pair of random variables $X, Y$,
-
-   \begin{equation}
-   \rho_{X,Y} = \frac{cov(X, Y)}{\sigma_X\sigma_Y}
-   \end{equation}
-
-   Since,
-
-   \begin{equation}
-   cov(X,Y) = \mathbb{E}[(X - \mu_X)(Y - \mu_Y)],
-   \end{equation}
-
-   $\rho$ can be written as
-
-   \begin{equation}
-   \rho_{X,Y} = \frac{\mathbb{E}[(X-\mu_X)(Y-\mu_Y)]}{\sigma_X\sigma_Y}
-   \end{equation}
-
-   where:
-
-   - $\sigma_X$ and $\sigma_Y$ are standard deviation of $X$ and $Y$
-   - $\mu_X$ and $\mu_Y$ are mean of $X$ and $Y$
-   - $\mathbb{E}$ is the expectation.
-
-** ACF (Auto Correlation Function) & PACF (Partial ACF)
-
-   The partial autocorrelation function gives the partial correlation of a
-   stationary time series with its own lagged values.
-
-   Given a time series $y_t$, the partial correlation of lag $k$, denoted
-   $\alpha_k$, is autocorrelation between $y_t$ and $y_{t-k}$.
-
-   \begin{equation}
-   y_{t} = \alpha_{0} + \alpha_{1} y_{t-1} + \alpha_{2} y_{t-2} + \dots + \alpha_{k} y_{t-k} + \epsilon_{t}
-   \end{equation}
-
-** AutoRegression
-   \begin{align}
-   AR(1) &\rightarrow y_t = \alpha_1 y_{t-1} + \epsilon_t \\
-   AR(2) &\rightarrow y_t = \alpha_1 y_{t-1} + \alpha_2 y_{t-2} + \epsilon_t \\
-   AR(p) &\rightarrow y_t = \alpha_1 y_{t-1} + \alpha_2 y_{t-2} + \dots + \alpha_p y_{t-p} + \epsilon_t \\
-   \end{align}
-
+Additive: X = T + S + C + I
 
 ** Stationary
-
 *** requirements
-   - mean $\mu$ is constant
-   - standard deviation $\sigma$ is constant
-   - no *seasonality* component
+- mean $\mu$ is constant
+- standard deviation $\sigma$ is constant
+- no *seasonality* component
 
 *** tests
-   - visual
-   - local test V.S. global test
-   - Augmented Dickey-Fuller Test
-
-** Integrated (Differentiate)
-   Integrating can be used to make a time-series stationary.
-
-   For non-stationary time-series
-   \begin{align}
-   y_t &= \beta_0 + \beta_{t} t + \epsilon_t \\
-
-   z_t &= y_t - y_{t-k} \\
-       &= (\beta_{t} - \beta_{t-k}) t + (\epsilon_t - \epsilon_{t-k})
-   \end{align}
+- visual
+- local test V.S. global test
+- Augmented Dickey-Fuller Test
 
 ** Unit Root
-   If a time series has unit root, it is non-stationary but does not always have a trend.
+If a time series has unit root, it is non-stationary but does not always have a trend.
 
-   For AR(1) model y_t = \alpha y_{t-1} + \epsilon_t, where \epsilon \sim \Nu(0, \sigma^2),
-   \begin{align}
-   \mathbb{E}(y_t) &= \alpha\mathbb{E}(y_{t-1}) + \mathbb{E}(\epsilon_t) = \alpha^t y_0 \\
-   var(y_t) &= \alpha^2 var(y_{t-1}) + var(\epsilon_t) = \alpha^2 var(y_{t-1}) + \sigma^2 \\
-            &= \sigma^2\sum_{k=0}^{t-1}{\alpha^{2k}} \\
-   \end{align}
+For AR(1) model y_t = \alpha y_{t-1} + \epsilon_t, where \epsilon \sim \Nu(0, \sigma^2),
 
-   - If $\alpha > 1$, both mean and variance are infinite overtime.
-   - If $\alpha = 1$, the process has a unit root. $\mathbb{E}(y_t)$ is constant but $\lim_{t \to \infty}var(y_t) \to \infty$.
-   - $y_t$ is stationary only when $|\alpha| < 1$.
+\begin{align}
+\mathbb{E}(y_t) &= \alpha\mathbb{E}(y_{t-1}) + \mathbb{E}(\epsilon_t) = \alpha^t y_0 \\
+var(y_t) &= \alpha^2 var(y_{t-1}) + var(\epsilon_t) = \alpha^2 var(y_{t-1}) + \sigma^2 \\
+         &= \sigma^2\sum_{k=0}^{t-1}{\alpha^{2k}} \\
+\end{align}
 
+- If $\alpha > 1$, both mean and variance are infinite overtime.
+- If $\alpha = 1$, the process has a unit root. $\mathbb{E}(y_t)$ is constant but $\lim_{t \to \infty}var(y_t) \to \infty$.
+- $y_t$ is stationary only when $|\alpha| < 1$.
 
-** Moving Average
-   For time series $y_t$ with error \epsilon \sim \Nu(\mu_\epsilon, \sigma_\epsilon^2),
-
-   \begin{align}
-   MA(1) &\rightarrow \hat{y}_t = \mu + \beta_1 \epsilon_{t-1} \\
-   MA(2) &\rightarrow \hat{y}_t = \mu + \beta_1 \epsilon_{t-1} + \beta_2 \epsilon_{t-2} \\
-   MA(q) &\rightarrow \hat{y}_t = \mu + \beta_1 \epsilon_{t-1} + \beta_2 \epsilon_{t-2} + \cdots + \beta_q \epsilon_{t-q} \\
-   \end{align}
-
+** Single Variable V.S. Multiple Variable
 ** Exogenous Variables
-   A parallel time series that not modeled directly but is used as a weighted input to the model.
+A parallel time series that not modeled directly but is used as a weighted input to the model.
 
-   e.g. Consider daily based number of customers of a restaurant. Whether the day is weekend or holiday will affect the number.
+e.g. Consider daily based number of customers of a restaurant. Whether the day is weekend or holiday will affect the number.
 
-** AIC (Akaike Information Criterion)
-   \begin{equation}
-   AIC = 2k - 2\ln(\hat{L})
-   \end{equation}
+* Categories of Time-Series Analysis
 
-** BIC (Bayesian Information Criterion)
-   \begin{equation}
-   BIC = 2 \ln{N} k - 2 \ln{L}
-   \end{equation}
-** HQIC
-** Invertible
+- Time-Series Prediction/Forecasting
+- Time-Series Anomaly/Outlier Detection
+- Time-Series Classification/Clustering
+- Time-Series Association Rules
 
-* Models
-** ARMA(p, q)
-   \begin{equation}
-   y_t = \phi_1 y_{t-1} + \phi_2 y_{t-2} + \ldots + \phi_p y_{t-p} + \theta_1\epsilon_{t-1}
-         + \theta_2 \epsilon_{t-2} + \ldots + \theta_q \epsilon_{t-q} + \epsilon_t
-   \end{equation}
-** ARIMA(p, d, q)
-   \begin{equation}
-   \left(1-\sum_{i=1}^p\phi_i L^i\right)(1-L)^d X_t = \left(1+\sum^q_{i=1}\theta_iL^i\right)\epsilon_t
-   \end{equation}
+* Time-Series Prediction/Forecasting
 
-** SARIMAX
+Given observed values of previous $K$ timestamps $x_{t-K},\ldots,x_{t-1}$,
+the task of *time-series forecasting* aims to predict the node values
+in for the next $H$ timestamps $x_t,x_{t+1},\ldots,x_{t+H-1}$.
+$\mathcal{F}$ is the forecasting model with parameter $\Phi$.
 
-** VAR
+\begin{equation}
+\hat{x}_t,\hat{x}_{t+1},\ldots,\hat{x}_{t+H-1} = \mathcal{F}\left(x_{t-K},\ldots,x_{t-1};\Phi\right)
+\end{equation}
+
+* Time-Series Anomaly/Outlier Detection
+
+\begin{equation}
+\hat{y} = \mathcal{F}\left(x_{t-K},\ldots,x_{t-1};\Phi\right), y \in \{0, 1\}
+\end{equation}
+
+* Time-Series Classification/Clustering
+
+Distances (or similarity) of data points are critical to clustering algorithms.
+There're many ways to define distances of time-series data.
+  - lock-step measures (e.g. Euclidean distance and Manhatan distance)
+  - elastic measures (e.g. longests common sub-sequence and dynamic time warping)
+  - pattern-based measures (e.g. spatial assembling distance [SpADe])
+  - threshold-based measures (e.g. threshold query based similarity search [TQuEST])
+
+** Dynamic Time Warping
+One of the algorithms for measuring similarity between two sequences that do not align exactly
+in time, speed, or length.
+\begin{equation}
+DWT(x, y) = min_{\pi}\sqrt{\sum_{(i,j)\in\pi}d(x_j,y_j)^2}
+\end{equation}
+Where \pi = [\pi_{0},\dots,\pi_{K}] is a path that satisfies the following properties:
+
+** Time-Series k-means
+** Kernel k-means
+** KShape
+
+* Time-Series Association Rules
+* Time-Series Analysis Methods
+#+CAPTION: Generic process of bearing fault detection using vibration signal
+#+NAME: fig:general_methods
+#+BEGIN_EXPORT html
+<div class="mermaid">
+flowchart TD
+a[Data Acquisition] --> db[Database]
+db --> dp[Data Preprocessing]
+dp --> fe[Feature Extraction]
+fe --> sp[Signal Processing Methods]
+fe --> ml[ML Algorithms]
+dp --> ml
+dp ---> dl[DL Algorithms]
+</div>
+#+END_EXPORT
+
+* Signal Processing Methods
+** Spectrum
+*** Fourier Transform
+
+\begin{equation*}
+\hat{f}(s) = \int\limits_{-\infty}^{+\infty}{f(t)e^{-j 2 \pi s t}\mathrm{d}t}
+\end{equation*}
+
+*** Continuous Wavelet Transform (CWT)
+
+With $s = 1/freqency$ as scale, wavelet coefficient $\mathcal{F}$ defined as
+\begin{equation*}
+\mathcal{F}(s, \tau) = \frac{1}{\sqrt{\vert s\vert}}\int\limits_{-\infty}^{+\infty}{f(t)\psi\left(\frac{t-\tau}{s}\right)\mathrm{d}t}
+\end{equation*}
+
+#+CAPTION: Example of wavelet transform
+#+attr_html: :width 600px
+[[./img/wavelet.jpg]]
+
+The result of wavelet transform is also called *scalogram*.
+
+The Morlet wavelet
+#+attr_html: :width 300px :style inline
+[[./img/MorletWaveletMathematica.png]]
+\begin{equation*}
+\Psi(t) = k_0 \cdot cos\left(\frac{t}{s}\right) \cdot e^{-t^2/2}
+\end{equation*}
+
+#+attr_html: :width 300px :style inline
+[[./img/Wavelet_Cmor.png]]
+
+
+** Decomposition
+*** Empirical Mode Decomposition
+EMD provides intrinsic mode functions(IMFs) and a residual.
+
+The sum of all IMFs and residual resemble the original signal.
+\begin{equation}
+f(t) = \sum_t{inf_i} + res
+\end{equation}
+
+Check stopping criterion:
+\begin{equation}
+  \sum_t{\frac{\left(res(t) - f(t)\right)^2}{f(t)^2}} \lt \epsilon
+\end{equation}
+
+* Statistics Methods
+** Auto-correlation
+
+Values of a time series may be correlated with previous values in the same series.
+
+*** ACF (Auto Correlation Function) & PACF (Partial ACF)
+
+The *Sample autocorrelation function* is
+\begin{equation}
+\hat\rho(h) = \frac{\hat\gamma(h)}{\hat\gamma(0)}
+\end{equation}
+
+where
+\begin{equation*}
+\mu_x = \overline{x} = \frac{1}{n}\sum_{t=1}^n{x_t}\\
+
+\hat\gamma(h) = \frac{1}{n}\sum_{t=1}^{n-|h|}{(x_{t+|h|}-\mu_x)(x_t-\mu_x)}, for |h| < n.\\
+\hat\gamma(0) = \frac{1}{n}\sum_{t=1}^n{(x_t-\mu_x)^2}
+\end{equation*}
+
+The partial autocorrelation function gives the partial correlation of a
+stationary time series with its own lagged values.
+
+Given a time series $x_t$, the partial correlation of lag $k$, denoted
+$\alpha_k$, is autocorrelation between $x_t$ and $x_{t-k}$.
+
+\begin{equation}
+\hat{x}_{t} = \alpha_{0} + \alpha_{1} x_{t-1} + \alpha_{2} x_{t-2} + \dots + \alpha_{k} x_{t-k} + \epsilon_{t}
+\end{equation}
+
+** Smoothing Methods
+*** Single Smoothing
+For data sequence with only level, with 0 \leq \alpha \leq 1,
+\begin{align}
+F_{t+k} &= L_t \\
+L_1 &= Y_1, \\
+L_t &= \alpha Y_t + (1 - \alpha) L_{t-1} \\
+    &= \alpha Y_t + \alpha (1 - \alpha)Y_{t-1} + \alpha (1 - \alpha)^2 Y_{t-2} + \ldots
+\end{align}
+
+*** Double Smoothing
+For data sequence with level and *additive trend*, with 0 \leq \alpha, \beta \leq 1,
+\begin{align}
+F_{t+k} &= L_t + kT_t \\
+L_t &= \alpha Y_t + (1 - \alpha)(L_{t-1} + T_{t-1}) \\
+T_t &= \beta (L_t - L_{t-1}) + (1 - \beta) T_{t-1}
+\end{align}
+
+*** Triple Smoothing
+For data sequence with *additive trend* and *multiplicative seasonality*, with 0 \leq \alpha, \beta \leq 1,
+\begin{align}
+F_{t+k} &= (L_t + kT_t) * S_{t+k-M} \\
+L_t &= \alpha (Y_t / S_{t-M}) + (1 - \alpha)(L_{t-1} + T_{t-1}) \\
+T_t &= \beta (L_t - L_{t-1}) + (1 - \beta) T_{t-1} \\
+S_t &= \gamma (Y_t / L_t) + (1 + \gamma) S_{t-M}
+\end{align}
+
+** Integrated (Differentiate)
+Integrating can be used to make a time-series stationary.
+
+For non-stationary time-series
+\begin{align}
+y_t &= \beta_0 + \beta_{t} t + \epsilon_t \\
+
+z_t &= y_t - y_{t-k} \\
+    &= (\beta_{t} - \beta_{t-k}) t + (\epsilon_t - \epsilon_{t-k})
+\end{align}
+
+** Statistics Models
+*** AutoRegression
+\begin{align}
+AR(1) &\rightarrow \hat{y}_t = \alpha_1 y_{t-1} + \epsilon_t \\
+AR(2) &\rightarrow \hat{y}_t = \alpha_1 y_{t-1} + \alpha_2 y_{t-2} + \epsilon_t \\
+AR(p) &\rightarrow \hat{y}_t = \alpha_1 y_{t-1} + \alpha_2 y_{t-2} + \dots + \alpha_p y_{t-p} + \epsilon_t \\
+\end{align}
+
+
+*** Moving Average
+For time series $y_t$ with error \epsilon \sim \Nu(\mu_\epsilon, \sigma_\epsilon^2),
+
+\begin{align}
+MA(1) &\rightarrow \hat{y}_t = \mu + \beta_1 \epsilon_{t-1} \\
+MA(2) &\rightarrow \hat{y}_t = \mu + \beta_1 \epsilon_{t-1} + \beta_2 \epsilon_{t-2} \\
+MA(q) &\rightarrow \hat{y}_t = \mu + \beta_1 \epsilon_{t-1} + \beta_2 \epsilon_{t-2} + \cdots + \beta_q \epsilon_{t-q} \\
+\end{align}
+
+
+*** ARMA(p, q)
+\begin{equation}
+\hat{y}_t = \phi_1 y_{t-1} + \phi_2 y_{t-2} + \ldots + \phi_p y_{t-p} + \theta_1\epsilon_{t-1}
+      + \theta_2 \epsilon_{t-2} + \ldots + \theta_q \epsilon_{t-q} + \epsilon_t
+\end{equation}
+
+
+*** ARIMA(p, d, q)
+\begin{equation}
+\left(1-\sum_{i=1}^p\phi_i L^i\right)(1-L)^d X_t = \left(1+\sum^q_{i=1}\theta_iL^i\right)\epsilon_t
+\end{equation}
+
+
+*** SARIMAX
+
+*** VAR
+2-dimensional VAR(1) model:
+\begin{align}
+y_{1,t} &= \phi_{1,1}y_{1,t-1} + \phi_{1,2}y_{2,t-1} + \epsilon_{1,t} \\
+y_{2,t} &= \phi_{2,1}y_{1,t-1} + \phi_{2,2}y_{2,t-1} + \epsilon_{2,t} \\
+\end{align}
+
+
+*** VARMA
+2-dimensional VARMA(1,1) model:
+\begin{align}
+y_{1,t} &= \phi_{1,1}y_{1,t-1} + \phi_{1,2}y_{2,t-1} + \theta_{1,1}\epsilon_{1,t-1} + \theta_{1,2}\epsilon_{2,t-1} + \epsilon_{1,t} \\
+y_{2,t} &= \phi_{2,1}y_{1,t-1} + \phi_{2,2}y_{2,t-1} + \theta_{2,1}\epsilon_{1,t-1} + \theta_{2,2}\epsilon_{2,t-1} + \epsilon_{2,t} \\
+\end{align}
+
    
-   2-dimensional VAR(1) model:
-   \begin{align}
-   y_{1,t} &= \phi_{1,1}y_{1,t-1} + \phi_{1,2}y_{2,t-1} + \epsilon_{1,t} \\
-   y_{2,t} &= \phi_{2,1}y_{1,t-1} + \phi_{2,2}y_{2,t-1} + \epsilon_{2,t} \\
-   \end{align}
+*** Criterions
+**** AIC (Akaike Information Criterion)
+\begin{equation}
+AIC = 2k - 2\ln(\hat{L})
+\end{equation}
 
-** VARMA
+**** BIC (Bayesian Information Criterion)
+\begin{equation}
+BIC = 2 \ln{N} k - 2 \ln{L}
+\end{equation}
 
-   2-dimensional VARMA(1,1) model:
-   \begin{align}
-   y_{1,t} &= \phi_{1,1}y_{1,t-1} + \phi_{1,2}y_{2,t-1} + \theta_{1,1}\epsilon_{1,t-1} + \theta_{1,2}\epsilon_{2,t-1} + \epsilon_{1,t} \\
-   y_{2,t} &= \phi_{2,1}y_{1,t-1} + \phi_{2,2}y_{2,t-1} + \theta_{2,1}\epsilon_{1,t-1} + \theta_{2,2}\epsilon_{2,t-1} + \epsilon_{2,t} \\
-   \end{align}
+**** HQIC
+
+* Deep Learning Models
+
+** Temporal Graph
+
+A *multivariate temporal graph* can be denoted as $\mathcal{G} = (X, W)$.
+$X = { X_{i,t} } \in \mathbb{R}^{N \times T}$ stands for multivariate time-series input,
+where $N$ is the input time series (nodes), and $T$ is the number of timestamps.
+Observed value at timestamp $t$ can be denoted as $X_t \in \mathbb{R}^N$.
+$W \in \mathbb{R}^{N \times N}$ is the adjacency matrix,
+w_{ij} indicates the strength of the edge connecting node $i$ and $j$.
+
+** Predcition in Graph
+
+Given observed values of previous $K$ timestamps $X_{t-K},\ldots,X_{t-1}$,
+the task of *multivariate time-series forecasting* aims to predict the node values
+in $\mathcal{G}$ for the next $H$ timestamps $X_t,X_{t+1},\ldots,X_{t+H-1}$.
+$F$ is the forecasting model with parameter $\Phi$.
+
+\begin{equation}
+\hat{X}_t,\hat{X}_{t+1},\ldots,\hat{X}_{t+H-1} = F\left(X_{t-K},\ldots,X_{t-1};\mathcal{G};\Phi\right)
+\end{equation}
+
+** Graph Laplacian [[https://en.wikipedia.org/wiki/Laplacian_matrix][ref]]
+The Laplacian matrix is defined as
+   \begin{equation}
+L = D - A
+   \end{equation}
+where $D$ is the degree matrix, and $A$ is the adjacency matrix of the graph.
+
+Symmetrically normalized Laplacian is defined as
+   \begin{equation}
+L = (D^+)^{1/2}L(D^+)^{1/2} = I - (D^+)^{1/2}A(D^+)^{1/2}
+   \end{equation}
+   where $D^+$ is the Moore-Penrose inverse.
+
+
+** Chebyshev Polynomial Approximation
+Define
+   \begin{align*}
+c_j &\equiv \frac{2}{N}\sum_{k=1}^Nf(x_k)T_j(x_k) \\
+    &= \frac{2}{N}\sum_{k=1}^Nf\Bigl[cos\Bigl\{\frac{\pi(k-\frac{1}{2})}{N}\Bigr\}\Bigr]cos\Bigl\{\frac{\pi j (k-\frac{1}{2})}{N}\Bigr\}
+   \end{align*}
+Then
+   \begin{equation}
+f(x) \approx \sum_{k=0}^{N-1}c_kT_k(x)-\frac{1}{2}c_0
+   \end{equation}
+This type of approximation is important because, when truncated, the error is spread smoothly over [-1,1].
+
+** Graph Fourier Transformation
+
+** Spectral Network
+
+** Recurrent Neural Network
+
+*** Long-Short Term Memory
+
+*** Gated Recurrent Unit
+
+* Use Cases
+
+** Traffic prediction
+
+** Bearing fault detection (with Vibration Analysis)
+
+Detecting of status of bearing is important, finding out the reason of failure and eliminating it is even more important.
+
+Possible failure reasons:
+- fatigue
+- lubrication
+- poor handling & installation
+- contamination (hard particles)
+
+Traditional means:
+- oil analysis
+- wear particle analysis
+- thermography
+- vibration analysis
+
+#+CAPTION: Idealized vibration signature due to fault in outer bearing race.
+#+NAME: fig:0001
+[[./img/bearing_outerrace_crack.png]]
+
+*** Limitation of simple spectral analysis
+
+#+CAPTION: Construction of the synthetic signal. (a) Square wave approximation. (b) Random noise. (c) Ringing pulse sequence. (d) Their sum.
+#+NAME: fig:0002
+[[./img/bearing_synthetic_signal.png]]
+
+#+CAPTION: Spectra of the (a) Square wave approximation. (b) Random noise. (c) Ringing pulse sequence. (d) Composite waveform
+#+NAME: fig:0003
+[[./img/bearing_signal_spectra.png]]
+
+*** Envelop analysis [[https://ieeexplore.ieee.org/iel5/13/26560/01183679.pdf][ref]]
+#+CAPTION: Process of envelop analysis
+#+NAME: fig:0004
+#+BEGIN_EXPORT html
+<div class="mermaid">
+flowchart TD
+  rts(Raw Time Signal) --> bf(Bandpass Filtering) --> fwr(Full Wave Rectification) --> ps(Power Spectrum)
+</div>
+#+END_EXPORT
+
+**** Kurtosis
+Variance
+\begin{equation*}
+\sigma^2 = \frac{1}{N}\sum_{i=1}^N\bigl(x(t_i) - \mu\bigr)^2
+\end{equation*}
+Kurtosis coefficient
+\begin{equation*}
+\gamma = \frac{1}{N}\sum_{i=1}^N\frac{(x(t_i)-\mu)^4}{\sigma^4}
+\end{equation*}
 
 * Tools
 ** Python
-   - Numpy
-   - Pandas
-   - Statsmodels.tsa
+   - numpy
+   - pandas
+   - statsmodels.tsa
    - pdmarima
-   - Scipy
+   - scipy
+   - sktime [[https://www.sktime.org/en/latest/tutorials.html][link]]
+** R
+** Libraries
+   - facebook prophet [[https://facebook.github.io/prophet/][ref]]
 
-* Projects
+
+* Datasets
+
+** Traffic Prediction
+*** Caltrans Performance Measurement System (PeMS)
+    [[https://dot.ca.gov/programs/traffic-operations/mpr/pems-source][link1]], [[https://archive.ics.uci.edu/ml/machine-learning-databases/00204/][link2]], [[https://zenodo.org/record/3939793#.YtEGpUhBzMg][link3]]
+*** University of East Anglia (UEA)
+    [[http://www.timeseriesclassification.com/][link]]
+*** University of California, Riverside (UCR)
+    [[https://www.cs.ucr.edu/%7Eeamonn/time_series_data_2018/][link]] password: someone
+*** University of California, Irvine (UCI)
+    [[https://archive-beta.ics.uci.edu/][link]]
+** Bearing Fault Detection
+*** CASE Western Reserve University (CWRU)
+    [[https://engineering.case.edu/bearingdatacenter][link]] Motor Bearing Fault
+*** Center for Intelligent Maintenance Systems (IMS), University of Cincinnati
+    [[http://imscenter.net][link]]
+*** Paderborn University
+*** FEMTO
+*** Machinery Failure Prevention Technology (MFPT)
+
+* Demos
+
+#+CAPTION: Time-Series Analysis System Structure
+#+BEGIN_EXPORT html
+<div class="mermaid">
+%%{init: {'theme': 'default' }}%%
+flowchart LR
+  subgraph collecting
+    s1((sensor #1)) --> b(broker)
+    s2((sensor #2)) --> b
+    sn((sensor #n)) --> b
+  end
+  subgraph aggregating
+    b --> telegraf(telegraf)
+    telegraf --> db[(time-series\ndatabase)]
+  end
+  subgraph analyzing
+    db <--> ie(Inference\nservice)
+  end
+  subgraph visualizing
+    db --> grafana
+  end
+  subgraph training
+    ie <--> pytorch[pytorch\nmodel]
+  end
+</div>
+#+END_EXPORT
+
+
+* Other Topics
+** Kalman Filter
+
+* Appendices
+** Coefficient
+
+Given a pair of random variables $X, Y$,
+
+\begin{equation}
+\rho_{X,Y} = \frac{cov(X, Y)}{\sigma_X\sigma_Y}
+\end{equation}
+
+Since,
+
+\begin{equation}
+cov(X,Y) = \mathbb{E}[(X - \mu_X)(Y - \mu_Y)],
+\end{equation}
+
+$\rho$ can be written as
+
+\begin{equation}
+\rho_{X,Y} = \frac{\mathbb{E}[(X-\mu_X)(Y-\mu_Y)]}{\sigma_X\sigma_Y}
+\end{equation}
+
+where:
+   - $\sigma_X$ and $\sigma_Y$ are standard deviation of $X$ and $Y$
+   - $\mu_X$ and $\mu_Y$ are mean of $X$ and $Y$
+   - $\mathbb{E}$ is the expectation.
