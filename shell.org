@@ -15,10 +15,12 @@
   # or with printf
   printf "%x\n" 1234
 #+END_SRC
+
 ** compare folders                                                     :diff:
 #+BEGIN_SRC sh
   diff --brief --exclude='.git' -r <dir1> <dir2>
 #+END_SRC
+
 ** find files in current directory, without subdirectories             :find:
 #+BEGIN_SRC sh
 find . -maxdepth 1
@@ -68,6 +70,7 @@ grep -rnI --include=\*.{h,cpp} 'pattern'
 #+BEGIN_SRC sh
  find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.java" -print0 | xargs -0 grep --color -n "$@"
 #+END_SRC
+
 ** cast grep result for vim                                        :grep:sed:
    Vim takes parameter =+n= after file name to go to line number =n= directly
    after open the file. To use result of grep with line number:
@@ -90,10 +93,12 @@ cat file | awk '{ sum+=$N } END { print "average = ", sum/NR }'
 #+BEGIN_SRC sh
 cat file | awk '{ $1=""; print $0 }'
 #+END_SRC
+
 ** Print a column in a row                                              :awk:
 #+BEGIN_SRC sh
 cat file | awk 'BEGIN { ORS = " " } { print $1 }'
 #+END_SRC
+
 ** Replace top dir of a list of files                                   :awk:
 #+BEGIN_SRC sh
   cat file | awk -F '/' 'BEGIN {OFS="/"} {$1="$TOP"; print $0}'
@@ -136,36 +141,44 @@ cat file | awk 'BEGIN { ORS = " " } { print $1 }'
 #+BEGIN_SRC sh
 cat [files] | sort | uniq
 #+END_SRC
+
 ** List 10 biggest files in current folder                             :sort:
 #+BEGIN_SRC sh
 du -s * | sort -rg | head
 #+END_SRC
+
 ** List top 10 RAM user                                                :sort:
 #+BEGIN_SRC sh
 ps aux | sort -rgk +4 | head
 #+END_SRC
+
 ** Check if string 'Finish: success' exists in log                      :sed:
 #+BEGIN_SRC sh
 tail -f /path/to/log | sed '/^Finish success$/q'
 #+END_SRC
+
 ** Remove lines of multiple files with a pattern                        :sed:
 #+BEGIN_SRC sh
 sed -i '/pattern/d' files
 #+END_SRC
+
 ** Remove trailing whitespaces and empty lines                          :sed:
 #+BEGIN_SRC sh
 sed -i -e 's/[ ^I]*$//' -e '/^$/ d' files
 #+END_SRC
    This command takes care of _lines contain only whitespaces_ by removing
    whitespaces then empty line.
+
 ** Run command on remote machine                                        :ssh:
 #+BEGIN_SRC sh
   ssh user@host '<CMD>'
 #+END_SRC
+
 ** Run script on remote machine without copy file                       :ssh:
 #+BEGIN_SRC sh
   ssh user@host bash < /path/to/local/script
 #+END_SRC
+
 ** deploy ssh identity to remote device                                 :ssh:
 #+BEGIN_SRC sh
   ssh-copy-id -i <idfile.pub> user@remote-machcine
@@ -177,6 +190,7 @@ sed -i -e 's/[ ^I]*$//' -e '/^$/ d' files
     User username
     IdentityFile ~/.ssh/you_file
 #+END_SRC
+
 ** Create a detached SSH connection                                     :ssh:
 #+BEGIN_SRC sh
   screen -d -m -S svr1 -t user@server ssh user@server
@@ -246,17 +260,23 @@ watch -n1 lsof -i TCP:22
 #+BEGIN_SRC bash
 sudo iptables -A OUTPUT -p tcp --dport 22 -j LOG --log-prefix '[output@tcp:22] '
 #+END_SRC
+** Get public IP address                                            :network:
+#+BEGIN_SRC bash
+  curl ip.sb # or ifconfig.me
+#+END_SRC
 * bash
 ** To run a script with current environment
 #+BEGIN_SRC sh
 . <script>
 #+END_SRC
+
 ** Check if folder exists
 #+BEGIN_SRC sh
   if [ -d /path/to/folder ]; then
       # code here
   fi
 #+END_SRC
+
 ** Check string length
 #+BEGIN_SRC sh
   # true if STRING length is 0
@@ -269,6 +289,7 @@ sudo iptables -A OUTPUT -p tcp --dport 22 -j LOG --log-prefix '[output@tcp:22] '
       # code here
   fi
 #+END_SRC
+
 ** Check if a variable is defined
 #+BEGIN_SRC sh
   if [ -z ${var+x} ]; then
@@ -277,6 +298,7 @@ sudo iptables -A OUTPUT -p tcp --dport 22 -j LOG --log-prefix '[output@tcp:22] '
       echo "var is set to '$var'";
   fi
 #+END_SRC
+
 ** On Bash variables
    To declare a variable in current bash context.
 #+BEGIN_SRC sh
@@ -332,16 +354,19 @@ case $- in
     ;;
 esac
 #+END_SRC
+
 ** Auto complete
    Check =/etc/bash_completion= and =/usr/share/bash-completion=
 ** Start editor (specified by $EDITOR)
 #+BEGIN_SRC sh
 ctrl-x e
 #+END_SRC
+
 ** Run previous cmd as root
 #+BEGIN_SRC sh
 sudo !!
 #+END_SRC
+
 ** Run a command N times
 #+BEGIN_SRC sh
   for i in {1..$N}; do <CMD>; done
@@ -361,14 +386,17 @@ sudo !!
   touch very-loooooooooooooooooooooooong-file-name
   vi !$ # alt-. does the same
 #+END_SRC
+
 ** Also last argument of previous cmd
 #+BEGIN_SRC sh
 alt+.
 #+END_SRC
+
 ** /n/th argument of previous cmd
 #+BEGIN_SRC sh
 alt+n alt+.
 #+END_SRC
+
 ** Create an empty file without using /touch/
 #+BEGIN_SRC sh
 >file.txt
@@ -408,6 +436,7 @@ echo $?
 #+BEGIN_SRC sh
 type <command>
 #+END_SRC
+
 ** Exit ssh without stopping a long-run-cmd
 #+BEGIN_SRC sh
 nohup <long-run-command> &
@@ -419,18 +448,21 @@ nohup <long-run-command> &
 # press ctrl-z
 bg && disown
 #+END_SRC
+
 * String manipulation
 ** Get length of string
 #+BEGIN_SRC sh
   string="hello world!"
   ${#string} # 12
 #+END_SRC
+
 ** Get substring by position
 #+BEGIN_SRC sh
   ${string:position}
   # or
   ${string:position:length}
 #+END_SRC
+
 ** Match shortest substring
 #+BEGIN_SRC sh
   # start from front
@@ -438,6 +470,7 @@ bg && disown
   # start from back
   ${string%substring}
 #+END_SRC
+
 ** Match longest substring
 #+BEGIN_SRC sh
   # from front
@@ -445,6 +478,7 @@ bg && disown
   # from back
   ${string%%substring}
 #+END_SRC
+
 ** Replace substring
 #+BEGIN_SRC sh
   # replace first match
@@ -456,6 +490,7 @@ bg && disown
   # replace only ending
   ${string/%pattern/replace}
 #+END_SRC
+
 ** Delete substring
 #+BEGIN_SRC sh
   # remove prefix, match shortest
@@ -467,6 +502,7 @@ bg && disown
   # remove suffix, match longest
   ${string%%substring}
 #+END_SRC
+
 ** Convert string to uppercase
 #+BEGIN_SRC sh
   $(str^^)
@@ -475,6 +511,7 @@ bg && disown
   # or
   echo $str | awk '{print toupper($0)}'
 #+END_SRC
+
 * debugging
 ** Run shell script with *-x* option
 

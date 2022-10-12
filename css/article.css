@@ -43,6 +43,7 @@ h2 {
     font-size: 1.25em;
     border-bottom: 1px solid #ddd;
     padding-bottom: 5px;
+    padding-top: 2ex;
 }
 
 h3, h4, h5 {
@@ -51,6 +52,15 @@ h3, h4, h5 {
 
 h2, h3 { color: #005a9c; }
 h4, h5 { color: black; }
+
+/*
+h2::before {
+    content: "\261b  ";
+}
+h2::after {
+    content: "  \261a";
+}
+*/
 
 dl {
     //border: 3px double #ccc;
@@ -69,15 +79,13 @@ dd {
     padding: 0 0 0.5em 0;
 }
 
-/*
 div.figure {
     text-align: center;
 }
 
-img {
+div.mermaid {
     text-align: center;
 }
-*/
 
 code {
     font-family: mononoki, consolas, inconsolata, "Courier New", monospace;

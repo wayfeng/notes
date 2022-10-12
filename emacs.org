@@ -8,7 +8,7 @@
 
 ** Search & Replace
 
-   #+CAPTION: key bindings of searching & replacing
+#+CAPTION: key bindings of searching & replacing
 | key binding     | description                       |
 |-----------------+-----------------------------------|
 | C-s             | search forward                    |
@@ -22,9 +22,9 @@
 | M-x re-builder  | try regexp with current buffer    |
 
 ** Regular Expression
-   More detail in [[http://www.emacswiki.org/emacs/RegularExpression][Regular Expression]]
+More detail in [[http://www.emacswiki.org/emacs/RegularExpression][Regular Expression]]
 
-   #+CAPTION: regular expressions
+#+CAPTION: regular expressions
 | code     | description                                            |
 |----------+--------------------------------------------------------|
 | .        | any character (but newline)                            |
@@ -58,13 +58,13 @@
    - To swap lines such as "first line\n second line", put cursor at "second line", then press 'C-x C-t'.
 
 ** Key Binding
-  Global key map
+Global key map
 #+BEGIN_SRC elisp
   (global-set-key key binding)
   ;; or
   (define-key (current-global-map) key binding)
 #+END_SRC
-  Local key map
+Local key map
 #+BEGIN_SRC elisp
   (local-set-key key binding)
   ;; or
@@ -73,7 +73,7 @@
 
 ** Variables
 *** Get content of a variable
-    : C-h v RET
+: C-h v RET
 
 ** Macros
 
@@ -87,16 +87,16 @@
 | M-z         | zap-to-char;                           |
 
 ** TimeStamp
-   More details [[http://www.gnu.org/software/emacs/elisp/html_node/Time-Parsing.html][here]].
+More details [[http://www.gnu.org/software/emacs/elisp/html_node/Time-Parsing.html][here]].
 *** Get Current Time
 #+BEGIN_SRC elisp
-    (current-time)
+  (current-time)
 #+END_SRC
 *** Format Time String
 #+BEGIN_SRC elisp
-    (format-time-string "%Y-%m-%d %a" (current-time))
+  (format-time-string "%Y-%m-%d %a" (current-time))
 #+END_SRC
-    will get this
+will get this
 : 2011-09-23 Fri
 
    Some useful formatting sequences:
@@ -113,28 +113,29 @@
 
 ** Sorting
 *** Case sensitive
-    Emacs sorting is case sensitive by default, set variable /sort-fold-case/ to /t/ to make it case insensitive.
+Emacs sorting is case sensitive by default, set variable /sort-fold-case/ to /t/ to make it case insensitive.
 
 *** Sorting order
-    Emacs sorting use /lexicographic/ by default for all but /sort-numeric-field/.
-    Sort with reverse order
-    : C-u 1 M-x sort-lines
+Emacs sorting use /lexicographic/ by default for all but /sort-numeric-field/.
+Sort with reverse order
+: C-u 1 M-x sort-lines
 
-    Sort lines by second word
-    : C-u 2 M-x sort-lines
+Sort lines by second word
+: C-u 2 M-x sort-lines
 
 *** Sorting by Lines, Paragraphs and Pages
-    : sort-lines
-    : sort-paragraph
-    : sort-pages
-    The variables /paragraph-start/ and /paragraph-separate/ controls how paragraph works.
+: sort-lines
+: sort-paragraph
+: sort-pages
+
+The variables /paragraph-start/ and /paragraph-separate/ controls how paragraph works.
 
 *** Sorting by Field
-    : sort-field
-    : sort-numeric-field
+: sort-field
+: sort-numeric-field
 
 *** Sorting by Regular Expression
-    : sort-regexp-field
+: sort-regexp-field
 
 ** Set Default Coding
 #+BEGIN_SRC elisp
@@ -173,35 +174,50 @@
 
 ** Install Packages
 
-   Setup package repositories
- #+BEGIN_SRC elisp
- ;; configure package archives
- (require 'package)
- (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
- (package-initialize)
- #+END_SRC
+Setup package repositories
+#+BEGIN_SRC elisp
+  ;; configure package archives
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+  (package-initialize)
+#+END_SRC
 
-   show available/installed packages
- : M-x list-packages
+show available/installed packages
+: M-x list-packages
 
-   install package
- : M-x package-install RET <package_name> RET
+install package
+: M-x package-install RET <package_name> RET
+
+*** With =use-package=
+Enable =use-package= in *init.el*.
+#+BEGIN_SRC elisp
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+  (require 'use-package)
+  (setq use-package-always-ensure 't)
+#+END_SRC
+
+Then use other packages.
+#+BEGIN_SRC elisp
+  (use-package gruvbox-theme :config (load-theme 'gruvbox-dark-medium t))
+#+END_SRC
 
 * Programming
 
 ** Find a function definition in buffer
-   : M-x imenu
+: M-x imenu
 
 ** Occurs of a regexp in buffer
-   : M-x occur <regexp>
+: M-x occur <regexp>
 
 ** Chinese Input
    - Using ibus in emacs
 #+BEGIN_SRC sh
-sudo apt install ibus-el
+  sudo apt install ibus-el
 #+END_SRC
-   and run following command in emacs to start ibus mode.
-   : M-x ibus-mode
+and run following command in emacs to start ibus mode.
+: M-x ibus-mode
 
 ** Google C/C++ coding style for emacs
    Download google-c-style.el
@@ -209,7 +225,7 @@ sudo apt install ibus-el
 $ wget http://google-styleguide.googlecode.com/svn/trunk/google-c-style.el
 #+END_SRC
 
-   Setup emacs to use Google C/C++ style. In =~/.emacs=
+Setup emacs to use Google C/C++ style. In =~/.emacs=
 #+BEGIN_SRC elisp
   (require 'google-c-style)
   ; 'return-and-indent is necessary for emacs < 24.4
@@ -220,29 +236,29 @@ $ wget http://google-styleguide.googlecode.com/svn/trunk/google-c-style.el
 
 ** Yasnippet
 *** Install
-    : package-install yasnippet
+: package-install yasnippet
 
 *** templates
-    templates of yasnippet is directory structrue in =/usr/share/emacs/site-lisp/yasnippet/snippets/=, I'll use this folder as =$TOP= in later examples.
+templates of yasnippet is directory structrue in =/usr/share/emacs/site-lisp/yasnippet/snippets/=, I'll use this folder as =$TOP= in later examples.
 
-    to add =while= for =c-mode= and =c++-mode=, edit $TOP/text-mode/cc-mode/while
- #+BEGIN_SRC c
-   #name : while (...) { ... }
-   # --
-   while (${1:condition}) {
-       $0
-   }
- #+END_SRC
+to add =while= for =c-mode= and =c++-mode=, edit $TOP/text-mode/cc-mode/while
+#+BEGIN_SRC c
+  #name : while (...) { ... }
+  # --
+  while (${1:condition}) {
+      $0
+  }
+#+END_SRC
 
 ** Ebrowse
 *** Generate database from source code
- #+BEGIN_SRC sh
- ebrowse *.h *.cc
- #+END_SRC
+#+BEGIN_SRC sh
+  ebrowse *.h *.cc
+#+END_SRC
 *** Open browse file
- : C-x C-f BROWSE
+: C-x C-f BROWSE
 *** Find class
- : / <ClassName>
+: / <ClassName>
 
 * Advanced
 
@@ -251,5 +267,3 @@ $ wget http://google-styleguide.googlecode.com/svn/trunk/google-c-style.el
    - [[http://www.emacswiki.org/emacs/SampleMode][Sample]]
    - [[http://www.emacswiki.org/emacs/DerivedMode][Derived Major Mode]]
    - [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Derived-Modes.html][Derived Modes]]
-
-
