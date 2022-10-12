@@ -1,0 +1,76 @@
+#+TITLE: Windows 10 CLI Tools
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+HTML_HEAD: <script src="js/mermaid.min.js" type="text/javascript"></script>
+#+HTML_HEAD_EXTRA: <script src="js/org-info.js" type="text/javascript"></script>
+
+
+* Package Management with Scoop
+Install scoop from Windows Powershell
+#+begin_src sh
+Set-ExecutionPolicy RemoteSigned -scope CurrentUser
+iwr -useb get.scoop.sh | iex
+#+end_src
+
+* PowerShell
+
+Put following line to $PROFILE to use Emacs edit mode.
+#+begin_src sh
+Set-PSReadLineOption -EditMode Emacs
+#+end_src
+
+** oh-my-posh
+Install oh-my-posh.
+#+begin_src sh
+  scoop install oh-my-posh
+#+end_src
+
+Configure theme by adding following line to $profile.
+#+begin_src sh
+  oh-my-posh init powershell --config ".minimal.omp.json" | Invoke-Expression
+#+end_src
+
+* Nushell
+#+begin_src sh
+winget nushell
+#+end_src
+
+* Windows Terminal
+
+* Alacritty
+
+* NeoVim
+
+#+begin_src sh
+scoop install neovim
+#+end_src
+
+Set aliases for neovim by adding following lines to $profile.
+#+begin_src sh
+  Set-Alias -Name vi -Value nvim
+  Set-Alias -Name vim -Value nvim
+#+end_src
+
+* Clang/Clang++
+
+#+begin_src sh
+scoop install llvm
+#+end_src
+
+** Swapping Left Ctrl & CapsLock keys
+
+In regedit tool, find ``Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layout``, add key ``Scancode Map`` as type ``REG_BINARY``, with value:
+
+#+begin_src
+00 00 00 00 00 00 00 00
+03 00 00 00 1D 00 3A 00
+3A 00 1D 00 00 00 00 00
+#+end_src
+
+Then reboot windows.
+
+Consider using [Autohotkey](https://www.autohotkey.com/) if you only want to swap occasionally. Just put a simple line in your ``ahk`` file.
+#+begin_src
+Capslock::Ctrl
+#+end_src
+
