@@ -1,0 +1,25 @@
+#+TITLE:     Distributed System
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+HTML_HEAD: <script src="js/mermaid.min.js" type="text/javascript"></script>
+#+HTML_HEAD_EXTRA: <script src="js/org-info.js" type="text/javascript"></script>
+#+OPTIONS:   tex:t
+#+INDEX: distributed system
+#+INDEX: system design
+
+* Concepts
+
+* Components
+
+** Storage
+
+** Task/Event/Message Queue
+- [[https://docs.celeryq.dev/en/stable/][celery]]
+- [[https://kafka.apache.org/][kafka]]
+- [[https://zeromq.org/][zmq]]
+
+** Networking
+
+** Observability
+
+* Case Studies
