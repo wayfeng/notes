@@ -15,8 +15,8 @@
   services available in the organisation.[fn:2] Platform engineering team provides IDP as a product.
 
 - Internal Developer Platform (IDP) :: A self-service layer that allows developers to interact
-   independently with their organization’s delivery setup, enabling them to self-serve
-   environments, deployments, databases, logs and anything else they need to run their applications.[fn:1]
+  independently with their organization’s delivery setup, enabling them to self-serve
+  environments, deployments, databases, logs and anything else they need to run their applications.[fn:1]
 
 * Why is Platform Engineering needed
 
