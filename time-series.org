@@ -59,6 +59,7 @@ var(y_t) &= \alpha^2 var(y_{t-1}) + var(\epsilon_t) = \alpha^2 var(y_{t-1}) + \s
 
 ** Single Variable V.S. Multiple Variable
 ** Exogenous Variables
+
 A parallel time series that not modeled directly but is used as a weighted input to the model.
 
 e.g. Consider daily based number of customers of a restaurant. Whether the day is weekend or holiday will affect the number.
@@ -110,7 +111,7 @@ Where \pi = [\pi_{0},\dots,\pi_{K}] is a path that satisfies the following prope
 
 * Time-Series Association Rules
 * Time-Series Analysis Methods
-#+CAPTION: Generic process of bearing fault detection using vibration signal
+#+CAPTION: Generic process of time-series analysis
 #+NAME: fig:general_methods
 #+BEGIN_EXPORT html
 <div class="mermaid">
@@ -126,19 +127,23 @@ dp ---> dl[DL Algorithms]
 #+END_EXPORT
 
 * Signal Processing Methods
-** Spectrum
+** Spectrum Analysis
 *** Fourier Transform
 
-\begin{equation*}
+\begin{equation}
 \hat{f}(s) = \int\limits_{-\infty}^{+\infty}{f(t)e^{-j 2 \pi s t}\mathrm{d}t}
-\end{equation*}
+\end{equation}
 
-*** Continuous Wavelet Transform (CWT)
+*** Hilbert Transform
+
+*** Z Transform
+
+** Continuous Wavelet Transform (CWT)
 
 With $s = 1/freqency$ as scale, wavelet coefficient $\mathcal{F}$ defined as
-\begin{equation*}
+\begin{equation}
 \mathcal{F}(s, \tau) = \frac{1}{\sqrt{\vert s\vert}}\int\limits_{-\infty}^{+\infty}{f(t)\psi\left(\frac{t-\tau}{s}\right)\mathrm{d}t}
-\end{equation*}
+\end{equation}
 
 #+CAPTION: Example of wavelet transform
 #+attr_html: :width 600px
@@ -149,13 +154,12 @@ The result of wavelet transform is also called *scalogram*.
 The Morlet wavelet
 #+attr_html: :width 300px :style inline
 [[./img/MorletWaveletMathematica.png]]
-\begin{equation*}
+\begin{equation}
 \Psi(t) = k_0 \cdot cos\left(\frac{t}{s}\right) \cdot e^{-t^2/2}
-\end{equation*}
+\end{equation}
 
 #+attr_html: :width 300px :style inline
 [[./img/Wavelet_Cmor.png]]
-
 
 ** Decomposition
 *** Empirical Mode Decomposition
@@ -171,6 +175,26 @@ Check stopping criterion:
   \sum_t{\frac{\left(res(t) - f(t)\right)^2}{f(t)^2}} \lt \epsilon
 \end{equation}
 
+*** Envelop analysis [[https://ieeexplore.ieee.org/iel5/13/26560/01183679.pdf][ref]]
+#+CAPTION: Process of envelop analysis
+#+NAME: fig:0004
+#+BEGIN_EXPORT html
+<div class="mermaid">
+flowchart TD
+  rts(Raw Time Signal) --> bf(Bandpass Filtering) --> fwr(Full Wave Rectification) --> ps(Power Spectrum)
+</div>
+#+END_EXPORT
+
+**** Kurtosis
+Variance
+\begin{equation}
+\sigma^2 = \frac{1}{N}\sum_{i=1}^N\bigl(x(t_i) - \mu\bigr)^2
+\end{equation}
+Kurtosis coefficient
+\begin{equation}
+\gamma = \frac{1}{N}\sum_{i=1}^N\frac{(x(t_i)-\mu)^4}{\sigma^4}
+\end{equation}
+
 * Statistics Methods
 ** Auto-correlation
 
@@ -184,12 +208,12 @@ The *Sample autocorrelation function* is
 \end{equation}
 
 where
-\begin{equation*}
+\begin{equation}
 \mu_x = \overline{x} = \frac{1}{n}\sum_{t=1}^n{x_t}\\
 
 \hat\gamma(h) = \frac{1}{n}\sum_{t=1}^{n-|h|}{(x_{t+|h|}-\mu_x)(x_t-\mu_x)}, for |h| < n.\\
 \hat\gamma(0) = \frac{1}{n}\sum_{t=1}^n{(x_t-\mu_x)^2}
-\end{equation*}
+\end{equation}
 
 The partial autocorrelation function gives the partial correlation of a
 stationary time series with its own lagged values.
@@ -337,13 +361,12 @@ L = (D^+)^{1/2}L(D^+)^{1/2} = I - (D^+)^{1/2}A(D^+)^{1/2}
    \end{equation}
    where $D^+$ is the Moore-Penrose inverse.
 
-
 ** Chebyshev Polynomial Approximation
 Define
-   \begin{align*}
+   \begin{align}
 c_j &\equiv \frac{2}{N}\sum_{k=1}^Nf(x_k)T_j(x_k) \\
     &= \frac{2}{N}\sum_{k=1}^Nf\Bigl[cos\Bigl\{\frac{\pi(k-\frac{1}{2})}{N}\Bigr\}\Bigr]cos\Bigl\{\frac{\pi j (k-\frac{1}{2})}{N}\Bigr\}
-   \end{align*}
+   \end{align}
 Then
    \begin{equation}
 f(x) \approx \sum_{k=0}^{N-1}c_kT_k(x)-\frac{1}{2}c_0
@@ -351,14 +374,18 @@ f(x) \approx \sum_{k=0}^{N-1}c_kT_k(x)-\frac{1}{2}c_0
 This type of approximation is important because, when truncated, the error is spread smoothly over [-1,1].
 
 ** Graph Fourier Transformation
-
 ** Spectral Network
-
 ** Recurrent Neural Network
 
 *** Long-Short Term Memory
 
 *** Gated Recurrent Unit
+
+** Autoencoder (AE) [[https://en.wikipedia.org/wiki/Autoencoder][ref]]
+- Unsupervised learning
+- Representation learning (dimension reduction)
+- Anomaly detection
+- Denoising
 
 * Use Cases
 
@@ -394,26 +421,6 @@ Traditional means:
 #+NAME: fig:0003
 [[./img/bearing_signal_spectra.png]]
 
-*** Envelop analysis [[https://ieeexplore.ieee.org/iel5/13/26560/01183679.pdf][ref]]
-#+CAPTION: Process of envelop analysis
-#+NAME: fig:0004
-#+BEGIN_EXPORT html
-<div class="mermaid">
-flowchart TD
-  rts(Raw Time Signal) --> bf(Bandpass Filtering) --> fwr(Full Wave Rectification) --> ps(Power Spectrum)
-</div>
-#+END_EXPORT
-
-**** Kurtosis
-Variance
-\begin{equation*}
-\sigma^2 = \frac{1}{N}\sum_{i=1}^N\bigl(x(t_i) - \mu\bigr)^2
-\end{equation*}
-Kurtosis coefficient
-\begin{equation*}
-\gamma = \frac{1}{N}\sum_{i=1}^N\frac{(x(t_i)-\mu)^4}{\sigma^4}
-\end{equation*}
-
 * Tools
 ** Python
    - numpy
@@ -422,9 +429,9 @@ Kurtosis coefficient
    - pdmarima
    - scipy
    - sktime [[https://www.sktime.org/en/latest/tutorials.html][link]]
-** R
-** Libraries
    - facebook prophet [[https://facebook.github.io/prophet/][ref]]
+** R
+** Matlab
 
 
 * Datasets
