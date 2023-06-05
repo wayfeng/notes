@@ -71,12 +71,12 @@ git checkout -p <file>
 git add -p <file>
 #+END_SRC
 ** Branches
-   Show branch(es)
+Show branch(es)
 #+BEGIN_SRC sh
 git branch
 #+END_SRC
 
-   Check out remote branch
+Check out remote branch
 #+BEGIN_SRC sh
 git checkout -b <local-branch> origin/<remote-branch>
 #+END_SRC

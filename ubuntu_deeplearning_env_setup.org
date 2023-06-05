@@ -151,12 +151,12 @@ pip install matplotlib
 #+END_SRC
 
 ** Jupyter Notebook
-   Install jupyter notebook.
+Install jupyter notebook.
 #+BEGIN_SRC sh
-  pip install jupyter
+  pip install notebook
 #+END_SRC
 
-   Start jupyter notebook
+Start jupyter notebook
 #+BEGIN_SRC sh
   jupyter notebook
 #+END_SRC

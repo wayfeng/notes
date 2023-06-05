@@ -74,3 +74,20 @@ sudo systemctl set-default graphical.target
 #+BEGIN_SRC sh
   sudo lvresize -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
 #+END_SRC
+
+* Configuring systemd-timesyncd
+Default NTP server may not working behind corporate proxies. To enable the corporate NTP server, if there is one, edit =/etc/systemd/timesyncd.conf=
+#+begin_src 
+[Time]
+NTP=ntp.yourcorp.com
+#+end_src
+
+Then restart timesyncd.
+#+being_src sh
+sudo systemctl restart systemd-timesyncd
+#+end_src
+
+Now check if it works.
+#+being_src sh
+sudo systemctl status systemd-timesyncd
+#+end_src

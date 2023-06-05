@@ -59,7 +59,7 @@ scoop install llvm
 
 ** Swapping Left Ctrl & CapsLock keys
 
-In regedit tool, find ``Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layout``, add key ``Scancode Map`` as type ``REG_BINARY``, with value:
+In regedit tool, find =Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layout=, add key =Scancode Map= as type =REG_BINARY=, with value:
 
 #+begin_src
 00 00 00 00 00 00 00 00

@@ -1,0 +1,212 @@
+#+TITLE: Rust Language Notes
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+HTML_HEAD: <script src="js/mermaid.min.js" type="text/javascript"></script>
+#+HTML_HEAD_EXTRA: <script src="js/org-info.js" type="text/javascript"></script>
+#+OPTIONS:   tex:t
+
+* Setup development environment
+** Install =rustup=
+#+begin_src sh
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+#+end_src
+
+** *emacs* plugin
+#+begin_src elisp
+M-x pacakge-install rust-mode
+#+end_src
+
+** *vim* plugin
+#+begin_src sh
+git clone https://github.com/rust-lang/rust.vim $HOME/.vim/pack/plugins/start/rust.vim
+#+end_src
+
+* Q&A
+
+** What is the difference between =iter= and =into_iter=?  
+Check [[https://stackoverflow.com/questions/34733811/what-is-the-difference-between-iter-and-into-iter][ref]]
+- The iterator returned by =into_iter= may yield any of =T=, =&T=, or =&mut T=, depending on the context.
+- The iterator returned by =iter= will yield =&T=.
+- The iterator returned by =iter_mut= will yield =&mut T=.
+
+* Tutorials [0/10]
+** TODO Ownership
+** TODO Enums
+** TODO Patterns and Matching
+** TODO Traits
+** TODO Smart Pointers
+*** Box<T>
+*** Rc<T>
+*** RefCell<T>
+** TODO Error Handling
+** TODO Automated Testing
+** TODO Functional Features
+*** Closure
+*** Iterator
+** TODO Object-Oriented Features
+** Concurrency
+*** Create threads in rust
+#+begin_src rust
+  use std::thread;
+  use std::time::Duration;
+
+  fn main() {
+      let handle = thread::spawn(|| {
+          for i in 1..10 {
+              println!("hi number {} from the spawned thread!", i);
+              thread::sleep(Duration::from_millis(1));
+          }
+      });
+
+      handle.join().unwrap();
+  }
+#+end_src
+
+*** message-passing with channel
+#+begin_src rust
+  use std::sync::mpsc;
+  use std::thread;
+  use std::time::Duration;
+
+  fn main() {
+      let (tx, rx) = mpsc::channel();
+
+      let handle = thread::spawn(move || {
+          let vals = vec![
+              String::from("hi"),
+              String::from("from"),
+              String::from("the"),
+              String::from("thread"),
+          ];
+          for val in vals {
+              tx.send(val).unwrap();
+              thread::sleep(Duration::from_secs(1));
+          }
+      });
+
+      //let received = rx.recv().unwrap();
+      for received in rx {
+          println!("Got: {}", received);
+      }
+
+      handle.join().unwrap();
+  }
+#+end_src
+
+*** shared-state with =Mutex= and =Arc=
+#+begin_src rust
+  use std::sync::{Arc, Mutex};
+  use std::thread;
+
+  fn main() {
+      let counter = Arc::new(Mutex::new(0));
+      let mut handles = vec![];
+
+      for _ in 0..10 {
+          let counter = Arc::clone(&counter);
+          let handle = thread::spawn(move || {
+              let mut num = counter.lock().unwrap();
+              ,*num += 1;
+          });
+          handles.push(handle);
+      }
+
+      for handle in handles {
+          handle.join().unwrap();
+      }
+
+      println!("Result: {}", *counter.lock().unwrap());
+  }
+#+end_src
+
+*** =Sync= and =Send= traits
+- Allowing transference of ownership between threads with =Send.=
+- Allowing access from multiple threads with =Sync=.  
+
+** TODO Implement Single Lined List
+
+* Cargo
+** Change cargo source mirror
+In file =$HOME/.cargo/config=, add source configurations.
+#+begin_src toml
+  [source.crates-io]
+  registry = "https://github.com/rust-lang/crates.io-index"
+  replace-with = "ustc"
+  [source.ustc]
+  registry = "git://mirrors.ustc.edu.cn/crates.io-index"
+#+end_src
+
+* Rust App as Minimal Docker Image
+** Specify MUSL as target
+Create cargo-config.toml file.
+#+begin_src toml
+  [build]
+  target = "x86_64-unknown-linux-musl"
+#+end_src
+
+** With Ubuntu
+Create Dockerfile:
+#+begin_src dockerfile
+  FROM ubuntu:18.04 as builder
+
+  RUN apt-get update &&\
+      apt-get install -y --no-install-recommends curl sudo
+  RUN useradd rust --user-group --create-home --shell /bin/bash --groups sudo
+  ADD sudoers /etc/sudoers.d/nopasswd
+
+  USER rust
+
+  ENV PATH=/home/rust/.cargo/bin:/usr/local/musl/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  RUN curl https://sh.rustup.rs -sSf | \
+      sh -s -- -y
+  ADD cargo-config.toml /home/rust/.cargo/config
+
+  WORKDIR /home/rust/
+  RUN cargo new helloworld
+  WORKDIR /home/rust/helloworld
+  RUN cargo build --release && cargo install --path .
+
+  FROM ubuntu:18.04
+  COPY --from=builder /home/rust/helloworld/target/release/helloworld /usr/local/bin/
+  CMD ["helloworld"]
+#+end_src
+
+The image will be aroung 70MB.
+
+** With Alpine Linux
+#+begin_src dockerfile
+FROM rust:1.45.0-alpine3.12 as builder
+WORKDIR /home/
+
+RUN USER=root cargo new helloworld
+WORKDIR /home/helloworld
+RUN cargo build --release
+
+RUN cargo install --path .
+
+FROM scratch as builder
+COPY --from=build /usr/local/cargo/bin/helloworld .
+USER 1000
+CMD ["./helloworld"]
+#+end_src
+
+Then build docker image:
+
+#+begin_src bash
+docker build -t hello .
+#+end_src
+
+The docker image _hello_ generated contains only statically linked app _helloworld_.
+It's only 3.18MB.
+    
+#+begin_src sh
+$ docker images
+REPOSITORY      TAG                 IMAGE ID            CREATED             SIZE
+hello           latest              4ba8b292a860        5 minutes ago       3.18MB
+rust            latest              9b539306c373        17 hours ago        1.16GB
+#+end_src
+
+[[https://doc.rust-lang.org/edition-guide/rust-2018/platform-and-target-support/musl-support-for-fully-static-binaries.html][MUSL support for fully static binaries]].
+
+The drawback of MUSL is not all C libraries can be built.
+

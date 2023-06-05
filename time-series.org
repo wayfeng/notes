@@ -45,11 +45,11 @@ Additive: X = T + S + C + I
 ** Unit Root
 If a time series has unit root, it is non-stationary but does not always have a trend.
 
-For AR(1) model y_t = \alpha y_{t-1} + \epsilon_t, where \epsilon \sim \Nu(0, \sigma^2),
+For AR(1) model y_t = \alpha y_{t-1} + \varepsilon_t, where \varepsilon \sim \Nu(0, \sigma^2),
 
 \begin{align}
-\mathbb{E}(y_t) &= \alpha\mathbb{E}(y_{t-1}) + \mathbb{E}(\epsilon_t) = \alpha^t y_0 \\
-var(y_t) &= \alpha^2 var(y_{t-1}) + var(\epsilon_t) = \alpha^2 var(y_{t-1}) + \sigma^2 \\
+\mathbb{E}(y_t) &= \alpha\mathbb{E}(y_{t-1}) + \mathbb{E}(\varepsilon_t) = \alpha^t y_0 \\
+var(y_t) &= \alpha^2 var(y_{t-1}) + var(\varepsilon_t) = \alpha^2 var(y_{t-1}) + \sigma^2 \\
          &= \sigma^2\sum_{k=0}^{t-1}{\alpha^{2k}} \\
 \end{align}
 
@@ -172,7 +172,7 @@ f(t) = \sum_t{inf_i} + res
 
 Check stopping criterion:
 \begin{equation}
-  \sum_t{\frac{\left(res(t) - f(t)\right)^2}{f(t)^2}} \lt \epsilon
+  \sum_t{\frac{\left(res(t) - f(t)\right)^2}{f(t)^2}} \lt \varepsilon
 \end{equation}
 
 *** Envelop analysis [[https://ieeexplore.ieee.org/iel5/13/26560/01183679.pdf][ref]]
@@ -222,7 +222,7 @@ Given a time series $x_t$, the partial correlation of lag $k$, denoted
 $\alpha_k$, is autocorrelation between $x_t$ and $x_{t-k}$.
 
 \begin{equation}
-\hat{x}_{t} = \alpha_{0} + \alpha_{1} x_{t-1} + \alpha_{2} x_{t-2} + \dots + \alpha_{k} x_{t-k} + \epsilon_{t}
+\hat{x}_{t} = \alpha_{0} + \alpha_{1} x_{t-1} + \alpha_{2} x_{t-2} + \dots + \alpha_{k} x_{t-k} + \varepsilon_{t}
 \end{equation}
 
 ** Smoothing Methods
@@ -257,41 +257,41 @@ Integrating can be used to make a time-series stationary.
 
 For non-stationary time-series
 \begin{align}
-y_t &= \beta_0 + \beta_{t} t + \epsilon_t \\
+y_t &= \beta_0 + \beta_{t} t + \varepsilon_t \\
 
 z_t &= y_t - y_{t-k} \\
-    &= (\beta_{t} - \beta_{t-k}) t + (\epsilon_t - \epsilon_{t-k})
+    &= (\beta_{t} - \beta_{t-k}) t + (\varepsilon_t - \varepsilon_{t-k})
 \end{align}
 
 ** Statistics Models
 *** AutoRegression
 \begin{align}
-AR(1) &\rightarrow \hat{y}_t = \alpha_1 y_{t-1} + \epsilon_t \\
-AR(2) &\rightarrow \hat{y}_t = \alpha_1 y_{t-1} + \alpha_2 y_{t-2} + \epsilon_t \\
-AR(p) &\rightarrow \hat{y}_t = \alpha_1 y_{t-1} + \alpha_2 y_{t-2} + \dots + \alpha_p y_{t-p} + \epsilon_t \\
+AR(1) &\rightarrow \hat{y}_t = \alpha_1 y_{t-1} + \varepsilon_t \\
+AR(2) &\rightarrow \hat{y}_t = \alpha_1 y_{t-1} + \alpha_2 y_{t-2} + \varepsilon_t \\
+AR(p) &\rightarrow \hat{y}_t = \alpha_1 y_{t-1} + \alpha_2 y_{t-2} + \dots + \alpha_p y_{t-p} + \varepsilon_t \\
 \end{align}
 
 
 *** Moving Average
-For time series $y_t$ with error \epsilon \sim \Nu(\mu_\epsilon, \sigma_\epsilon^2),
+For time series $y_t$ with error \varepsilon \sim \Nu(\mu_\varepsilon, \sigma_\varepsilon^2),
 
 \begin{align}
-MA(1) &\rightarrow \hat{y}_t = \mu + \beta_1 \epsilon_{t-1} \\
-MA(2) &\rightarrow \hat{y}_t = \mu + \beta_1 \epsilon_{t-1} + \beta_2 \epsilon_{t-2} \\
-MA(q) &\rightarrow \hat{y}_t = \mu + \beta_1 \epsilon_{t-1} + \beta_2 \epsilon_{t-2} + \cdots + \beta_q \epsilon_{t-q} \\
+MA(1) &\rightarrow \hat{y}_t = \mu + \beta_1 \varepsilon_{t-1} \\
+MA(2) &\rightarrow \hat{y}_t = \mu + \beta_1 \varepsilon_{t-1} + \beta_2 \varepsilon_{t-2} \\
+MA(q) &\rightarrow \hat{y}_t = \mu + \beta_1 \varepsilon_{t-1} + \beta_2 \varepsilon_{t-2} + \cdots + \beta_q \varepsilon_{t-q} \\
 \end{align}
 
 
 *** ARMA(p, q)
 \begin{equation}
-\hat{y}_t = \phi_1 y_{t-1} + \phi_2 y_{t-2} + \ldots + \phi_p y_{t-p} + \theta_1\epsilon_{t-1}
-      + \theta_2 \epsilon_{t-2} + \ldots + \theta_q \epsilon_{t-q} + \epsilon_t
+\hat{y}_t = \phi_1 y_{t-1} + \phi_2 y_{t-2} + \ldots + \phi_p y_{t-p} + \theta_1\varepsilon_{t-1}
+      + \theta_2 \varepsilon_{t-2} + \ldots + \theta_q \varepsilon_{t-q} + \varepsilon_t
 \end{equation}
 
 
 *** ARIMA(p, d, q)
 \begin{equation}
-\left(1-\sum_{i=1}^p\phi_i L^i\right)(1-L)^d X_t = \left(1+\sum^q_{i=1}\theta_iL^i\right)\epsilon_t
+\left(1-\sum_{i=1}^p\phi_i L^i\right)(1-L)^d X_t = \left(1+\sum^q_{i=1}\theta_iL^i\right)\varepsilon_t
 \end{equation}
 
 
@@ -300,16 +300,16 @@ MA(q) &\rightarrow \hat{y}_t = \mu + \beta_1 \epsilon_{t-1} + \beta_2 \epsilon_{
 *** VAR
 2-dimensional VAR(1) model:
 \begin{align}
-y_{1,t} &= \phi_{1,1}y_{1,t-1} + \phi_{1,2}y_{2,t-1} + \epsilon_{1,t} \\
-y_{2,t} &= \phi_{2,1}y_{1,t-1} + \phi_{2,2}y_{2,t-1} + \epsilon_{2,t} \\
+y_{1,t} &= \phi_{1,1}y_{1,t-1} + \phi_{1,2}y_{2,t-1} + \varepsilon_{1,t} \\
+y_{2,t} &= \phi_{2,1}y_{1,t-1} + \phi_{2,2}y_{2,t-1} + \varepsilon_{2,t} \\
 \end{align}
 
 
 *** VARMA
 2-dimensional VARMA(1,1) model:
 \begin{align}
-y_{1,t} &= \phi_{1,1}y_{1,t-1} + \phi_{1,2}y_{2,t-1} + \theta_{1,1}\epsilon_{1,t-1} + \theta_{1,2}\epsilon_{2,t-1} + \epsilon_{1,t} \\
-y_{2,t} &= \phi_{2,1}y_{1,t-1} + \phi_{2,2}y_{2,t-1} + \theta_{2,1}\epsilon_{1,t-1} + \theta_{2,2}\epsilon_{2,t-1} + \epsilon_{2,t} \\
+y_{1,t} &= \phi_{1,1}y_{1,t-1} + \phi_{1,2}y_{2,t-1} + \theta_{1,1}\varepsilon_{1,t-1} + \theta_{1,2}\varepsilon_{2,t-1} + \varepsilon_{1,t} \\
+y_{2,t} &= \phi_{2,1}y_{1,t-1} + \phi_{2,2}y_{2,t-1} + \theta_{2,1}\varepsilon_{1,t-1} + \theta_{2,2}\varepsilon_{2,t-1} + \varepsilon_{2,t} \\
 \end{align}
 
    
@@ -361,31 +361,31 @@ L = (D^+)^{1/2}L(D^+)^{1/2} = I - (D^+)^{1/2}A(D^+)^{1/2}
    \end{equation}
    where $D^+$ is the Moore-Penrose inverse.
 
-** Chebyshev Polynomial Approximation
-Define
-   \begin{align}
-c_j &\equiv \frac{2}{N}\sum_{k=1}^Nf(x_k)T_j(x_k) \\
-    &= \frac{2}{N}\sum_{k=1}^Nf\Bigl[cos\Bigl\{\frac{\pi(k-\frac{1}{2})}{N}\Bigr\}\Bigr]cos\Bigl\{\frac{\pi j (k-\frac{1}{2})}{N}\Bigr\}
-   \end{align}
-Then
-   \begin{equation}
-f(x) \approx \sum_{k=0}^{N-1}c_kT_k(x)-\frac{1}{2}c_0
-   \end{equation}
-This type of approximation is important because, when truncated, the error is spread smoothly over [-1,1].
-
 ** Graph Fourier Transformation
 ** Spectral Network
 ** Recurrent Neural Network
 
-*** Long-Short Term Memory
+*** Long-Short Term Memory (LSTM)
+#+CAPTION: LSTM
+[[./img/LSTM_Cell.png]]
 
-*** Gated Recurrent Unit
+*** Gated Recurrent Unit (GRU)
+#+CAPTION: GRU
+[[./img/GRU.png]]
 
-** Autoencoder (AE) [[https://en.wikipedia.org/wiki/Autoencoder][ref]]
+** Deep AutoEncoder (AE) [[https://en.wikipedia.org/wiki/Autoencoder][ref]]
 - Unsupervised learning
 - Representation learning (dimension reduction)
 - Anomaly detection
 - Denoising
+
+** Temporal Transformer
+
+** Attention
+With Q for Query, K for Key, and V for Value.
+\begin{equation}
+A(Q, K, V) = softmax(QK^T)V
+\end{equation}
 
 * Use Cases
 
@@ -432,7 +432,6 @@ Traditional means:
    - facebook prophet [[https://facebook.github.io/prophet/][ref]]
 ** R
 ** Matlab
-
 
 * Datasets
 
@@ -482,7 +481,6 @@ flowchart LR
 </div>
 #+END_EXPORT
 
-
 * Other Topics
 ** Kalman Filter
 
@@ -508,6 +506,18 @@ $\rho$ can be written as
 \end{equation}
 
 where:
-   - $\sigma_X$ and $\sigma_Y$ are standard deviation of $X$ and $Y$
-   - $\mu_X$ and $\mu_Y$ are mean of $X$ and $Y$
-   - $\mathbb{E}$ is the expectation.
+ - $\sigma_X$ and $\sigma_Y$ are standard deviation of $X$ and $Y$
+ - $\mu_X$ and $\mu_Y$ are mean of $X$ and $Y$
+ - $\mathbb{E}$ is the expectation.
+
+** Chebyshev Polynomial Approximation
+Define
+   \begin{align}
+c_j &\equiv \frac{2}{N}\sum_{k=1}^Nf(x_k)T_j(x_k) \\
+    &= \frac{2}{N}\sum_{k=1}^Nf\Bigl[cos\Bigl\{\frac{\pi(k-\frac{1}{2})}{N}\Bigr\}\Bigr]cos\Bigl\{\frac{\pi j (k-\frac{1}{2})}{N}\Bigr\}
+   \end{align}
+Then
+   \begin{equation}
+f(x) \approx \sum_{k=0}^{N-1}c_kT_k(x)-\frac{1}{2}c_0
+   \end{equation}
+This type of approximation is important because, when truncated, the error is spread smoothly over [-1,1].

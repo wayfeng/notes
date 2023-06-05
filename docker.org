@@ -104,7 +104,10 @@ To setup proxy in docker containers, edit =~/.docker/config.json=
   # or use filter
   docker images --filter reference='k8s.*'
 #+END_SRC
-
+** List docker images with format
+#+begin_src sh
+  docker images --format 'table{{.Repository}}\t{{.Size}}'
+#+end_src
 ** Remove all containers
 #+BEGIN_SRC sh
   docker rm -f $(docker ps -a -q)

@@ -21,6 +21,20 @@
   diff --brief --exclude='.git' -r <dir1> <dir2>
 #+END_SRC
 
+** compare binary files
+*** hashing
+#+BEGIN_SRC sh
+  diff <(sha256sum bin_file_1) <(sha256sum bin_file_2)
+#+END_SRC
+*** cmp
+#+BEGIN_SRC sh
+  cmp bin_file_1 bin_file_2
+#+END_SRC
+*** hexdump
+#+BEGIN_SRC sh
+  diff <(hexdump bin_file_1) <(hexdump bin_file_2)
+#+END_SRC
+
 ** find files in current directory, without subdirectories             :find:
 #+BEGIN_SRC sh
 find . -maxdepth 1
@@ -203,6 +217,11 @@ screen -r svr1
 
    To detach it again, input 'C-a C-d'.
 
+** Create a SSH tunnel                                                  :ssh:
+#+BEGIN_SRC sh
+  ssh -f -N -L 6667:localhost:6667 server.example.com
+#+END_SRC
+
 ** Indent one-line XML file                                          :others:
    First, create indent style sheet as =indent.xsl=.
 #+BEGIN_SRC xml
@@ -241,8 +260,8 @@ last | head
 lastlog
 #+END_SRC
 
+** Has a user logged in recently                                    :network:
 #+BEGIN_SRC bash
-# has user logged in recently
 last <user> | head
 # or
 lastlog -u <user>
@@ -260,10 +279,12 @@ watch -n1 lsof -i TCP:22
 #+BEGIN_SRC bash
 sudo iptables -A OUTPUT -p tcp --dport 22 -j LOG --log-prefix '[output@tcp:22] '
 #+END_SRC
+
 ** Get public IP address                                            :network:
 #+BEGIN_SRC bash
   curl ip.sb # or ifconfig.me
 #+END_SRC
+
 * bash
 ** To run a script with current environment
 #+BEGIN_SRC sh
@@ -539,6 +560,7 @@ set +x
 #+BEGIN_SRC sh
 #!/bin/bash -xv
 #+END_SRC
+
 
 [fn:shebang] Explain of shebang on [[http://en.wikipedia.org/wiki/Shebang_(Unix)][Wikipedia]].
 [fn:sed] There is a splendid tutorial of sed can be found [[http://www.grymoire.com/Unix/sed.html][here]].

@@ -1,4 +1,4 @@
-#+TITLE:     Managing virtual devices on Linux with libvirt
+#+TITLE:     Managing virtual machine on Linux with libvirt
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/article.css" />
 #+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
 
@@ -30,14 +30,14 @@ $ virsh list
 
 ** Setup bridged network (optional)
 
-Create a bridge `br0` and set NIC `eno1` as it's interface.
+Create a bridge =br0= and set NIC =eno1= as it's interface.
 #+BEGIN_SRC bash
 sudo apt install bridge-utils -y
 sudo brctl addbr br0
 sudo brctl addif br0 eno1
 #+END_SRC
 
-Then bring up `br0` with `netplan`.
+Then bring up =br0= with =netplan=.
 #+BEGIN_SRC bash
 cat <<EOF | sudo tee /etc/netplan/00-installer-config.yaml
 network:
@@ -54,7 +54,7 @@ EOF
 sudo netplan apply
 #+END_SRC
 
-Apply bridged network to `libvirt`
+Apply bridged network to =libvirt=
 #+BEGIN_SRC bash
 cat <<EOF > /tmp/bridged-network.xml
 <network>
@@ -213,9 +213,9 @@ $ virsh list
 
 ** Connect to the VM
 
-There are two ways to connect to the VM: using `virsh console` command or `ssh`.
+There are two ways to connect to the VM: using =virsh console= command or =ssh=.
 
-- With `virsh console`
+- With =virsh console=
 #+BEGIN_SRC bash
 $ virsh console eii
 Connected to domain eii
@@ -228,7 +228,7 @@ eii@vm-eii:~$ ip addr show dev enp1s0 scope global
        valid_lft 2884sec preferred_lft 2884sec
 #+END_SRC
 
-- With `ssh`
+- With =ssh=
 
 #+BEGIN_SRC bash
 $ ssh eii@<vm-ip-addr>
@@ -250,4 +250,10 @@ Read the manual for more details.
 #+BEGIN_SRC bash
 virsh setmem eii <new-memory-size>
 virsh setvcpu eii <new-cores>
+#+END_SRC
+
+** Change root password of guest
+
+#+BEGIN_SRC bash
+sudo passwd root
 #+END_SRC
