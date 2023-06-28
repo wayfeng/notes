@@ -1,0 +1,40 @@
+#+TITLE:     Presentation Zen
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+HTML_HEAD: <script src="js/mermaid.min.js" type="text/javascript"></script>
+#+HTML_HEAD_EXTRA: <script src="js/org-info.js" type="text/javascript"></script>
+#+OPTIONS:   tex:t
+#+INDEX:     presentation
+
+* The key principles of Presentation Zen:
+- Restraint in presentation.
+- Simplicity in design.
+- Naturalness in delivery.
+
+* /Six senses/ of a whole new mind, presentations in /conceptual age/
+- Design :: not decoration, happens from the beginning
+- Story :: we're designed to be story tellers and receivers
+- Symphony :: see the bigger picture, take care of what is the most impotant
+- Empathy :: see things from position of others
+- Play :: don't be too serious
+- Meaning :: make a difference to both you and your audiences
+
+* Seth Godin: /presentation is about the transfer of emotion/
+- No more than six words on a slide.
+- Use professional images instead of cheesy images.
+- No dissolves, spins, or other transitions. Keep it simple.
+- Create a written document.
+
+* Creativity, limitations, and constraints
+- Presentation is a creative art.
+  - Don't be afraid to make mistakes. Willing to be wrong.
+  - Start with the beginner's mind.
+  - Be bold.
+  - Do not force it.
+  - Embrace your enthusiasm.
+- Restrictions, constraints and limitations are not enemies.
+- Keep these three words in mind: *simplicity*, *clarity*, and *brevity*.
+
+* Planning analog
+
+* Crafting the story

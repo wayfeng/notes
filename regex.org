@@ -1,0 +1,12 @@
+#+TITLE:     Regular Expressions
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+INDEX: regex
+
+* Basics
+
+* Tricks
+** check prime numbers
+#+BEGIN_SRC regex
+/^1?$|^(11+?)\1+$/
+#+END_SRC

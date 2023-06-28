@@ -80,3 +80,40 @@ go install github.com/go-delve/delve/cmd/dlv@latest
 #+BEGIN_SRC bash
 dlv debug <app>
 #+END_SRC
+
+* Guiding principle for Go error handling
+[[https://stephenn.com/2023/06/gopher-wrangling.-effective-error-handling-in-go/][ref]]
+** Always handle errors.
+** Log errors in one layer (top layer), make sure logging framework includes stack traces.
+** Returning async errors
+#+BEGIN_SRC go
+  func concurrent() error {
+          errors := make(chan error, 2)
+          go func() {
+                  errors <- refresh(1)
+          }()
+
+          go func() {
+                  errors <- refresh(2)
+          }()
+          return multierror.Combine(<-errors, <-errors)
+  }
+#+END_SRC
+** Wrapping errors (may not be necessary)
+#+BEGIN_SRC go
+  err := saveToDB(user)
+  if err != nil {
+          return fmt.errorf("unexpected error saving user. userId=%v error=%w", user.Id, err)
+  }
+#+END_SRC
+** Downgrade warnings
+#+BEGIN_SRC go
+  err := refresh()
+  if err != nil {
+          if err == context.DeadlineExceeded {
+                  log.Warn("Timeout on processing request %w", err)
+          } else {
+                  log.Error("Unexpected error on processing request %w", err)
+          }
+  }
+#+END_SRC

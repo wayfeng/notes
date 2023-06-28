@@ -1,0 +1,81 @@
+#+TITLE: Notes of Cloud Native
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/article.css" />
+#+html_head: <link rel="stylesheet" type="text/css" href="../css/toc.css" />
+
+* What is Cloud Native
+
+** by [[https://github.com/cncf/toc/blob/main/DEFINITION.md][CNCF]]
+
+Cloud native technologies empower organizations to build and run scalable
+applications in modern, dynamic environments such as public, private, and
+hybrid clouds. Containers, service meshes, microservices, immutable
+infrastructure, and declarative APIs exemplify this approach.
+
+These techniques enable loosely coupled systems that are resilient,
+manageable, and observable. Combined with robust automation, they allow
+engineers to make high-impact changes frequently and predictably with
+minimal toil.
+
+The Cloud Native Computing Foundation seeks to drive adoption of this
+paradigm by fostering and sustaining an ecosystem of open source,
+vendor-neutral projects. We democratize state-of-the-art patterns to
+make these innovations accessible for everyone.
+
+** by [[https://aws.amazon.com/what-is/cloud-native/][AWS]]
+
+Cloud native is the software approach of building, deploying, and managing
+modern applications in cloud computing environments. Modern companies want
+to build highly scalable, flexible, and resilient applications that they can
+update quickly to meet customer demands. To do so, they use modern tools and
+techniques that inherently support application development on cloud
+infrastructure. These cloud-native technologies support fast and frequent
+changes to applications without impacting service delivery, providing adopters
+with an innovative, competitive advantage.
+
+** Cloud Native Stack
+
+- infrastructure layer ::
+  It's the foundation of the cloud native stack. consists of operating system,
+  storage, network, and other computing resources managed by cloud providers.
+- provisioning layer ::
+  It consists of cloud services that allocate and configure the cloud environment.
+- runtime layer ::
+  Cloud data storage, networking capability, and a container runtime.
+- orchestration and management layer ::
+  Tools like Kubernetes to deploy, manage, and scale cloud applications.
+- application definition and development layer ::
+  as name suggests.
+- observability and analysis layer ::
+  Monitor, evaluate, and improve the system health of cloud applications.
+
+* Key techs
+** APIs
+** DevOps
+** Microservices
+** Container
+
+* Benefits
+** Resilience
+** Scalability
+** Flexibility
+** Observability
+
+* Serverless
+
+** The Litmus Test for Serverless
+
+1. Nothing to provision, nothing to manage;
+2. Usage-based pricing with no minimums;
+3. Ready with a single API call;
+4. No planned downtime;
+5. No instances.
+
+** Infrastructure from Code (IfC)
+
+* Container
+** Docker
+** Podman
+
+* MicroVM
+** [[https://firecracker-microvm.github.io/][Firecracker]]
+** [[https://qemu.readthedocs.io/en/latest/system/i386/microvm.html][QEMU microvm]]

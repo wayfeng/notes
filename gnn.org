@@ -1,0 +1,251 @@
+#+TITLE:     Graph Neural Networks
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+HTML_HEAD: <script src="js/mermaid.min.js" type="text/javascript"></script>
+#+HTML_HEAD_EXTRA: <script src="js/org-info.js" type="text/javascript"></script>
+#+OPTIONS:   tex:t
+#+INDEX:     deeplearning!gnn
+
+* Graph
+** Category
+
+** Components
+*** Node
+*** Edge
+** Representation
+*** Adjacency Matrix
+*** Edge List
+*** Adjacency List
+
+* Applications of Machine Learning with Graphs
+** Node Level
+- protein folding
+** Edge (Link) Level
+- recommendation system
+- drugs' side-effects
+** Subgraph Level
+- traffic prediction
+** Graph Level
+- drug (antibiotics) discovery
+- graph generation/optimization
+- physics simulation
+
+
+* Node-Level Features
+** Node Degree
+- Edges a node has is the degree of this node.
+** Node Centrality
+*** Eigenvector centrality
+- A node $v$ is important if surrounded by important neighboring nodes $u \in N(v)$.
+  \begin{equation}
+  c_v = \frac{1}{\lambda}\sum_{u\in N(v)}{c_u} \Longleftrightarrow \lambda \boldsymbol{c} = \boldsymbol{A}\boldsymbol{c}
+  \end{equation}
+  + $\lambda$ is some positive constant.\\
+  + $\boldsymbol{A}$: Adjacency matrix, $\boldsymbol{A}_{uv} = 1$ if $u \in N(v)$.\\
+  + $\boldsymbol{c}$: centrality vector.\\
+- The largest eigenvalue $\lambda_\mathrm{max}$ is always positive and unique (Perron-Frobenius Theorem).
+- The leading eigenvector $\boldsymbol{c}_\mathrm{max}$ is used for centrality.
+*** Betweenness centrality
+- A node is important if it lies on many shortest paths between other nodes.
+*** Closeness centrality
+- A node is important if it has small shortest path lengths to all other nodes.
+** Clustering Coefficient
+Measures how connected $v$'s neighboring nodes are. $e_v \in [0, 1]$
+** Graphlets
+Rooted connected non-isomorphic subgraphs.
+*** Graphlet Degree Vector (GDV)
+Graphlet-based features for nodes.
+
+* Link-Level Features
+** Distance-based features
+** Local Neighborhood Overlap
+*** Common neighbors
+\begin{equation}
+|N(v_1) \cap N(v_2)|
+\end{equation}
+*** Jaccard's coefficient
+\begin{equation}
+\frac{|N(v_1) \cap N(v_2)|}{|N(v_1) \cup N(v_2)|}
+\end{equation}
+*** Adamic-Adar index
+\begin{equation}
+\sum_{u\in N(v_1) \cap N(v_2)}\frac{1}{\log(k_u)}
+\end{equation}
+where $|N(v)|$ is number of neighbors of vertex $v$, and $k_u$ is degree of vertex $u$.
+*** Limitations
+- metric is always zero if two nodes have no neighbor in common.
+- however, these two nodes may still potentially be connected in the future.
+** Global Neighborhood Overlap
+*** Katz Index
+Count the number of paths of all lengths between a given pair of nodes.
+
+Given adjacency matrix $\mathbb{A}$ of a graph.
+- $A_{uv} = 1$ if $u \in N(v)$
+- let $P^{(k)}_{uv}$ is #paths of length $k$ between $u$ and $v$
+- $P^{(k)} = \mathbb{A}^k$
+- $P^{(2)}_{uv} = \sum_{i}{A_{ui} * P^{(1)}_{iv}} = \sum_i{A_{ui} * A_{iv}} = A^2_{uv}$
+
+Katz Index between $v_1$ and $v_2$ is calculated as sum over all path lenghts.
+\begin{equation}
+S_{v_1 v_2} = \sum^{\infty}_{l=1}{\beta^l A^l_{v_1 v_2}}
+\end{equation}
+Where $0 \lt \beta \lt 1$ is discount factor.
+
+Katz Index can be computed in closed-form.
+\begin{equation}
+S = \sum^{\infty}_{i=1}{\beta^i A^i} = \sum^{\infty}_{i=0}{\beta^i A^i} - \mathbb{I} = (\mathbb{I} - \beta\mathbb{A})^{-1} - \mathbb{I}
+\end{equation}
+
+* Graph-Level Features
+** Kernel Methods
+
+Find vector $\Phi(G)$ of graph $G$
+
+- Bag of node degrees
+- Bag of words
+
+*** Graphlet Kernel
+- Count the number of different graphlets in a graph, $\mathcal{G} = \{\}$.
+- Counting graphlets is expensive!
+*** Weisfeiler-Lehman Kernel
+Given a graph $G$ with set of nodes $V$.
+- assign an initial color $c^{(0)}(v)$ to each node $v$
+- iteratively refine node colors by $c^{(k+1)}(v) = \mathrm{HASH}\bigl(\bigl\{c^{(k)}(v), \{ c^{(k)}(u)\}_{u \in N(v)} \bigr\}\bigr)$,
+  where $\mathrm{HASH}$ maps different inputs to different colors.
+- after $K$ steps of color refinement, $c^{(K)}(v)$ summarizes the structure of K-hop neighborhood.
+
+WL kernel counts number of nodes with given colors $[c_0, c_1, \dots]$, which is $\phi(G) = [n_{c_0}, n_{c_1}, \dots]$
+
+Then $K(G, G') = \phi(G)^T \phi(G)$
+
+* Traditional Machine Learning with Graphs
+#+CAPTION: Machine Learning with Graphs
+#+NAME: fig:tradition_ml
+#+BEGIN_EXPORT html
+<div class="mermaid">
+flowchart LR
+a(Input\nGraph) -- Feature\nEngineering --> b(Structured\nFeatures) --> c(Learning\nAlgorithms) --> d(Prediction)
+</div>
+#+END_EXPORT
+
+** Models
+*** Random Forest
+*** SVM
+*** Neural Network
+
+** Tasks
+*** Link Prediction
+- Links missing at random
+- Links over time: Given $G[t_0, t'_0]$ a graph on edges up to time $t'_0$, output a *ranked
+   list L* of links (not in $G[t_0, t'_0]$) that are predicted to appear in $G[t_1, t'_1]$.
+
+* Graph Representation Learning
+
+* Node Embedding
+- task: mapping nodes into an embedding space.
+- goal: encode nodes so that *similarity in the embedding space* approximates *similarity in the graph*.
+- define a node similarity function.
+  \begin{equation}
+  \mathrm{Similarity}(u, v) = Z_u \cdot Z_v
+  \end{equation}
+- Encoder
+  \begin{equation}
+  \mathrm{Enc}(v) = z_v
+  \end{equation}
+- *Shallow* encoding, just an *embedding-lookup*
+  \begin{equation}
+  \mathrm{Enc}(v) = z_v = Z \cdot v
+  \end{equation}
+- *task independent* embeddings are not trained for a specific task but can be used for any task.
+- Machine learning algorithms need some form of vector input to be executed.
+- A network consists of nodes and edges which connect the nodes.
+
+** Random Walk Approach
+- Vector $z_u$ :: the embedding of node $u$.
+- Probability $p(v|z_u)$ :: the *(predicted) probability* of visiting node $v$ on random walks
+  starting from node $u$.
+
+  Softmax for vector $x$ with $n$ values:
+  \begin{equation}
+  \mathrm{softmax}(x_i) = \frac{e^{x_i}}{\sum^n_{j=1}{e^{x_j}}}
+  \end{equation}
+
+  Sigmoid function:
+  \begin{equation}
+  \sigma(x) = \frac{1}{1+e^{-x}}
+  \end{equation}
+
+- Random Walk on graph :: Given a graph and a starting point, we select a neighbor of it at random,
+  and move to this neighbor; then we select a neighbor of this point at random, and move to it, etc.
+  The (random) sequence of nodes visited this way is a *random walk on the graph*.
+
+- Feature Learning as Optimization :: Given node $u$, we want to learn feature representations that are predictive of
+   the nodes in its random walk neighborhood $N_R(u)$.
+
+  Given $G = (V, E)$, our goal is to learn a mapping $f: u \rightarrow \mathbb{R}^d$:
+  \begin{equation}
+  f(u) = z_u
+  \end{equation}
+
+  Log-likelihood objective:
+  \begin{equation}
+  \mathrm{max}_f\sum_{u \in V}{\log P(N_R(u)|z_u)}
+  \end{equation}
+
+  $N_R(u)$ is the neighborhood of node $u$ by strategy $R$.
+
+- Random Walk Optimization :: Optimize embeddings $z_u$ to maximize the likelihood of
+  random walk co-occurrences.
+  \begin{equation}
+  \mathcal{L} = \sum_{u \in V}{\sum_{v \in N_R(u)}{-\log{P(v|z_u)}}}
+  \end{equation}
+
+  Parameterize $P(v|z_u)$ using softmax:
+  \begin{equation}
+  P(v|z_u) = \frac{e^{z_u \cdot z_v}}{\sum_{n\in V}{e^{z_u \cdot z_n}}}
+  \end{equation}
+
+  Putting it all together:
+  \begin{equation}
+  \mathcal{L} = \sum_{u \in V}{\sum_{v \in N_R(u)}{-\log{\Bigl(\frac{e^{z_u \cdot z_v}}{\sum_{n\in V}{e^{z_u \cdot z_n}}}}\Bigr)}}
+  \end{equation}
+
+- Negative sampling :: Instead of normalizing w.r.t. all nodes, just normalize against $k$ random
+  *negative samples* $n_i$.
+  \begin{equation}
+  \log\Bigl(\frac{e^{z_u \cdot z_v}}{\sum_{n\in V}e^{z_u \cdot z_n}}\Bigr) \approx \\
+  \log\bigl(\sigma(z_u \cdot z_v)\bigr) - \sum^k_{i=1}\log\bigl(\sigma(z_u \cdot z_{n_i})\bigr)
+  \end{equation}
+  Where $P_V$ is the background distribution, and $n_i \sim P_V$.
+
+  Sample $k$ negative nodes each with probability proportional to its degree.
+  1. Higher $k$ gives more robust estimates
+
+  2. Higher $k$ corresponds to higher bias on negative events
+
+  In practice, $k = 5 \sim 20$.
+
+- Stochastic Gradient Descent ::
+
+** node2vec
+- Goal: embed nodes with similar network neighborhoods close in the feature space.
+  - Homophily equivalence hypothesis :: nodes that are highly inter-connected and belong to *similar network cluster* should be embedded closely.
+  - Structural equivalence hypothesis :: nodes that have *similar structural roles* in networks should be embedded closely together.
+
+
+- parameters $p$ and $q$
+  - return parameter $p$ :: controls the likelihood of immediately returning to a node which is just visited in a walk.
+  - in-out parameter $q$ :: controls the likelihood of visting  nodes further away.
+
+* Graph Embedding
+- Graph Embedding :: mapping entire graph or sub-graph into an embedding space.
+
+** Ideas
+*** Sum (or average) the *node embeddings* of the graph $G$
+\begin{equation}
+Z_G = \sum_{v\in G}{Z_v}
+\end{equation}
+
+* Graph Convolution
+
+* Chebyshev Polynomial Approximation

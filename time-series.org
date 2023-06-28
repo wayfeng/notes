@@ -79,7 +79,7 @@ in for the next $H$ timestamps $x_t,x_{t+1},\ldots,x_{t+H-1}$.
 $\mathcal{F}$ is the forecasting model with parameter $\Phi$.
 
 \begin{equation}
-\hat{x}_t,\hat{x}_{t+1},\ldots,\hat{x}_{t+H-1} = \mathcal{F}\left(x_{t-K},\ldots,x_{t-1};\Phi\right)
+\hat{X}_t,\hat{X}_{t+1},\ldots,\hat{X}_{t+H-1} = \mathcal{F}\left(X_{t-K},\ldots,X_{t-1};\Phi\right)
 \end{equation}
 
 * Time-Series Anomaly/Outlier Detection
