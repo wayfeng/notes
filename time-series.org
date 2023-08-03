@@ -7,7 +7,8 @@
 
 * Define Time-Series Data
 
-Values measured repeatedly over fixed interval become *time series*.
+- Time-Series Data :: Values measured repeatedly over fixed interval become *time series*.
+- Time-Series Analysis :: The endeavor of extracting meaningful summary and statistical information from points arranged in chronological order.
 
 * Categories of Time-Series Data
 
@@ -21,10 +22,10 @@ Values measured repeatedly over fixed interval become *time series*.
 
 * Properties of Time-Series Data
 ** Components of Time Series
-   - Trend
-   - Seasonal variation
-   - Cyclic variation
-   - Irregular variation
+- Trend
+- Seasonal variation
+- Cyclic variation
+- Irregular variation
 
 ** Additive Model VS Multiplicative Model
 Multiplicative: X = T \times S \times C \times I
@@ -423,13 +424,13 @@ Traditional means:
 
 * Tools
 ** Python
-   - numpy
-   - pandas
-   - statsmodels.tsa
-   - pdmarima
-   - scipy
-   - sktime [[https://www.sktime.org/en/latest/tutorials.html][link]]
-   - facebook prophet [[https://facebook.github.io/prophet/][ref]]
+- numpy
+- pandas
+- statsmodels.tsa
+- pdmarima
+- scipy
+- sktime [[https://www.sktime.org/en/latest/tutorials.html][link]]
+- facebook prophet [[https://facebook.github.io/prophet/][ref]]
 ** R
 ** Matlab
 
@@ -481,10 +482,11 @@ flowchart LR
 </div>
 #+END_EXPORT
 
-* Other Topics
-** Kalman Filter
 
 * Appendices
+** Kalman Filter
+An intuitive explanation [[https://praveshkoirala.com/2023/06/13/a-non-mathematical-introduction-to-kalman-filters-for-programmers/][here]].
+
 ** Coefficient
 
 Given a pair of random variables $X, Y$,
@@ -506,18 +508,18 @@ $\rho$ can be written as
 \end{equation}
 
 where:
- - $\sigma_X$ and $\sigma_Y$ are standard deviation of $X$ and $Y$
- - $\mu_X$ and $\mu_Y$ are mean of $X$ and $Y$
- - $\mathbb{E}$ is the expectation.
+- $\sigma_X$ and $\sigma_Y$ are standard deviation of $X$ and $Y$
+- $\mu_X$ and $\mu_Y$ are mean of $X$ and $Y$
+- $\mathbb{E}$ is the expectation.
 
 ** Chebyshev Polynomial Approximation
 Define
-   \begin{align}
+\begin{align}
 c_j &\equiv \frac{2}{N}\sum_{k=1}^Nf(x_k)T_j(x_k) \\
     &= \frac{2}{N}\sum_{k=1}^Nf\Bigl[cos\Bigl\{\frac{\pi(k-\frac{1}{2})}{N}\Bigr\}\Bigr]cos\Bigl\{\frac{\pi j (k-\frac{1}{2})}{N}\Bigr\}
-   \end{align}
+\end{align}
 Then
-   \begin{equation}
+\begin{equation}
 f(x) \approx \sum_{k=0}^{N-1}c_kT_k(x)-\frac{1}{2}c_0
-   \end{equation}
+\end{equation}
 This type of approximation is important because, when truncated, the error is spread smoothly over [-1,1].
