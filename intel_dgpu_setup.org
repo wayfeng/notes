@@ -1,0 +1,77 @@
+#+TITLE:     Setting up Intel dGPU for Machine Learning
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+INDEX: Intel
+
+* Installing Drivers of dGPU
+
+** Arc
+#+BEGIN_SRC sh
+  wget -qO - https://repositories.intel.com/gpu/intel-graphics.key | \
+    sudo gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg
+
+  echo "deb [arch=amd64,i386 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/gpu/ubuntu jammy client" | \
+      sudo tee /etc/apt/sources.list.d/intel-gpu-jammy.list
+#+END_SRC
+
+** Flex
+
+** Install packages
+#+BEGIN_SRC sh
+  sudo apt update
+  # Compute, media, and display runtimes
+  sudo apt install -y \
+    intel-opencl-icd intel-level-zero-gpu level-zero \
+    intel-media-va-driver-non-free libmfx1 libmfxgen1 libvpl2 \
+    libegl-mesa0 libegl1-mesa libegl1-mesa-dev libgbm1 libgl1-mesa-dev libgl1-mesa-dri \
+    libglapi-mesa libgles2-mesa-dev libglx-mesa0 libigdgmm12 libxatracker2 mesa-va-drivers \
+    mesa-vdpau-drivers mesa-vulkan-drivers va-driver-all vainfo hwinfo clinfo
+
+  # Development packages
+  sudo apt install -y \
+    libigc-dev intel-igc-cm libigdfcl-dev libigfxcmrt-dev level-zero-dev
+#+END_SRC
+
+Reference to offical [[https://dgpu-docs.intel.com/driver/client/overview.html][documents]] for more details.
+
+* Allow Normal User
+
+#+BEGIN_SRC sh
+  sudo usermod -aG video,render $(id -u)
+#+END_SRC
+
+* Installing oneAPI Base Toolkit
+
+#+BEGIN_SRC sh
+   wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | \
+       gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+
+   echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | \
+       sudo tee /etc/apt/sources.list.d/oneAPI.list
+
+   sudo apt update
+
+   sudo apt install intel-basekit
+#+END_SRC
+
+
+* Installing OpenVINO
+
+For python developers.
+#+BEGIN_SRC sh
+  pip install openvino-dev==2023.1.0
+#+END_SRC
+
+
+* Installing IPEX
+
+#+BEGIN_SRC sh
+  pip install torch==2.0.1a0 torchvision==0.15.2a0 intel_extension_for_pytorch==2.0.110+xpu -f https://developer.intel.com/ipex-whl-stable-xpu 
+#+END_SRC
+
+
+* Installing BigDL
+
+#+BEGIN_SRC sh
+  pip install --pre --upgrade bigdl-llm[xpu] -f https://developer.intel.com/ipex-whl-stable-xpu
+#+END_SRC

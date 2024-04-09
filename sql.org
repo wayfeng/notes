@@ -1,0 +1,83 @@
+#+TITLE:     SQL for Dummies
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+HTML_HEAD_EXTRA: <script src="js/org-info.js" type="text/javascript"></script>
+#+OPTIONS:   tex:t
+#+INDEX: SQL
+
+* Select constant
+#+begin_src sql
+  select N;
+#+end_src
+
+* Select all values from a table
+#+begin_src sql
+  select * from tablename;
+#+end_src
+
+** Administrative commands
+#+begin_src sql
+  .headers on
+  .mode markdown
+  select * from table_name;
+#+end_src
+
+* Select specific columns from a table
+#+begin_src sql
+  select col_a, col_b from tablename;
+#+end_src
+
+* Sort query results
+#+begin_src sql
+  select col_a, col_b, col_c from tablename
+  order by col_b asc, col_c desc;
+#+end_src
+
+* Limit #rows
+#+begin_src sql
+  select col_a, col_b from tablename
+  order by col_b asc
+  limit 10;
+#+end_src
+
+* Limit #rows with offsets
+#+begin_src sql
+  select col_a, col_b from tablename
+  order by col_b asc
+  limit 10 offset 3;
+#+end_src
+
+* Remove duplicated rows
+#+begin_src sql
+  select distinct col_a, col_b from tablename;
+#+end_src
+
+* Filter results
+#+begin_src sql
+  select col_a, col_b from tablename
+  where col_b = 'key';
+#+end_src
+
+* Filter with complex conditions
+#+begin_src sql
+  select col_a, col_b from tablename
+  where col_a = 'key1' and col_b = 'key2';
+#+end_src
+
+* Calculation
+#+begin_src sql
+  select
+      col_a / 10.0,
+      col_b / 1000.0
+  from tablename
+  limit 5;
+#+end_src
+
+* Rename columns
+#+begin_src sql
+  select
+      col_a / 10.0 as a,
+      col_b / 1000.0 as b
+  from tablename
+  limit 5;
+#+end_src

@@ -1,0 +1,60 @@
+#+TITLE:     Elisp Basics
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+INDEX: elisp
+
+* Variables
+
+** Global variables
+#+begin_src elisp
+  (defvar name "Wayne" "user name")
+  (setq nickname "Bruce")
+#+end_src
+
+** Local variables
+#+begin_src elisp
+  (let ((name "Wayne"))
+    (print name) ;; Wayne
+    (setq name "Bruce")
+    (print name) ;; Bruce
+    )
+#+end_src
+
+* Functions
+#+begin_src elisp
+  (defun add (a b) (+ a b))
+  (add 3 5)
+#+end_src
+
+* Conditions
+
+** if
+#+begin_src elisp
+  (if (> 5 3)
+      (message "5 > 3")
+    (message "5 <= 3"))
+#+end_src
+
+** when
+#+begin_src elisp
+  (when (> 10 5)
+    (message "5 > 3")
+    (sleep-for 2)
+    (message "second action"))
+#+end_src
+
+** unless
+
+** cond
+
+* Loops
+
+** while
+
+** dolist
+
+** dotimes
+
+* Miscellaneous
+
+** [[http://www-formal.stanford.edu/jmc/facts.txt][John McCarthy's collection of numerical facts]]

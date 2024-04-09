@@ -1,0 +1,17 @@
+#+TITLE:     Python Language and Tools
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+HTML_HEAD_EXTRA: <script src="js/org-info.js" type="text/javascript"></script>
+#+OPTIONS:   tex:t
+#+INDEX: python
+
+* Basics
+
+* Tools
+
+** [[https://numpy.org/doc/stable/][Numpy]]
+
+** [[https://pandas.pydata.org/docs/][Pandas]]
+
+** [[https://toolz.readthedocs.io][Toolz]]
+
