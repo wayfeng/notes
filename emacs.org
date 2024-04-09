@@ -2,7 +2,6 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
 #+INDEX: emacs
-#+INDEX: elisp
 
 * Basic Usage
 

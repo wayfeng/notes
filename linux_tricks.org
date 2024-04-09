@@ -77,17 +77,48 @@ sudo systemctl set-default graphical.target
 
 * Configuring systemd-timesyncd
 Default NTP server may not working behind corporate proxies. To enable the corporate NTP server, if there is one, edit =/etc/systemd/timesyncd.conf=
-#+begin_src 
+
+#+BEGIN_SRC 
 [Time]
 NTP=ntp.yourcorp.com
-#+end_src
+#+END_SRC
 
 Then restart timesyncd.
-#+being_src sh
-sudo systemctl restart systemd-timesyncd
-#+end_src
+
+#+BEGIN_SRC sh
+  sudo systemctl restart systemd-timesyncd
+#+END_SRC
 
 Now check if it works.
-#+being_src sh
-sudo systemctl status systemd-timesyncd
-#+end_src
+
+#+BEGIN_SRC sh
+  sudo systemctl status systemd-timesyncd
+#+END_SRC
+
+* Proxy
+
+** General Setting
+
+For local users, add these lines in =~/.profile= if using bash, =~/.zshenv= if zsh.
+For all users, add to =/etc/environment=.
+#+BEGIN_SRC sh
+  export http_proxy="http://proxy.host:port"
+  export https_proxy="http://proxy.host:port"
+#+END_SRC
+
+** APT
+
+Edit =/etc/apt/apt.conf.d/80proxy=
+#+BEGIN_SRC conf
+  Acquire {
+    HTTP::Proxy "http://proxy.host:port";
+    HTTPS::Proxy "http://proxy.host:port";
+  }
+#+END_SRC
+
+** Snap
+
+#+BEGIN_SRC sh
+snap set system proxy.http="http://proxy.host:port"
+snap set system proxy.https="http://proxy.host:port"
+#+END_SRC

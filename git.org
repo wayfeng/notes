@@ -30,6 +30,7 @@
 #+BEGIN_SRC sh
 git init
 #+END_SRC
+
 ** Get repository from a remote server
 #+BEGIN_SRC sh
 git clone <URL>
@@ -39,22 +40,27 @@ git clone <URL>
 #+BEGIN_SRC sh
 git status
 #+END_SRC
+
 ** Diff changes
 #+BEGIN_SRC sh
 git diff <FILE>
 #+END_SRC
+
 ** Diff with another branch
 #+BEGIN_SRC sh
 git diff <another-branch>
 #+END_SRC
+
 ** Staging changes
 #+BEGIN_SRC sh
 git add <FILE>
 #+END_SRC
+
 ** Diff staged changes
 #+BEGIN_SRC sh
 git diff --cached
 #+END_SRC
+
 ** Check whitespaces errors
 #+BEGIN_SRC sh
 git diff --check
@@ -64,12 +70,14 @@ git diff --check
 #+BEGIN_SRC sh
 git commit
 #+END_SRC
+
 ** Commit/Checkout/Stage Interactively
 #+BEGIN_SRC sh
 git commit -p <file>
 git checkout -p <file>
 git add -p <file>
 #+END_SRC
+
 ** Branches
 Show branch(es)
 #+BEGIN_SRC sh
@@ -81,71 +89,81 @@ Check out remote branch
 git checkout -b <local-branch> origin/<remote-branch>
 #+END_SRC
 
-   It is commom enough to use same local branch name, so git provide shorthand like this
+It is commom enough to use same local branch name, so git provide shorthand like this
 #+BEGIN_SRC sh
 git checkout --track origin/<remote-branch>
 #+END_SRC
 
-   push local branch to remote server:
+push local branch to remote server:
 #+BEGIN_SRC sh
 git push remote <branch>
 #+END_SRC
 
-   to delete a remote branch
+to delete a remote branch
 #+BEGIN_SRC sh
 git push origin --delete <branch>
 #+END_SRC
+
 ** List Tags
 #+BEGIN_SRC sh
 git tag -l
 #+END_SRC
+
 ** Checkout a specific tag
 #+BEGIN_SRC sh
 git checkout tags/<tagname>
 #+END_SRC
+
 ** Create tag
-   An annotated tag is stored as full object in Git database.
-   While lightweight tag is merely a pointer to a commit.
+An annotated tag is stored as full object in Git database.
+While lightweight tag is merely a pointer to a commit.
 #+BEGIN_SRC sh
   git tag -a v1.0 -m 'version 1.0' # annotated tag
   git tag v1.0-lw # lightweight tag
 #+END_SRC
+
 ** Share a tag
 #+BEGIN_SRC sh
   git push origin v1.0
 #+END_SRC
+
 ** Revert just added file
 #+BEGIN_SRC sh
   git reset <file>
 #+END_SRC
-** Roll back commitment
 
-   When you have done some bad commit on a branch like this:
+** Roll back commitment
+When you have done some bad commit on a branch like this:
 #+BEGIN_SRC sh
 A - B - C - D - E - F
 #+END_SRC
-   and you want to roll back to /C/ and discard /D/, /E/ and /F/.
+and you want to roll back to /C/ and discard /D/, /E/ and /F/.
 
-   First, you will need the hash id of /C/, the first several number is sufficient (db7c2b7 for example).
+First, you will need the hash id of /C/, the first several number is sufficient (db7c2b7 for example).
 
-   Then execute the reset command of git:
+Then execute the reset command of git:
 #+BEGIN_SRC sh
 git reset --soft db7c2b7
 #+END_SRC
-   or you want to discard the changes you have made forever (before you do it, think about it twice):
+or you want to discard the changes you have made forever (before you do it, think about it twice):
 #+BEGIN_SRC sh
 git reset --hard db7c2b7
 #+END_SRC
-   After reset the branch, the commitment /D/, /E/, and /F/ are removed. Next time you commit some thing, it will directly behind /C/.
+After reset the branch, the commitment /D/, /E/, and /F/ are removed. Next time you commit some thing, it will directly behind /C/.
 
-   If you have a remote repository and you want to change it also, push the resetting like this:
+If you have a remote repository and you want to change it also, push the resetting like this:
 #+BEGIN_SRC sh
 git push --force origin
 #+END_SRC
 
-   To get a list of HEADs with =reflog=
+To get a list of HEADs with =reflog=
 #+BEGIN_SRC sh
 git reflog
+#+END_SRC
+
+** Check the history of a method
+#+BEGIN_SRC sh
+git log -L :method:filename
 #+END_SRC
 
 * Git Configuration

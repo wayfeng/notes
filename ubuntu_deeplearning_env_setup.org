@@ -7,16 +7,16 @@
 #+INDEX: ubuntu
 #+INDEX: mxnet
 
-* Install Ubuntu 18.04
-  Should be easy.
+* Install Ubuntu 22.04
+Should be easy.
 
 * Install Nvidia Device Driver
-  Add PPA repository of Nvidia drivers.
+Add PPA repository of Nvidia drivers.
 #+BEGIN_SRC sh
   sudo add-apt-repository ppa:graphics-drivers/ppa
 #+END_SRC
 
-  List Nvidia devices
+List Nvidia devices
 #+BEGIN_SRC sh
   lspci | grep VGA
 #+END_SRC
@@ -25,7 +25,7 @@
   01:00.0 VGA compatible controller: NVIDIA Corporation Device 1f07 (rev a1)
 #+end_example
 
-  List available drivers
+List available drivers
 #+BEGIN_SRC sh
   sudo ubuntu-drivers devices
 #+END_SRC
@@ -40,17 +40,18 @@
   driver   : xserver-xorg-video-nouveau - distro free builtin
 #+end_example
 
-  Install recommended driver
+Install recommended driver
 #+BEGIN_SRC sh
   sudo ubuntu-drivers install
 #+END_SRC
 
-  Check installation
+Check installation
 #+BEGIN_SRC sh
   nvidia-smi
 #+END_SRC
+
 * Install CUDA/CUDNN toolkit
-  Should be easy.
+Should be easy.
 
 * Setup Python Environment
 ** Setup VirtualEnv
@@ -79,7 +80,7 @@
 #+END_SRC
 
 *** Using local *pip* mirrors
-    Create file =~/.pip/pip.conf=
+Create file =~/.pip/pip.conf=
 #+BEGIN_SRC conf
   [global]
   #index-url = https://mirrors.ustc.edu.cn/pypi/web/simple
@@ -89,16 +90,17 @@
 #+END_SRC
 
 * Install TensorFlow
-  Install the stable version with GPU supported.
+Install the stable version with GPU supported.
 #+BEGIN_SRC sh
   pip install tensorflow-gpu
 #+END_SRC
-  Install specific version.
+
+Install specific version.
 #+BEGIN_SRC sh
   pip install tensorflow-gpu==1.14.0
 #+END_SRC
 
-  The "Conv2D CUDNN handle issue"[fn:1][fn:2]
+The "Conv2D CUDNN handle issue"[fn:1][fn:2]
 #+BEGIN_SRC python
   # for tf 1.x
   config = tf.ConfigProto(allow_soft_placement=True)
@@ -112,13 +114,13 @@
 #+END_SRC
 
 ** Build TensorFlow from source code[fn:3]
-   Download tensorflow source code
+Download tensorflow source code
 #+BEGIN_SRC sh
   git clone git@github.com:tensorflow/tensorflow.git
   git checkout r1.9
 #+END_SRC
 
-   Install bazel
+Install bazel
 #+BEGIN_SRC sh
   wget https://github.com/bazelbuild/bazel/releases/download/0.26.1/bazel-0.26.1-installer-linux-x86_64.sh
   chmod a+x *.sh
@@ -129,16 +131,16 @@
 
 * Install PyTorch
 #+BEGIN_SRC sh
-  pip install torch torchvision
+  pip install torch torchvision torchaudio
 #+END_SRC
 
 * Install MxNet
-  To install official release, check [[https://mxnet.apache.org][here]].
+To install official release, check [[https://mxnet.apache.org][here]].
 #+BEGIN_SRC sh
   pip install mxnet-cu100mkl # for both CUDA 10.0 and MKLDNN
 #+END_SRC
 
-  To install branch with NumPy integrated, check [[https://numpy.mxnet.io][here]].
+To install branch with NumPy integrated, check [[https://numpy.mxnet.io][here]].
 #+BEGIN_SRC sh
   pip install https://apache-mxnet.s3-accelerate.amazonaws.com/dist/python/numpy/latest/mxnet_cu100mkl-1.5.0-py2.py3-none-manylinux1_x86_64.whl
 #+END_SRC

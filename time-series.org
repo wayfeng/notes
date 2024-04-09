@@ -388,6 +388,11 @@ With Q for Query, K for Key, and V for Value.
 A(Q, K, V) = softmax(QK^T)V
 \end{equation}
 
+** InceptionTime
+- [[https://github.com/hfawaz/InceptionTime][GitHub]]
+- [[https://arxiv.org/pdf/1909.04939.pdf][ArXiv]]
+
+
 * Use Cases
 
 ** Traffic prediction
@@ -421,6 +426,9 @@ Traditional means:
 #+CAPTION: Spectra of the (a) Square wave approximation. (b) Random noise. (c) Ringing pulse sequence. (d) Composite waveform
 #+NAME: fig:0003
 [[./img/bearing_signal_spectra.png]]
+
+
+** Time-Series classification
 
 * Tools
 ** Python
@@ -485,7 +493,7 @@ flowchart LR
 
 * Appendices
 ** Kalman Filter
-An intuitive explanation [[https://praveshkoirala.com/2023/06/13/a-non-mathematical-introduction-to-kalman-filters-for-programmers/][here]].
+An intuitive explanation [[https://praveshkoirala.com/2023/06/13/a-non-mathematical-introduction-to-kalman-filters-for-programmers/][here]]. And more [[https://towardsdatascience.com/exposing-the-power-of-the-kalman-filter-1b78621c3f56][here]].
 
 ** Coefficient
 

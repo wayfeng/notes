@@ -249,3 +249,8 @@ Z_G = \sum_{v\in G}{Z_v}
 * Graph Convolution
 
 * Chebyshev Polynomial Approximation
+
+
+* Tools
+
+** [[https://pytorch-geometric.readthedocs.io/en/latest/][torch geometric]]

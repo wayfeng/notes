@@ -16,6 +16,13 @@
   printf "%x\n" 1234
 #+END_SRC
 
+** convert hexadecimal to decimal                                    :others:
+#+BEGIN_SRC sh
+  echo $((0x4d2))
+  # or
+  printf "%d\n" 0x4d2
+#+END_SRC
+
 ** compare folders                                                     :diff:
 #+BEGIN_SRC sh
   diff --brief --exclude='.git' -r <dir1> <dir2>
@@ -105,7 +112,11 @@ cat file | awk '{ sum+=$N } END { print "average = ", sum/NR }'
 
 ** Print all columns but the very first one                             :awk:
 #+BEGIN_SRC sh
-cat file | awk '{ $1=""; print $0 }'
+awk '{ $1=""; print $0 }' file
+#+END_SRC
+
+#+BEGIN_SRC sh
+awk '{for (i=2; i<=NF; i++) $(i-1)=$i; print}' file
 #+END_SRC
 
 ** Print a column in a row                                              :awk:
