@@ -1,0 +1,36 @@
+#+TITLE:     Candle
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+INDEX: git
+
+* Installation
+
+** With CUDA support
+
+Make sure that CUDA is correctly installed.
+
+#+begin_src sh
+  nvidia-smi --query-gpu=compute_cap --format=csv
+#+end_src
+
+This command may not work with older version of cuda tools, another way is to check =compute_cap= from [[https://developer.nvidia.com/cuda-gpus][cuda-gpus]],
+then set environment variable. Compute capability of my RTX2080 is 8.6.
+#+begin_src sh
+  export CUDA_COMPUTE_CAP=86
+#+end_src
+
+Now create a new app and add candle-core.
+
+#+begin_src sh
+  cargo new candle_app
+  cd candle_app
+
+  cargo add --git https://github.com/huggingface/candle.git candle-core --features "cuda"
+  cargo build
+#+end_src
+
+** With MKL support
+
+#+begin_src sh
+  cargo add --git https://github.com/huggingface/candle.git candle-core --features "mkl"
+#+end_src
