@@ -1,0 +1,82 @@
+#+TITLE:     Hosting Codellama Locally
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+INDEX:     LLM
+
+* Convert Pytorch models to GGUF
+
+Get source code of =llama.cpp=.
+#+begin_src bash
+  git clone https://github.com/ggerganov/llama.cpp.git
+#+end_src
+
+Setup environment.
+#+begin_src bash
+  cd llama.cpp
+  virtualenv .env
+  source .env/bin/activate
+  pip install -r ./requirements.txt
+#+end_src
+
+Build =llama.cpp=
+#+begin_src bash
+  mkdir build
+  cmake -DLLAMA_CUBLAS=ON ..
+  make -j$(nproc)
+#+end_src
+
+Convert and quantize.
+#+begin_src bash
+  python convert.py <path/to/codellama/safetensors> --outtype f16
+  ./build/bin/quantize <path/tocodellama/ggml-model-f16.gguf 2
+#+end_src
+
+* Install and setup ollama
+
+#+begin_src bash
+  mkdir -p $HOME/.local/bin
+  curl -L https://ollama.ai/download/ollama-linux-amd64 -o $HOME/.local/bin/ollama
+  export PATH=$HOME/.local/bin:$PATH
+#+end_src
+
+Create Modelfile for ollama.
+#+begin_src bash
+  cat Modelfile <<EOF > Modelfile
+  FROM ./models/CodeLlama-7b/ggml-model-Q4_0.gguf
+  EOF
+#+end_src
+
+Add model to ollama
+#+begin_src bash
+  ollama create codellama:7b -f Modelfile
+#+end_src
+
+
+Check ollama installed models
+#+begin_src bash
+  ollama list
+#+end_src
+
+Start ollama server
+#+begin_src bash
+  export OLLAMA_HOST=0.0.0.0 # in case of remote access of ollama server
+  ollama serve
+#+end_src
+
+* Configure [[https://continue.dev][Continue]] extension
+
+Add ollama server to Continue configure file =config.json=
+#+begin_src json
+{
+  "models": [
+    ...,
+    {
+      "title": "CodeLlama-7b",
+      "model": "codellama:7b",
+      "completionOptions": {},
+      "apiBase": "http://localhost:11434",
+      "provider": "ollama"
+    },
+    ...
+  ]
+#+end_src
