@@ -3,14 +3,14 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
 #+INDEX:     LLM
 
-* Convert Pytorch models to GGUF
+* Convert Pytorch checkpoints to GGUF format
 
-Get source code of =llama.cpp=.
+The source code of =llama.cpp= is available on GitHub.
 #+begin_src bash
   git clone https://github.com/ggerganov/llama.cpp.git
 #+end_src
 
-Setup environment.
+It's better to create a virtual environment to install python dependencies.
 #+begin_src bash
   cd llama.cpp
   virtualenv .env
@@ -18,20 +18,24 @@ Setup environment.
   pip install -r ./requirements.txt
 #+end_src
 
-Build =llama.cpp=
+To use quantization tool, we need to build =llama.cpp=.
 #+begin_src bash
   mkdir build
-  cmake -DLLAMA_CUBLAS=ON ..
+  cd build
+  cmake -DLLAMA_CUBLAS=ON .. # if you have Nvidia GPU and CUDA
   make -j$(nproc)
+  cd ..
 #+end_src
 
-Convert and quantize.
+Convert =codellama= model to GGUF format, and quantize the converted model to INT4.
+In this example, I downloaded =codellama-7b= checkpoints in =./models/CodeLlama-7b=.
+
 #+begin_src bash
-  python convert.py <path/to/codellama/safetensors> --outtype f16
-  ./build/bin/quantize <path/tocodellama/ggml-model-f16.gguf 2
+  python convert.py ./models/CodeLlama-7b --outtype f16
+  ./build/bin/quantize ./models/CodeLlama-7b/ggml-model-f16.gguf 2
 #+end_src
 
-* Install and setup ollama
+* Install and setup [[https://ollama.ai][ollama]]
 
 #+begin_src bash
   mkdir -p $HOME/.local/bin
@@ -51,16 +55,15 @@ Add model to ollama
   ollama create codellama:7b -f Modelfile
 #+end_src
 
-
-Check ollama installed models
-#+begin_src bash
-  ollama list
-#+end_src
-
 Start ollama server
 #+begin_src bash
   export OLLAMA_HOST=0.0.0.0 # in case of remote access of ollama server
   ollama serve
+#+end_src
+
+Check ollama installed models
+#+begin_src bash
+  ollama list
 #+end_src
 
 * Configure [[https://continue.dev][Continue]] extension
@@ -79,4 +82,11 @@ Add ollama server to Continue configure file =config.json=
     },
     ...
   ]
+#+end_src
+
+In case that =ollama= is hosted on a remote server, we can use SSH port forwarding
+to let =continue= access the remote service.
+
+#+begin_src bash
+  ssh -L 11434:localhost:11434 user@server
 #+end_src

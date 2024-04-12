@@ -389,6 +389,7 @@ esac
 
 ** Auto complete
    Check =/etc/bash_completion= and =/usr/share/bash-completion=
+
 ** Start editor (specified by $EDITOR)
 #+BEGIN_SRC sh
 ctrl-x e
@@ -479,6 +480,13 @@ nohup <long-run-command> &
 <long-run-command>
 # press ctrl-z
 bg && disown
+#+END_SRC
+
+** Handle file by line
+#+BEGIN_SRC sh
+  while IFS= read -r s; do
+      echo $s
+  done < contents.txt
 #+END_SRC
 
 * String manipulation
