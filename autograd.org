@@ -1,32 +1,38 @@
-# AutoDiff: Automatic Differentiation
+#+TITLE:     AutoDiff: Automatic Differentiation
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+HTML_HEAD: <script src="js/mermaid.min.js" type="text/javascript"></script>
+#+HTML_HEAD_EXTRA: <script src="js/org-info.js" type="text/javascript"></script>
+#+OPTIONS:   tex:t
+#+INDEX: autodiff
 
-## Backgrounds
+* Backgrounds
 
-## Websites
+* Websites
 - [http://autodiff.org]
 
-## Videos
-- [Autograd implementation](http://videolectures.net/deeplearning2017_johnson_automatic_differentiation)
-- [AD for Dummies](https://www.youtube.com/watch?v=FtnkqIsfNQc)
-- [The Simple Essence of AD](https://www.youtube.com/watch?v=ne99laPUxN4)
-- [From AD to message passing](https://www.youtube.com/watch?v=cw7QTSfLjEo)
-- [Effective Automatic Differenciation Made Easy Via Category Theory](https://www.youtube.com/watch?v=17gfCTnw6uE)
-- [From AD to Message Passing](https://www.youtube.com/watch?v=cw7QTSfLjEo)
+* Videos
+- [[http://videolectures.net/deeplearning2017_johnson_automatic_differentiation][Autograd implementation]]
+- [[https://www.youtube.com/watch?v=FtnkqIsfNQc][AD for Dummies]]
+- [[https://www.youtube.com/watch?v=ne99laPUxN4][The Simple Essence of AD]]
+- [[https://www.youtube.com/watch?v=cw7QTSfLjEo][From AD to message passing]]
+- [[https://www.youtube.com/watch?v=17gfCTnw6uE][Effective Automatic Differenciation Made Easy Via Category Theory]]
+- [[https://www.youtube.com/watch?v=cw7QTSfLjEo][From AD to Message Passing]]
 
-## Papers
-- [The Simple Essence of Automatic Differentiation](https://arxiv.org/pdf/1804.00746.pdf)
-- [A Review of Automatic Differentiation and its Efficient Implementation](https://arxiv.org/pdf/1811.05031.pdf)
-- [AD Machine Learning: a Survey](https://arxiv.org/pdf/1502.05767.pdf)
-- [Enzyme AD](https://arxiv.org/pdf/2010.01709.pdf)
+* Papers
+- [[https://arxiv.org/pdf/1804.00746.pdf][The Simple Essence of Automatic Differentiation]]
+- [[https://arxiv.org/pdf/1811.05031.pdf][A Review of Automatic Differentiation and its Efficient Implementation]]
+- [[https://arxiv.org/pdf/1502.05767.pdf][AD Machine Learning: a Survey]]
+- [[https://arxiv.org/pdf/2010.01709.pdf][Enzyme AD]]
 
-## Implementations
-- --Moved to Google JAX-- [HIPS autograd](https://github.com/HIPS/autograd)
-- [Google JAX](https://github.com/google/jax)
-- [Enzyme AD](https://enzyme.mit.edu)
-- [PyTorch Autograd](https://github.com/pytorch/pytorch/tree/master/torch/csrc/autograd)
+* Implementations
+- --Moved to Google JAX-- [[https://github.com/HIPS/autograd][HIPS autograd]]
+- [[https://github.com/google/jax][Google JAX]]
+- [[https://enzyme.mit.edu][Enzyme AD]]
+- [[https://github.com/pytorch/pytorch/tree/master/torch/csrc/autograd][PyTorch Autograd]]
 
-## Articles
-- [Automatic Differenciation](https://www.robots.ox.ac.uk/~tvg/publications/talks/autodiff.pdf)
-- PyTorch动态图 [Part 1](https://zhuanlan.zhihu.com/p/61765561), [Part 2](https://zhuanlan.zhihu.com/p/65822256)
-- [PyTorch AD](https://pytorch.org/docs/stable/notes/autograd.html)
-- [Step-by-step Reverse Mode AD](https://stats.stackexchange.com/questions/224140/step-by-step-example-of-reverse-mode-automatic-differentiation)
+* Articles
+- [[https://www.robots.ox.ac.uk/~tvg/publications/talks/autodiff.pdf][Automatic Differenciation]]
+- PyTorch动态图 [[https://zhuanlan.zhihu.com/p/61765561][Part 1]], [[https://zhuanlan.zhihu.com/p/65822256][Part 2]]
+- [[https://pytorch.org/docs/stable/notes/autograd.html][PyTorch AD]]
+- [[https://stats.stackexchange.com/questions/224140/step-by-step-example-of-reverse-mode-automatic-differentiation][Step-by-step Reverse Mode AD]]
