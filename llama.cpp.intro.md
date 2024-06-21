@@ -68,7 +68,7 @@ source /opt/intel/oneapi/setvars.sh
 cmake -B build -DLLAMA_SYCL=ON -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icpx
 # Option 2: Use FP16
 cmake -B build -DLLAMA_SYCL=ON -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icpx -DLLAMA_SYCL_F16=ON
-cmake --build build --config Release -j -v
+cmake --build build --config Release
 ```
 
 ---
@@ -85,7 +85,33 @@ Quantizing GGUF model
 ```bash
 ./build/bin/quantize ~/checkpoints/Llama-2-7b-chat-hf/ggml-model-f16.gguf Q4_K
 ```
-<!-- _k quantization is optimal to _0 -->
+
+
+---
+
+## Quantization
+ *q4_k* quantization is better than *q4_0*, where k means [k-means clustering](https://en.wikipedia.org/wiki/K-means_clustering)
+![center](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/K-means_convergence.gif/330px-K-means_convergence.gif)
+
+<!-- quantize with
+  q4_0 calculates max value of a chunk;
+  q4_1 calculates max and min value of a chunk;
+  q4_k calculates k-means clusters of the chunk.
+  Since k-means clustering generates less MSE (mean squired error),
+  the result is more accurate with qn_k.
+  
+  qn_k_s and qn_k_m should be same.
+  -->
+
+<!-- quantization is done by chunk, how is the chunkes deviced?
+```C++
+llama_model_quantize_internal()
+    llama_tensor_quantize_internal()
+        n_per_row = tensor->ne[0];
+        n_row = tensor->ne[1];
+        ggml_quantize_chunk(n_row, n_per_row);
+```
+ -->
 
 ---
 
@@ -114,11 +140,11 @@ With GPU.
 
 ## Some background information
 
+Why the fuzz about model formats?
 How do tokenizers work?
 How are transformers calculated?
 Why is KV cache needed?
 Decoder-only models V.S. encoder-decoder models?
-Why the fuzz about model formats?
 
 ---
 
@@ -131,6 +157,28 @@ Why the fuzz about model formats?
 - GGUF
 - ...
 
+---
+
+## Tokenizers
+
+- BPE
+- SPM
+- WPM
+
+<!--
+```C++
+struct llama_vocab {};
+struct llm_tokenizer_bpe {};
+struct llm_tokenizer_spm {};
+struct llm_tokenizer_wpm {};
+```
+ -->
+
+<!--
+---
+
+## Sampling?
+-->
 ---
 
 <!-- _class: lead -->
@@ -147,42 +195,6 @@ Why the fuzz about model formats?
 <!-- _class: lead -->
 ## Repo structure
 
----
-
-## Memory management
-
-- Custom allocator
-- Lazy allocation
-- Free inactive tensors
-
----
-
-## KV cache
-
-- **Stores pre-computed token representations**: The cache stores key-value pairs where the key is a token and the value is its vector representation. This avoids redundant calculations for already encountered tokens.
-- **Targeted Storage**: The cache prioritizes storing frequently used tokens or those with complex representations.
-- **Eviction Strategies**: The cache evicts less important entries (LRU, LFU, or hybrid approaches) to make space for new ones.
-- **Fragmentation Mitigation**: Techniques like compaction or pre-allocation help maintain efficient cache space utilization.
-
----
-
-## Tokenizers
-
-- SPM
-- BPE
-- WPM
-
-```C++
-struct llama_vocab {};
-struct llm_tokenizer_bpe {};
-struct llm_tokenizer_spm {};
-struct llm_tokenizer_wpm {};
-```
-<!--
----
-
-## Sampling?
--->
 ---
 
 ## Inferencing process
@@ -229,6 +241,38 @@ llama_decode() {
 Compute graphs are composed with `ggml_tensor`
 A graph with only `ggml_add` looks like:
 ![center](./img/cgraph_add.png)
+<!--
+ nodes vs leafs
+ -->
+---
+
+## Memory management
+
+- Custom allocator
+- Lazy allocation
+- Free inactive tensors
+
+<!--
+- tensor allocator `ggml_tallocr`
+- graph allocator `ggml_gallocr`
+  - dynamic allocator `ggml_dyn_tallocr`
+  - hash set `ggml_hash_set`
+  - node allocator `node_alloc`
+  - leaf allocator `leaf_alloc`
+- backend allocator impl `ggml_backend_buffer_t`
+ -->
+
+---
+
+## KV cache
+
+<!--
+- **Stores pre-computed token representations**: The cache stores key-value pairs where the key is a token and the value is its vector representation. This avoids redundant calculations for already encountered tokens.
+- **Targeted Storage**: The cache prioritizes storing frequently used tokens or those with complex representations.
+- **Eviction Strategies**: The cache evicts less important entries (LRU, LFU, or hybrid approaches) to make space for new ones.
+- **Fragmentation Mitigation**: Techniques like compaction or pre-allocation help maintain efficient cache space utilization.
+-->
+
 <!--
 ---
 
