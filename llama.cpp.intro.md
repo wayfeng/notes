@@ -1,9 +1,14 @@
 ---
-theme: gaia
+theme: default
 style: |
     code { font-family: mononoki, consolas, monospace;  }
     img[alt~="center"] { display: block; margin: 0 auto; }
-    img[alt~="right"] { display: float; margin: 0 0 0 auto;}
+    img[alt~="right"] { display: block; margin: 0 0 0 auto;}
+    .columns {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
 _class: lead
 paginate: true
 #footer: "Intel Internal Only"
@@ -22,8 +27,7 @@ June 2024
 
 ## Agenda
 
-- How to use `llama.cpp`
-- Necessary background knowledges
+- Usage
 - Implementation
 
 ---
@@ -52,13 +56,13 @@ Combine with ``vscode`` and plugin [``continue``](continue.dev).
 
 ---
 
-## Compile source code
+## Compile source code 
+Based on commit [504f0c34](https://github.com/ggerganov/llama.cpp/tree/504f0c34)
 
 ```bash
 git clone https://github.com/ggerganov/llama.cpp.git
 cd llama.cpp
-make -j$(nproc)
-# make LLAMA_CUDA=1 -j$(nproc)
+make -j$(nproc) #LLAMA_CUDA=1
 ```
 
 For Intel devices with SYCL enabled.
@@ -90,7 +94,8 @@ Quantizing GGUF model
 ---
 
 ## Quantization
- *q4_k* quantization is better than *q4_0*, where k means [k-means clustering](https://en.wikipedia.org/wiki/K-means_clustering)
+ 
+*q4_k* quantization is better than *q4_0*, where k means [k-means clustering](https://en.wikipedia.org/wiki/K-means_clustering)
 ![center](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/K-means_convergence.gif/330px-K-means_convergence.gif)
 
 <!-- quantize with
@@ -131,7 +136,7 @@ With GPU.
 
 ---
 
-## Bonus: llamafile
+## Bonus: [llamafile](https://github.com/Mozilla-Ocho/llamafile.git)
 
 - Based on `llama.cpp`
 - Compile once, run everywhere with [Actual Portable Executable](https://justine.lol/ape.html).
@@ -140,15 +145,16 @@ With GPU.
 
 ## Some background information
 
-Why the fuzz about model formats?
-How do tokenizers work?
-How are transformers calculated?
-Why is KV cache needed?
-Decoder-only models V.S. encoder-decoder models?
+- model formats
+- tokenizers
+- transformers
+- sampling
+
+- decoder-only models V.S. encoder-decoder models
 
 ---
 
-## Model Formats
+### Model Formats
 
 - pickle (pytorch)
 - h5 (tensorflow)
@@ -159,11 +165,29 @@ Decoder-only models V.S. encoder-decoder models?
 
 ---
 
-## Tokenizers
+<!-- _class: lead -->
+### GGUF details
+![center width:800px](./img/gguf-spec.png)
 
-- BPE
-- SPM
-- WPM
+---
+
+<!-- _class: lead -->
+### LLM Inferencing
+![center width:900px](./img/inference.png)
+
+---
+
+<!-- _class: lead -->
+### Transformers
+![transformer center width:1000](./img/transformer_attention.png)
+
+---
+
+### Tokenizers
+
+- BPE: Byte Pair Encoding [Sennrich et al.](https://www.aclweb.org/anthology/P16-1162)
+- WPM: [Word Piece](https://arxiv.org/pdf/1609.08144.pdf)
+- SPM: Sentence Piece
 
 <!--
 ```C++
@@ -174,16 +198,16 @@ struct llm_tokenizer_wpm {};
 ```
  -->
 
-<!--
 ---
 
-## Sampling?
--->
----
+### Sampling
 
-<!-- _class: lead -->
-## GGUF details
-![width:800px](./img/gguf-spec.png)
+Choosing the next predicted token.
+
+- Greedy sampling
+- Temperature sampling
+- Grammar
+- ...
 
 ---
 
@@ -192,30 +216,26 @@ struct llm_tokenizer_wpm {};
 
 ---
 
-<!-- _class: lead -->
-## Repo structure
-
----
-
-## Inferencing process
+### Inferencing process
 ```C++
 main() {
     ...
     llama_backend_init();
     std::tie(model, ctx) = llama_init_from_gpt_params(params);
     inp = ::llama_tokenize(ctx, params.prompt, true, true);
-    for (...) { llama_decode(ctx, llama_batch_get_one(...)); }
-    output_ss << llama_token_to_piece(ctx, token);
+    while (...) {
+        llama_decode(ctx, llama_batch_get_one(...));
+        token = llama_sampling_sample(...);
+        output_ss << llama_token_to_piece(ctx, token);
+    }
     llama_free(ctx);
-    llama_free_model(model);
-    llama_backend_free();
     ...
 }
 ```
 
 ---
 
-## Decode process
+### Decode process
 
 ```C++
 llama_decode() {
@@ -236,7 +256,7 @@ llama_decode() {
 
 ---
 
-## Graph Compute
+### Graph Compute
 
 Compute graphs are composed with `ggml_tensor`
 A graph with only `ggml_add` looks like:
@@ -246,13 +266,14 @@ A graph with only `ggml_add` looks like:
  -->
 ---
 
-## Memory management
+<!-- _class: lead -->
+### GPU backend
+![center](./img/gpu_infer.png)
 
-- Custom allocator
-- Lazy allocation
-- Free inactive tensors
+---
 
-<!--
+### Memory management
+
 - tensor allocator `ggml_tallocr`
 - graph allocator `ggml_gallocr`
   - dynamic allocator `ggml_dyn_tallocr`
@@ -260,12 +281,17 @@ A graph with only `ggml_add` looks like:
   - node allocator `node_alloc`
   - leaf allocator `leaf_alloc`
 - backend allocator impl `ggml_backend_buffer_t`
- -->
+
+---
+### KV cache
+
+![mha center height:480](./img/mha.png)
 
 ---
 
-## KV cache
+### KV cache
 
+![kv cache center](./img/kvcache.png)
 <!--
 - **Stores pre-computed token representations**: The cache stores key-value pairs where the key is a token and the value is its vector representation. This avoids redundant calculations for already encountered tokens.
 - **Targeted Storage**: The cache prioritizes storing frequently used tokens or those with complex representations.
@@ -286,3 +312,8 @@ A graph with only `ggml_add` looks like:
 
 Executing llava requires CLIP. Refer to `examples/llava/clip.cpp`.
 -->
+
+---
+
+<!-- _class: lead -->
+## Q&A
