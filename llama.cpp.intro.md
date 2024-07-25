@@ -56,7 +56,8 @@ Combine with ``vscode`` and plugin [``continue``](continue.dev).
 
 ---
 
-## Compile source code 
+## Compile source code
+
 Based on commit [504f0c34](https://github.com/ggerganov/llama.cpp/tree/504f0c34)
 
 ```bash
@@ -66,6 +67,7 @@ make -j$(nproc) #LLAMA_CUDA=1
 ```
 
 For Intel devices with SYCL enabled.
+
 ```bash
 source /opt/intel/oneapi/setvars.sh
 # Option 1: Use FP32 (recommended for better performance in most cases)
@@ -80,21 +82,23 @@ cmake --build build --config Release
 ## Converting and quantizing GGUF manually
 
 Converting models to GGUF
+
 ```bash
 python3 -m venv .env
 pip install -r requirements/requirements-convert-hf-to-gguf.txt
 python convert-hf-to-gguf.py  ~/checkpoints/Llama-2-7b-chat-hf
 ```
+
 Quantizing GGUF model
+
 ```bash
 ./build/bin/quantize ~/checkpoints/Llama-2-7b-chat-hf/ggml-model-f16.gguf Q4_K
 ```
 
-
 ---
 
 ## Quantization
- 
+
 *q4_k* quantization is better than *q4_0*, where k means [k-means clustering](https://en.wikipedia.org/wiki/K-means_clustering)
 ![center](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/K-means_convergence.gif/330px-K-means_convergence.gif)
 
@@ -121,13 +125,17 @@ llama_model_quantize_internal()
 ---
 
 ## Run llama.cpp manually
+
 Run the model with CPU.
+
 ```bash
 ./build/bin/main --color \
  -m ~/checkpoints/Llama-2-7b-chat-hf/ggml-model-Q4_K.gguf \
  -p "What is openvino"
 ```
+
 With GPU.
+
 ```bash
 ./build/bin/main --color \
  -m ~/checkpoints/Llama-2-7b-chat-hf/ggml-model-Q4_K.gguf \
@@ -167,19 +175,22 @@ With GPU.
 
 <!-- _class: lead -->
 ### GGUF details
+
 ![center width:800px](./img/gguf-spec.png)
 
 ---
 
 <!-- _class: lead -->
-### LLM Inferencing
-![center width:900px](./img/inference.png)
+### Transformers
+
+![transformer center width:1000](./img/transformer_attention.png)
 
 ---
 
 <!-- _class: lead -->
-### Transformers
-![transformer center width:1000](./img/transformer_attention.png)
+### LLM Inferencing
+
+![center width:900px](./img/inference.png)
 
 ---
 
@@ -217,6 +228,7 @@ Choosing the next predicted token.
 ---
 
 ### Inferencing process
+
 ```C++
 main() {
     ...
@@ -268,6 +280,7 @@ A graph with only `ggml_add` looks like:
 
 <!-- _class: lead -->
 ### GPU backend
+
 ![center](./img/gpu_infer.png)
 
 ---
@@ -283,6 +296,7 @@ A graph with only `ggml_add` looks like:
 - backend allocator impl `ggml_backend_buffer_t`
 
 ---
+
 ### KV cache
 
 ![mha center height:480](./img/mha.png)
