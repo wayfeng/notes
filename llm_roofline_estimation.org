@@ -1,0 +1,212 @@
+#+TITLE:     Rooflines for LLM scaling
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
+#+HTML_HEAD: <script src="js/mermaid.min.js" type="text/javascript"></script>
+#+OPTIONS:   tex:t
+#+INDEX: deeplearning!llm
+#+INDEX: deeplearning!attention
+#+INDEX: deeplearning!transformer
+#+INDEX: deeplearning!roofline
+
+
+* What is roofline
+
+To calculate the minimum time that a specific device needed to inference a given model.
+
+There're two key factors of LLM: time of first token and average time of rest tokens.
+
+** Rough estimation of FLOPs
+
+With $N$ as number of parameters and $L$ as length of input sequence,
+\begin{equation}
+\mathrm{FLOPs} \approx 2 \times N \times L
+\end{equation}
+
+* Tools
+
+** Datasheet
+
+** clpeak
+
+** torchprofile
+
+To verify FLOPs and MACs(multiply-accumulate operation) with =torchprofile= library
+
+#+begin_src python
+  from torchprofile import profile_macs
+  macs = profile_macs(model, sample_data)
+  print(macs)
+#+end_src
+
+* Basic Operations
+
+** Dot Product
+
+For vector $X \in \mathbb{R}^n$ and $Y \in \mathbb{R}^n$,
+\begin{equation}
+p = X \cdot{} Y = \sum_{i=0}^{n-1}{x_i y_i}
+\end{equation}
+
+When vector length $n \gg 1$,
+\begin{equation}
+\mathrm{FLOPs} \approx 2 n
+\end{equation}
+
+** Softmax
+
+The naive softmax for vector $X \in \mathbb{R}^n$,
+\begin{equation}
+\sigma(x_i) = \frac{e^{x_i}}{\sum_{j=0}^{n-1}{e^{x_j}}} \ \ \ for \ i = 0, 1, 2, ..., n
+\end{equation}
+
+When vector length $n \gg 1$,
+\begin{equation}
+\mathrm{FLOPs} \approx 3 n
+\end{equation}
+
+The naive softmax suffer from numerical instability when $x_i$ are very large or very small.
+The softmax with numerical stability,
+\begin{equation}
+\sigma(x_i) = \frac{e^{x_i - max(\bar{x})}}{\sum_{j=0}^{n-1}{e^{x_j - max(\bar{x})}}}
+\end{equation}
+
+When vector length $n \gg 1$,
+\begin{equation}
+\mathrm{FLOPs} \approx 5 n
+\end{equation}
+
+** Attention
+
+\begin{equation}
+\mathrm{softmax}(\frac{Q\cdot{}K^T}{\sqrt{d}})\cdot{}V
+\end{equation}
+
+For inputs of shape $(batch, heads, seq\_len, head\_dim)$, FLOPs of softmax is normally ignored.
+\begin{equation}
+\mathrm{FLOPs} \approx 4 * \mathrm{batch} * \mathrm{heads} * \mathrm{seq\_len} * \mathrm{seq\_len} * \mathrm{head\_dim}
+\end{equation}
+
+** Grouped-Query Attention
+
+\begin{equation}
+N_{kv\_groups} = \lfloor \frac{N_{attn\_heads}}{N_{kv\_heads}} \rfloor
+\end{equation}
+
+\begin{equation}
+N_{kv\_size} = \frac{N_{attn\_size}}{N_{kv\_groups}}
+\end{equation}
+
+** Fully Connected (Dense) Layer
+
+For fully connected layer of $n_{in}$ inputs and $n_{out}$ outputs,
+\begin{equation}
+\mathrm{FLOPs} \approx 2 n_{in} n_{out}
+\end{equation}
+
+** RMSNorm
+
+Given input vector $x \in \mathbb{R}^m$,
+\begin{equation}
+a_i = \sum_{j=1}^m{w_ij}{x_j}, \;\; y_i = f(a_i + b_i)
+\end{equation}
+
+To use LayerNorm, with $\mu = \frac{1}{n}\sum_{i=1}^n{a_i}$ and $\sigma = \sqrt{\frac{1}{n}\sum_{i=1}^n{(a_i-\mu)^2}}$,
+\begin{equation}
+\overline{a_i} = \frac{a_i - \mu}{\sigma}g_i, \;\; y_i = f(\overline{a_i} + b_i)
+\end{equation}
+
+RMSNorm,
+\begin{equation}
+\overline{a_i} = \frac{a_i}{RMS(a_i)}g_i, \;\;\; where \; RMS(a) = \sqrt{\frac{1}{n}\sum_{i=1}^{n}{a_i^2}}
+\end{equation}
+
+Gain parameter $g \in \mathbb{R}^n$ is used to re-scale the standardized summed inputs, and is set to $1$ at the beginning.
+
+FLOPS of vector of length $n$ include
+ 1) square of each element $n$,
+ 2) sum squares $n-1$,
+ 3) multiply each element by reciprocal $n$,
+ 4) multiply by weights $n$,
+
+In total is
+\begin{equation}
+\mathrm{FLOPs} \approx 4n
+\end{equation}
+
+Refer to RMSNorm (Root Mean Square Normalization) [[https://arxiv.org/pdf/1910.07467][paper]].
+
+
+** RoPE
+
+This [[https://www.youtube.com/watch?v=o29P0Kpobz0][video]] explains Rotary Position Embedding (RoPE).
+
+\begin{equation}
+f_{\{q,k\}}(x_m,m) = R^d_{\Theta,m}W_{\{q,k\}}x_m
+\end{equation}
+
+\begin{equation}
+R^d_{\Theta,m} = \begin{pmatrix}
+\cos(m\theta_1) & -\sin(m\theta_1) & 0 & 0 & \ldots & 0 & 0 \\
+\sin(m\theta_1) & \cos(m\theta_1) & 0 & 0 & \ldots & 0 & 0 \\
+0 & 0 & \cos(m\theta_2) & -\sin(m\theta_2) & \ldots & 0 & 0 \\
+0 & 0 & \sin(m\theta_2) & \cos(m\theta_2) & \ldots & 0 & 0 \\
+\vdots & \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+0 & 0 & 0 & 0 & \ldots & \cos(m\theta_{d/2}) & -\sin(m\theta_{d/2}) \\
+0 & 0 & 0 & 0 & \ldots & \sin(m\theta_{d/2}) & \cos(m\theta_{d/2}) \\
+\end{pmatrix}
+\end{equation}
+
+
+* Models
+
+** LLaMA
+
+Parameters
+
+#+NAME: LLaMA 3.1 model configuration
+|                   | llama 3.1 8B | llama 3.1 70B | llama 3.1 405B |
+|-------------------+--------------+---------------+----------------|
+| layers            |           32 |            80 |            126 |
+| hidden size       |         4096 |          8192 |          16384 |
+| intermediate size |        14336 |         28672 |          53248 |
+| attn heads        |           32 |            64 |            128 |
+| k/v heads         |            8 |             8 |              8 |
+| vocab size        |       128256 |        128256 |         128256 |
+
+
+** Qwen2.5
+
+#+CAPTION: Qwen2.5 Architecture
+#+NAME: fig:1
+[[./img/qwen2_topo.png]]
+
+Given Qwen2.5 32B models, let's define:
+- # hidden states: $d_{model} = 5120$
+- # MLP intermediate size: $d_{ff} = 27648$
+- # vocabs: $V = 152064$
+- # layers: $L_n = 64$
+- # heads: $n_{heads} = 40$
+
+#+NAME: Qwen 2.5 model configuration
+|                   | Qwen2.5 0.5B | Qwen2.5 7B | Qwen2.5 30B | Qwen2.5 72B |
+|-------------------+--------------+------------+-------------+-------------|
+| layers            |           24 |         28 |          64 |          80 |
+| hidden size       |          896 |       3584 |        5120 |        8192 |
+| intermediate size |         4864 |      18944 |       27648 |       29568 |
+| attn heads        |           14 |         28 |          40 |          64 |
+| k/v heads         |            2 |          4 |           8 |           8 |
+| vocab size        |       151936 |     152064 |      152064 |      152064 |
+
+** Qwen3
+
+#+CAPTION: Qwen3 Architecture
+#+NAME: fig:2
+#+ATTR_HTML: :align center
+#+ATTR_HTML: :width 100%
+[[./img/qwen3.jpg]]
+
+* References
+
+- [[https://jax-ml.github.io/scaling-book/gpus/#rooflines-for-llm-scaling-on-gpus][How to scale your models]]
+- [[https://medium.com/@dzmitrybahdanau/the-flops-calculus-of-language-model-training-3b19c1f025e4][The FLOPs calculus]]
+- [[https://medium.com/@pashashaik/a-guide-to-hand-calculating-flops-and-macs-fa5221ce5ccc][Calculating FLOPs]]
