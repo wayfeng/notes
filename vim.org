@@ -428,6 +428,8 @@ set paste
 
 * Plugins
 
+** Manage plugins with vim-plug
+
 * History of Vim
   [[https://twobithistory.org/2018/08/05/where-vim-came-from.html][Twobithistory]] has an article about history of Vim.
 

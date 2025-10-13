@@ -248,52 +248,64 @@ screen -r svr1
 #+BEGIN_SRC sh
   $ xsltproc indent.xsl origin.xml > indented.xml
 #+END_SRC
+
 ** Post JSON data                                                      :curl:
-#+BEGIN_SRC bash
+#+BEGIN_SRC sh
 $ curl -X POST -H 'Content-Type: application/json' -d '{"key":"value"}' http://domain/upload
 #+END_SRC
 
 ** Post files                                                          :curl:
-#+BEGIN_SRC bash
+#+BEGIN_SRC sh
 curl -X POST -F 'image=@/path/to/pictures/pic.jpg' http://docmain/upload
 #+END_SRC
 
 ** Backup folder with filter                                          :rsync:
-#+BEGIN_SRC bash
+#+BEGIN_SRC sh
 rsync -aP --exclude-from=blacklist.txt $HOME /path/to/home_backup
 rsync -aP --include-from=whitelist.txt $HOME /path/to/home_backup
 #+END_SRC
 
+** Backup folder to remote server through SSH                         :rsync:
+#+BEGIN_SRC sh
+  rsync -e 'ssh' --info=progress2 -a -r /local/path user@remotehost:~/target/path
+#+END_SRC
+
 ** Who has logged in recently                                       :network:
-#+BEGIN_SRC bash
+#+BEGIN_SRC sh
 last | head
 # or
 lastlog
 #+END_SRC
 
 ** Has a user logged in recently                                    :network:
-#+BEGIN_SRC bash
+#+BEGIN_SRC sh
 last <user> | head
 # or
 lastlog -u <user>
 #+END_SRC
 
-#+BEGIN_SRC bash
+#+BEGIN_SRC sh
 grep -i "new session" /var/log/auth.log
 #+END_SRC
 
 ** Monitoring outgoing connections on port 22                       :network:
-#+BEGIN_SRC bash
+#+BEGIN_SRC sh
 watch -n1 lsof -i TCP:22
 #+END_SRC
 
-#+BEGIN_SRC bash
+#+BEGIN_SRC sh
 sudo iptables -A OUTPUT -p tcp --dport 22 -j LOG --log-prefix '[output@tcp:22] '
 #+END_SRC
 
 ** Get public IP address                                            :network:
-#+BEGIN_SRC bash
+#+BEGIN_SRC sh
   curl ip.sb # or ifconfig.me
+#+END_SRC
+
+** Unzip multi-part zip files                                        :others:
+#+BEGIN_SRC sh
+  cat test.zip.00{1,2,3} > test.zip
+  unzip test.zip
 #+END_SRC
 
 * bash

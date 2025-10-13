@@ -1,9 +1,24 @@
-#+TITLE:     WebAssembly
+#+TITLE: Update Common Commands
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/toc.css" />
 #+HTML_HEAD: <script src="js/mermaid.min.js" type="text/javascript"></script>
-#+OPTIONS:   tex:t
 
-* Basics
+* cat -> bat
 
-* [[https://wasmedge.org][WasmEdge]]
+* cd -> zoxide
+
+* du -> dust
+
+* find -> fd
+
+* ctrl-r -> fzf
+
+* grep -> ripgrep
+
+* pip -> uv
+
+* top -> btop
+
+* vim -> neovim
+
+* lazygit

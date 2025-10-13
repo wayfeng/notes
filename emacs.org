@@ -5,6 +5,14 @@
 
 * Basic Usage
 
+** Auto word wrapping
+
+: Alt-x auto-fill-mode
+
+** Auto line wrapping
+
+: Alt-x visual-line-mode
+
 ** Search & Replace
 
 #+CAPTION: key bindings of searching & replacing
@@ -200,6 +208,16 @@ Enable =use-package= in *init.el*.
 Then use other packages.
 #+BEGIN_SRC elisp
   (use-package gruvbox-theme :config (load-theme 'gruvbox-dark-medium t))
+#+END_SRC
+
+* Org mode
+
+** Javascript
+
+Add a single line to org file so that a large org file can be viewed by section.
+
+#+BEGIN_SRC org
+#+INFOJS_OPT: view:info toc:nil
 #+END_SRC
 
 * Programming

@@ -1,0 +1,12 @@
+#+TITLE:     Prompts
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/article.css" />
+#+OPTIONS:   ^:nil
+#+INDEX:     llm
+#+INDEX:     prompts
+#+INFOJS_OPT: view:info toc:nil
+
+* To beat AI detection.
+
+#+BEGIN_EXAMPLE
+Rewrite the content you just wrote. Ensure the content generated includes controlled imperfections, such as minor grammar variations, occasional punctuation inconsistencies, and abrupt shifts in sentence structure and length. Introduce human-like cognitive jumps, including topic shifts, incomplete thoughts, and slight redundancies in phrasing, while injecting personal anecdotes and sensory details to add unpredictability. Use emotionally charged language that sometimes contradicts itself or over-exaggerates feelings, and ensure complex sentences are broken up with asides, parenthetical statements, or dashes. Vary the vocabulary by replacing predictable word choices with synonyms, while introducing analogies or metaphors that may not directly follow the subject matter. Include recent real-world references or updates, and manually adjust sections of the text by mixing formal language with casual expressions and occasionally breaking logical flow to mimic human creativity. Be sure to alternate between short and long paragraphs, maintaining overall coherence while introducing moments of ambiguity and abstract thoughts that AI would typically struggle to generate.
+#+END_EXAMPLE
